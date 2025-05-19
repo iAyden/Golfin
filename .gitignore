@@ -1,0 +1,61 @@
+# === Gradle ===
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
+# === Java ===
+*.class
+*.jar
+*.war
+*.ear
+
+# === Logs ===
+*.log
+logs/
+*.pid
+
+# === IntelliJ IDEA ===
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# === VS Code ===
+.vscode/
+
+# === Sistema operativo ===
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Linux
+*~
+
+# === Archivos temporales ===
+*.swp
+*.tmp
+*.bak
+*.orig
+*.old
+
+# === Ambientes virtuales y config locales ===
+.env
+.env.*
+*.local
+*.secret
+*.key
+
+# === MongoDB dump (si usan mongodump) ===
+dump/
+
+# === Test reports ===
+test-output/
+surefire-reports/
+
+# === Otros ===
+node_modules/
