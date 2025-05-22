@@ -84,5 +84,22 @@ document.addEventListener('DOMContentLoaded', () => {
             caja_trasera_login.style.opacity = "1";
         }
     }
+
+    // FIN DE LA SECCION DE CODIGO QUE MANIPULA EL MODAL DE SIGN IN y LOG IN
+
+    // IF screen small, convert to burger menu
+    // Hamburger menu for mobile sidebar
+    const hamburger = document.getElementById('hamburgerMenu');
+    hamburger.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+    });
+
+    // Optional: Hide sidebar when clicking outside on mobile
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 900 && sidebar.classList.contains('active')) {
+            if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        }
+    });
 });
-// FIN DE LA SECCION DE CODIGO QUE MANIPULA EL MODAL DE SIGN IN y LOG IN
