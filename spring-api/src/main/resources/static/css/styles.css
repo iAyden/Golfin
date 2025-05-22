@@ -29,9 +29,13 @@ body {
     width: var(--sidebar-width);
     height: 100vh;
 <<<<<<< HEAD:spring-api/src/main/resources/static/css/styles.css
+<<<<<<< HEAD:spring-api/src/main/resources/static/css/styles.css
     background-image: linear-gradient(135deg, rgba(69, 68, 68, 0.751)), url("https://www.golfstonebridgeutah.com/images/slider2/slideshow3.jpg");
 =======
     background-image: url("https://www.golfstonebridgeutah.com/images/slider2/slideshow3.jpg");
+=======
+    background-image: linear-gradient(135deg, rgba(69, 68, 68, 0.452)), url("https://www.golfstonebridgeutah.com/images/slider2/slideshow3.jpg");
+>>>>>>> 99fad61 (Frontend updates):src/main/resources/static/css/styles.css
     /* background: linear-gradient(135deg, rgb(255, 229, 229) 0%, #03970f 100%); */
 >>>>>>> 0f64a1c (More updates in Frontend):src/main/resources/static/css/styles.css
     transition: all 0.5s ease;
@@ -102,7 +106,6 @@ body {
     font-size: 0.7rem;
 }
 
-
 #iconUser {
     display: none;
 }
@@ -140,7 +143,11 @@ body {
 #maintitle {
     color: beige;
     font: bold 50px "Courier New", Courier, monospace;
+<<<<<<< HEAD:spring-api/src/main/resources/static/css/styles.css
     font-size: 5rem;
+=======
+    font-size: 3rem;
+>>>>>>> 99fad61 (Frontend updates):src/main/resources/static/css/styles.css
     text-align: center;
 }
 
@@ -185,6 +192,7 @@ body {
 .grid_wrapper {
     display: grid;
 <<<<<<< HEAD:spring-api/src/main/resources/static/css/styles.css
+<<<<<<< HEAD:spring-api/src/main/resources/static/css/styles.css
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
     align-items: center;
@@ -192,6 +200,11 @@ body {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
 >>>>>>> 0f64a1c (More updates in Frontend):src/main/resources/static/css/styles.css
+=======
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    align-items: center;
+>>>>>>> 99fad61 (Frontend updates):src/main/resources/static/css/styles.css
 }
 
 .golf-images {
@@ -205,10 +218,14 @@ body {
 .golf-images img {
     display: grid;
 <<<<<<< HEAD:spring-api/src/main/resources/static/css/styles.css
+<<<<<<< HEAD:spring-api/src/main/resources/static/css/styles.css
     width: 60vh;
 =======
     width: 500px;
 >>>>>>> 0f64a1c (More updates in Frontend):src/main/resources/static/css/styles.css
+=======
+    width: 60vh;
+>>>>>>> 99fad61 (Frontend updates):src/main/resources/static/css/styles.css
     height: auto;
     object-fit: cover;
     border-radius: 12px;
@@ -435,7 +452,82 @@ a:hover {
     height: 100%;
 }
 
+<<<<<<< HEAD:spring-api/src/main/resources/static/css/styles.css
 >>>>>>> 0f64a1c (More updates in Frontend):src/main/resources/static/css/styles.css
+=======
+/* --------Content 2nd phase------------------------------------------------ */
+
+/* HAMBURGER menu style */
+.hamburger {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 2000;
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.hamburger span {
+    display: block;
+    width: 28px;
+    height: 4px;
+    margin: 4px 0;
+    background: #fff;
+    border-radius: 2px;
+    transition: 0.3s;
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        left: 0;
+        top: 0;
+        z-index: 1500;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        width: var(--sidebar-width);
+        position: fixed;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+    }
+
+    .grid_wrapper {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+    }
+
+    .golf-images {
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 5rem;
+    }
+
+    .textRight {
+        margin: 0;
+        text-align: center;
+        align-items: center;
+    }
+}
+
+/* --------End of content phase 2------------------------------------------------ */
+
+>>>>>>> 99fad61 (Frontend updates):src/main/resources/static/css/styles.css
 
 /* -----------INICIO DE LA SECCION DE ESTILOS DEl LOG IN Y SIGN IN-------------------------- */
 .global_container {
@@ -644,9 +736,13 @@ a:hover {
 }
 
 <<<<<<< HEAD:spring-api/src/main/resources/static/css/styles.css
+<<<<<<< HEAD:spring-api/src/main/resources/static/css/styles.css
 /* FIN DE LA SECCION DE ESTILOS DEL LOG IN Y SIGN IN*/
 =======
 /* FIN DE LA SECCION DE ESTILOS DEL LOG IN Y SIGN IN*/
 
 /* --------Content 2nd phase------------------------------------------------ */
 >>>>>>> 0f64a1c (More updates in Frontend):src/main/resources/static/css/styles.css
+=======
+/* FIN DE LA SECCION DE ESTILOS DEL LOG IN Y SIGN IN*/
+>>>>>>> 99fad61 (Frontend updates):src/main/resources/static/css/styles.css
