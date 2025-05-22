@@ -29,9 +29,13 @@ body {
     width: var(--sidebar-width);
     height: 100vh;
 <<<<<<< HEAD
+<<<<<<< HEAD
     background-image: linear-gradient(135deg, rgba(69, 68, 68, 0.751)), url("https://www.golfstonebridgeutah.com/images/slider2/slideshow3.jpg");
 =======
     background-image: url("https://www.golfstonebridgeutah.com/images/slider2/slideshow3.jpg");
+=======
+    background-image: linear-gradient(135deg, rgba(69, 68, 68, 0.452)), url("https://www.golfstonebridgeutah.com/images/slider2/slideshow3.jpg");
+>>>>>>> f70239c (Frontend updates)
     /* background: linear-gradient(135deg, rgb(255, 229, 229) 0%, #03970f 100%); */
 >>>>>>> b9998c4 (More updates in Frontend)
     transition: all 0.5s ease;
@@ -102,7 +106,6 @@ body {
     font-size: 0.7rem;
 }
 
-
 #iconUser {
     display: none;
 }
@@ -140,7 +143,11 @@ body {
 #maintitle {
     color: beige;
     font: bold 50px "Courier New", Courier, monospace;
+<<<<<<< HEAD
     font-size: 5rem;
+=======
+    font-size: 3rem;
+>>>>>>> f70239c (Frontend updates)
     text-align: center;
 }
 
@@ -185,6 +192,7 @@ body {
 .grid_wrapper {
     display: grid;
 <<<<<<< HEAD
+<<<<<<< HEAD
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
     align-items: center;
@@ -192,6 +200,11 @@ body {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
 >>>>>>> b9998c4 (More updates in Frontend)
+=======
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    align-items: center;
+>>>>>>> f70239c (Frontend updates)
 }
 
 .golf-images {
@@ -205,10 +218,14 @@ body {
 .golf-images img {
     display: grid;
 <<<<<<< HEAD
+<<<<<<< HEAD
     width: 60vh;
 =======
     width: 500px;
 >>>>>>> b9998c4 (More updates in Frontend)
+=======
+    width: 60vh;
+>>>>>>> f70239c (Frontend updates)
     height: auto;
     object-fit: cover;
     border-radius: 12px;
@@ -435,7 +452,82 @@ a:hover {
     height: 100%;
 }
 
+<<<<<<< HEAD
 >>>>>>> b9998c4 (More updates in Frontend)
+=======
+/* --------Content 2nd phase------------------------------------------------ */
+
+/* HAMBURGER menu style */
+.hamburger {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 2000;
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.hamburger span {
+    display: block;
+    width: 28px;
+    height: 4px;
+    margin: 4px 0;
+    background: #fff;
+    border-radius: 2px;
+    transition: 0.3s;
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        left: 0;
+        top: 0;
+        z-index: 1500;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        width: var(--sidebar-width);
+        position: fixed;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+    }
+
+    .grid_wrapper {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+    }
+
+    .golf-images {
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 5rem;
+    }
+
+    .textRight {
+        margin: 0;
+        text-align: center;
+        align-items: center;
+    }
+}
+
+/* --------End of content phase 2------------------------------------------------ */
+
+>>>>>>> f70239c (Frontend updates)
 
 /* -----------INICIO DE LA SECCION DE ESTILOS DEl LOG IN Y SIGN IN-------------------------- */
 .global_container {
@@ -644,9 +736,13 @@ a:hover {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 /* FIN DE LA SECCION DE ESTILOS DEL LOG IN Y SIGN IN*/
 =======
 /* FIN DE LA SECCION DE ESTILOS DEL LOG IN Y SIGN IN*/
 
 /* --------Content 2nd phase------------------------------------------------ */
 >>>>>>> b9998c4 (More updates in Frontend)
+=======
+/* FIN DE LA SECCION DE ESTILOS DEL LOG IN Y SIGN IN*/
+>>>>>>> f70239c (Frontend updates)
