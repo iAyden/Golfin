@@ -5,7 +5,7 @@ import com.golfin.backend.model.User;
 
 import com.golfin.backend.repository.UserRepository;
 import org.springframework.web.bind.annotation.*;
-
+import com.golfin.backend.util.PasswordUtil;
 import java.util.List;
 
 @RestController
@@ -18,14 +18,25 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
+    @PostMapping("/login")
+    public User loginUser(@RequestBody User user) {
+        
+        User userData = userRepository.findByEmail(user.getEmail());
 
-    @PostMapping
+        if(userData != null && PasswordUtil.matches(user.getPswd(),userData.getPswd())){
+            
+            return userData;
+        }
+        
+        User failedUser = new User();
+        return failedUser;
+    } 
+    
+
+    @PostMapping("/signup")
     public User createUser(@RequestBody User user) {
-        System.out.println("Entramos a create user");
+
+        user.setPswd(PasswordUtil.hash(user.getPswd()))  ;
         return userRepository.save(user);
     }
 }
