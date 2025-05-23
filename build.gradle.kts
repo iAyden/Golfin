@@ -24,6 +24,9 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	add("developmentOnly", "org.springframework.boot:spring-boot-devtools")
+	implementation("org.springframework.security:spring-security-crypto")
+
+
 }
 
 tasks.withType<Test> {
