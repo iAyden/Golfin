@@ -101,18 +101,18 @@
                         <div class="login_container-register">
                             <form action="" class="login_form">
                                 <h2>Log in</h2>
-                                <input type="text" placeholder="Email adress">
-                                <input type="password" placeholder="Password">
-                                <button>Entrar</button>
+                                <input type="text" id="l_email" placeholder="Email adress">
+                                <input type="password" id="l_pswd" placeholder="Password">
+                                <button id="login_btn">Entrar</button>
                             </form>
 
-                            <form action="" class="sign_in_form">
+                            <form id = "signup_form" class="sign_in_form">
                                 <h2>Sign in</h2>
-                                <input type="text" placeholder="Complete name">
-                                <input type="text" placeholder="Email adress">
-                                <input type="text" placeholder="User name">
-                                <input type="password" placeholder="Password">
-                                <button>Regístrarse</button>
+                                <input type="text" id = "s_name" placeholder="Name">
+                                <input type="text" id="s_email" placeholder="Email adress">
+                                <input type="text" id = "s_username" placeholder="Username">
+                                <input type="password" id = "s_pswd" placeholder="Password">
+                                <button type ="submit" id="signup_btn">Regístrarse</button>
                             </form>
                         </div>
                     </div>
@@ -136,6 +136,8 @@
     <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/index.js}"></script>
+    
+    <script th:src="@{/js/crud.js}"></script>
 
 </body>
 
