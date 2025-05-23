@@ -6,6 +6,7 @@ import com.golfin.backend.model.User;
 import com.golfin.backend.repository.UserRepository;
 import org.springframework.web.bind.annotation.*;
 import com.golfin.backend.util.PasswordUtil;
+import com.golfin.backend.util.PasswordUtil;
 import java.util.List;
 
 @RestController
@@ -27,7 +28,7 @@ public class UserController {
             
             return userData;
         }
-        
+
         User failedUser = new User();
         return failedUser;
     } 
@@ -35,6 +36,8 @@ public class UserController {
 
     @PostMapping("/signup")
     public User createUser(@RequestBody User user) {
+
+        user.setPswd(PasswordUtil.hash(user.getPswd()))  ;
 
         user.setPswd(PasswordUtil.hash(user.getPswd()))  ;
         return userRepository.save(user);
