@@ -580,8 +580,14 @@
       height: 250px;
     }
 
+<<<<<<< HEAD
     .textColor {
       color: #FFF;
+=======
+<<<<<<< HEAD:spring-api/src/main/resources/static/css/userStats.css
+    .textColor{
+      color:#FFF;
+>>>>>>> a1713a8 (footer added)
     }
 
 
@@ -759,6 +765,7 @@
       background: rgba(244, 67, 54, 0.3);
     }
 
+<<<<<<< HEAD
     /* Diseño responsive */
     @media (max-width: 768px) {
       .friend-item {
@@ -770,3 +777,21 @@
         font-size: 0.7rem;
       }
     }
+=======
+/* Diseño responsive */
+@media (max-width: 768px) {
+  .friend-item {
+    padding: 10px 12px;
+  }
+  
+  .btn-friend {
+    padding: 5px 8px;
+    font-size: 0.7rem;
+  }
+} 
+=======
+    .textColor {
+      color: #FFF;
+    }
+>>>>>>> 4e9aa89 (footer added):src/main/resources/static/css/userStats.css
+>>>>>>> a1713a8 (footer added)
