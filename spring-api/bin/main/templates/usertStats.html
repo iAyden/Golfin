@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,45 +8,45 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="/Golfin/src/main/resources/static/css/userStats.css">
-  <link rel="stylesheet" href="/Golfin/src/main/resources/static/css/styles.css">
+  <link rel="stylesheet" href="/spring-api/src/main/resources/static/css/userStats.css">
+  <script src="/spring-api/src/main/resources/static/js/userStats.js"></script>
 </head>
-<body> 
-  
 
-<div class="d-flex">
-        <div class="sidebarWrapper">
-            <nav class="sidebar d-flex flex-column flex-shrink-0 position-fixed">
-                <div class="p-4">
-                    <h4 class="logo-text fw-bold mb-0">GOLFIN'</h4>
-                </div>
+<body>
 
-                <div class="nav flex-column">
-                    <a href="#" class="sidebar-link  text-decoration-none p-3">
-                        <i class="fas fa-home me-3"></i>
-                        <span class="hide-on-collapse">Dashboard</span>
-                    </a>
-                    <a href="#" class="sidebar-link text-decoration-none p-3">
-                        <i class="fas fa-chart-bar me-3"></i>
-                        <span class="hide-on-collapse">Analytics</span>
-                    </a>
-                    <a href="#" class="sidebar-link text-decoration-none p-3">
-                        <i class="fas fa-users me-3"></i>
-                        <span class="hide-on-collapse">Customers</span>
-                    </a>
-                    <a href="#" class="sidebar-link text-decoration-none p-3">
-                        <i class="fas fa-box me-3"></i>
-                        <span class="hide-on-collapse">Products</span>
-                    </a>
-                    <a href="#" class="sidebar-link text-decoration-none p-3">
-                        <i class="fas fa-gear me-3"></i>
-                        <span class="hide-on-collapse" data-bs-toggle="modal"
-                            data-bs-target="#loginRegisterModal">Login</span>
-                    </a>
-                </div>
-            </nav>
+
+  <div class="d-flex">
+    <div class="sidebarWrapper">
+      <nav class="sidebar d-flex flex-column flex-shrink-0 position-fixed">
+        <div class="p-4">
+          <h4 class="logo-text fw-bold mb-0">GOLFIN'</h4>
         </div>
+
+        <div class="nav flex-column">
+          <a href="#" class="sidebar-link  text-decoration-none p-3">
+            <i class="fas fa-home me-3"></i>
+            <span class="hide-on-collapse">Dashboard</span>
+          </a>
+          <a href="#" class="sidebar-link text-decoration-none p-3">
+            <i class="fas fa-chart-bar me-3"></i>
+            <span class="hide-on-collapse">Analytics</span>
+          </a>
+          <a href="#" class="sidebar-link text-decoration-none p-3">
+            <i class="fas fa-users me-3"></i>
+            <span class="hide-on-collapse">Customers</span>
+          </a>
+          <a href="#" class="sidebar-link text-decoration-none p-3">
+            <i class="fas fa-box me-3"></i>
+            <span class="hide-on-collapse">Products</span>
+          </a>
+          <a href="#" class="sidebar-link text-decoration-none p-3">
+            <i class="fas fa-gear me-3"></i>
+            <span class="hide-on-collapse" data-bs-toggle="modal" data-bs-target="#loginRegisterModal">Login</span>
+          </a>
+        </div>
+      </nav>
     </div>
+  </div>
 
 
 
@@ -55,267 +56,269 @@
 
 
   <section class="main-content">
-<div class="container container-main">
-    <div class="row justify-content-center">
-      <!-- TARJETA 1: Perfil  -->
-      <div class="col-xl-4 col-lg-5 col-md-6">
-        <div class="card">
-          <div class="profile-section">
-            <img src="/Golfin/src/main/resources/static/kalamardo.jpg" alt="Gamer Profile" class="profile-img">
-            <h3 class="card-title textColor">Juanito el mas capito</h3>
-            <span class="badge-green textColor">pro en frifayer</span>
-            <p class="gamer-tag textColor">ejemplo@gmail.com</p>
-            
-            <div class="social-icons">
-              <a href="#" class="social-icon"><i class="fa-solid fa-user-pen" style="color: #069809;"></i></a>
-              <a href="#" class="social-icon"><i class="fa-solid fa-right-from-bracket" style="color: #069809;"></i></a>
-            </div>
-          </div>
+    <div class="container container-main">
+      <div class="row justify-content-center">
+        <!-- TARJETA 1: Perfil  -->
+        <div class="col-xl-4 col-lg-5 col-md-6">
+          <div class="card">
+            <div class="profile-section">
+              <img src="/Golfin/src/main/resources/static/kalamardo.jpg" alt="Gamer Profile" class="profile-img">
+              <h3 class="card-title textColor">Juanito el mas capito</h3>
+              <span class="badge-green textColor">pro en frifayer</span>
+              <p class="gamer-tag textColor">ejemplo@gmail.com</p>
 
-          <div class="divider"></div>
-
-          <div class="game-stats">
-            <div class="game-item">
-              <div class="game-icon">
-                <i class="fa-solid fa-golf-ball-tee" style="color: #069809;"></i>
+              <div class="social-icons">
+                <a href="#" class="social-icon"><i class="fa-solid fa-user-pen" style="color: #069809;"></i></a>
+                <a href="#" class="social-icon"><i class="fa-solid fa-right-from-bracket"
+                    style="color: #069809;"></i></a>
               </div>
-              <div class="game-info">
-                <div class="game-name ">Hole in one</div>
-                <p class="game-detail textColor">Range: challenguer lol</p>
-                <div class="progress-container">
-                  <div class="progress-label">
-                    <span>Hole in one per game: </span>
-                    <span>1.8</span>
-                  </div>
-                  <div class="progress">
-                    <div class="progress-bar" style="width: 85%"></div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="game-stats">
+              <div class="game-item">
+                <div class="game-icon">
+                  <i class="fa-solid fa-golf-ball-tee" style="color: #069809;"></i>
+                </div>
+                <div class="game-info">
+                  <div class="game-name ">Hole in one</div>
+                  <p class="game-detail textColor">Range: challenguer lol</p>
+                  <div class="progress-container">
+                    <div class="progress-label">
+                      <span>Hole in one per game: </span>
+                      <span>1.8</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar" style="width: 85%"></div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div class="game-item">
-              <div class="game-icon">
-                <i class="fa-solid fa-stopwatch-20" style="color: #069809 ;"></i> 
-              </div>
-              <div class="game-info">
-                <div class="game-name">Scoring time </div>
-                <p class="game-detail textColor">Range: PLATA</p>
-                <div class="progress-container">
-                  <div class="progress-label">
-                    <span>Average scoring time: </span>
-                    <span>68%</span>
-                  </div>
-                  <div class="progress">
-                    <div class="progress-bar" style="width: 68%"></div>
+              <div class="game-item">
+                <div class="game-icon">
+                  <i class="fa-solid fa-stopwatch-20" style="color: #069809 ;"></i>
+                </div>
+                <div class="game-info">
+                  <div class="game-name">Scoring time </div>
+                  <p class="game-detail textColor">Range: PLATA</p>
+                  <div class="progress-container">
+                    <div class="progress-label">
+                      <span>Average scoring time: </span>
+                      <span>68%</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar" style="width: 68%"></div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div class="game-item">
-              <div class="game-icon">
-                <i class="fa-solid fa-heart-crack" style="color: #069809;"></i>
-              </div>
-              <div class="game-info">
-                <div class="game-name">Hole interrupted </div>
-                <p class="game-detail textColor">Range: PLATINITO</p>
-                <div class="progress-container">
-                  <div class="progress-label">
-                    <span>Hole interrupted per game: </span>
-                    <span>92%</span>
-                  </div>
-                  <div class="progress">
-                    <div class="progress-bar" style="width: 92%"></div>
+              <div class="game-item">
+                <div class="game-icon">
+                  <i class="fa-solid fa-heart-crack" style="color: #069809;"></i>
+                </div>
+                <div class="game-info">
+                  <div class="game-name">Hole interrupted </div>
+                  <p class="game-detail textColor">Range: PLATINITO</p>
+                  <div class="progress-container">
+                    <div class="progress-label">
+                      <span>Hole interrupted per game: </span>
+                      <span>92%</span>
+                    </div>
+                    <div class="progress">
+                      <div class="progress-bar" style="width: 92%"></div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- TARJETA 2: Estadísticas -->
-      <div class="col-xl-4 col-lg-5 col-md-6">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="section-title textColor">Your stats</h4>
-            
-            <img src="/Golfin/src/main/resources/static/kalamardo.jpg" class="game-cover imgTemporada">
-            
-            <div class="progress-container">
-              <div class="progress-label">
-                <span><i class="fas fa-crosshairs"></i> Total oyos anotados: </span>
-                <span>87%</span>
-              </div>
-              <div class="progress mb-3">
-                <div class="progress-bar" style="width: 87%"></div>
-              </div>
-            </div>
+        <!-- TARJETA 2: Estadísticas -->
+        <div class="col-xl-4 col-lg-5 col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="section-title textColor">Your stats</h4>
 
-            <div class="progress-container">
-              <div class="progress-label">
-                <span><i class="fas fa-tachometer-alt"></i> Rendimiento: </span>
-                <span>320%</span>
-              </div>
-              <div class="progress mb-3">
-                <div class="progress-bar" style="width: 80%"></div>
-              </div>
-            </div>
+              <img src="/Golfin/src/main/resources/static/kalamardo.jpg" class="game-cover imgTemporada">
 
-            <div class="progress-container">
-              <div class="progress-label">
-                <span><i class="fas fa-users"></i>Tiros por partida: </span>
-                <span>95%</span>
+              <div class="progress-container">
+                <div class="progress-label">
+                  <span><i class="fas fa-crosshairs"></i> Total oyos anotados: </span>
+                  <span>87%</span>
+                </div>
+                <div class="progress mb-3">
+                  <div class="progress-bar" style="width: 87%"></div>
+                </div>
               </div>
-              <div class="progress mb-3">
-                <div class="progress-bar" style="width: 95%"></div>
-              </div>
-            </div>
 
-            <div class="progress-container">
-              <div class="progress-label">
-                <span><i class="fas fa-brain"></i>Friends</span>
-                <span>89%</span>
+              <div class="progress-container">
+                <div class="progress-label">
+                  <span><i class="fas fa-tachometer-alt"></i> Rendimiento: </span>
+                  <span>320%</span>
+                </div>
+                <div class="progress mb-3">
+                  <div class="progress-bar" style="width: 80%"></div>
+                </div>
               </div>
-              <div class="progress mb-3">
-                <div class="progress-bar" style="width: 89%"></div>
-              </div>
-            </div>
 
-            <div class="divider"></div>
+              <div class="progress-container">
+                <div class="progress-label">
+                  <span><i class="fas fa-users"></i>Tiros por partida: </span>
+                  <span>95%</span>
+                </div>
+                <div class="progress mb-3">
+                  <div class="progress-bar" style="width: 95%"></div>
+                </div>
+              </div>
 
-            <h5 class="section-title textColor">Logros Destacados</h5>
-            
-            <div class="achievement-item">
-              <div class="achievement-icon">
-                <i class="fas fa-trophy"></i>
+              <div class="progress-container">
+                <div class="progress-label">
+                  <span><i class="fas fa-brain"></i>Friends</span>
+                  <span>89%</span>
+                </div>
+                <div class="progress mb-3">
+                  <div class="progress-bar" style="width: 89%"></div>
+                </div>
               </div>
-              <div class="achievement-text">
-                <h6>El mas mejor</h6>
-                <p class="textColor">Primer puesto - Torneo internacional de BEYBLADE</p>
-              </div>
-            </div>
 
-            <div class="achievement-item">
-              <div class="achievement-icon">
-                <i class="fas fa-medal"></i>
-              </div>
-              <div class="achievement-text">
-                <h6>MOLESTADOR DE PERSONAS</h6>
-                <p class="textColor">ME LA PARTIEROn</p>
-              </div>
-            </div>
+              <div class="divider"></div>
 
-            <div class="achievement-item">
-              <div class="achievement-icon">
-                <i class="fas fa-award"></i>
+              <h5 class="section-title textColor">Logros Destacados</h5>
+
+              <div class="achievement-item">
+                <div class="achievement-icon">
+                  <i class="fas fa-trophy"></i>
+                </div>
+                <div class="achievement-text">
+                  <h6>El mas mejor</h6>
+                  <p class="textColor">Primer puesto - Torneo internacional de BEYBLADE</p>
+                </div>
               </div>
-              <div class="achievement-text">
-                <h6>Holes record</h6>
-                <p class="textColor">45 oyos seguidos</p>
+
+              <div class="achievement-item">
+                <div class="achievement-icon">
+                  <i class="fas fa-medal"></i>
+                </div>
+                <div class="achievement-text">
+                  <h6>MOLESTADOR DE PERSONAS</h6>
+                  <p class="textColor">ME LA PARTIEROn</p>
+                </div>
+              </div>
+
+              <div class="achievement-item">
+                <div class="achievement-icon">
+                  <i class="fas fa-award"></i>
+                </div>
+                <div class="achievement-text">
+                  <h6>Holes record</h6>
+                  <p class="textColor">45 oyos seguidos</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- TARJETA 3: AMIGOS -->
-      <div class="col-xl-4 col-lg-10 col-md-12">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="section-title textColor">Mi Setup</h4>
-            
-            <div class="achievement-item">
-              <div class="achievement-icon">
-                <i class="fas fa-desktop"></i>
+        <!-- TARJETA 3: AMIGOS -->
+        <div class="col-xl-4 col-lg-10 col-md-12">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="section-title textColor">Mi Setup</h4>
+
+              <div class="achievement-item">
+                <div class="achievement-icon">
+                  <i class="fas fa-desktop"></i>
+                </div>
+                <div class="achievement-text">
+                  <h6>PC de la naza</h6>
+                  <p>SUPER PC</p>
+                </div>
               </div>
-              <div class="achievement-text">
-                <h6>PC de la naza</h6>
-                <p>SUPER PC</p>
+
+              <div class="achievement-item">
+                <div class="achievement-icon">
+                  <i class="fas fa-keyboard"></i>
+                </div>
+                <div class="achievement-text">
+                  <h6>MECANICIDADs</h6>
+                  <p>UN TECLADO BIEN RICO MECANICOs</p>
+                </div>
               </div>
+
+              <div class="achievement-item">
+                <div class="achievement-icon">
+                  <i class="fas fa-headset"></i>
+                </div>
+                <div class="achievement-text">
+                  <h6>TENEMOS MICRORATONES</h6>
+                  <p>MICRO RATONES GOOD REACT REACT REACT</p>
+                </div>
+              </div>
+
+              <div class="achievement-item">
+                <div class="achievement-icon">
+                  <i class="fas fa-tv"></i>
+                </div>
+                <div class="achievement-text">
+                  <h6>OSTIA QUE BUENOS GRAFICOS</h6>
+                  <p>mi pentium corre con buenos graficos</p>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+
+              <h5 class="section-title textColor">TABLE DE AMIGOS</h5>
+
+              <div class="achievement-item">
+                <div class="achievement-icon">
+                  <i class="fas fa-envelope"></i>
+                </div>
+                <div class="achievement-text">
+                  <h6>AMIGO</h6>
+                  <p>AMIGO</p>
+                </div>
+              </div>
+
+              <div class="achievement-item">
+                <div class="achievement-icon">
+                  <i class="fas fa-phone"></i>
+                </div>
+                <div class="achievement-text">
+                  <h6>AMIGO</h6>
+                  <p>AMIGO</p>
+                </div>
+              </div>
+
+              <div class="achievement-item">
+                <div class="achievement-icon">
+                  <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="achievement-text">
+                  <h6>AMIGO</h6>
+                  <p>AMIGO</p>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+
             </div>
-
-            <div class="achievement-item">
-              <div class="achievement-icon">
-                <i class="fas fa-keyboard"></i>
-              </div>
-              <div class="achievement-text">
-                <h6>MECANICIDADs</h6>
-                <p>UN TECLADO BIEN RICO MECANICOs</p>
-              </div>
-            </div>
-
-            <div class="achievement-item">
-              <div class="achievement-icon">
-                <i class="fas fa-headset"></i>
-              </div>
-              <div class="achievement-text">
-                <h6>TENEMOS MICRORATONES</h6>
-                <p>MICRO RATONES GOOD REACT REACT REACT</p>
-              </div>
-            </div>
-
-            <div class="achievement-item">
-              <div class="achievement-icon">
-                <i class="fas fa-tv"></i>
-              </div>
-              <div class="achievement-text">
-                <h6>OSTIA QUE BUENOS GRAFICOS</h6>
-                <p>mi pentium corre con buenos graficos</p>
-              </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <h5 class="section-title textColor">TABLE DE AMIGOS</h5>
-            
-            <div class="achievement-item">
-              <div class="achievement-icon">
-                <i class="fas fa-envelope"></i>
-              </div>
-              <div class="achievement-text">
-                <h6>AMIGO</h6>
-                <p>AMIGO</p>
-              </div>
-            </div>
-
-            <div class="achievement-item">
-              <div class="achievement-icon">
-                <i class="fas fa-phone"></i>
-              </div>
-              <div class="achievement-text">
-                <h6>AMIGO</h6>
-                <p>AMIGO</p>
-              </div>
-            </div>
-
-            <div class="achievement-item">
-              <div class="achievement-icon">
-                <i class="fas fa-calendar-alt"></i>
-              </div>
-              <div class="achievement-text">
-                <h6>AMIGO</h6>
-                <p>AMIGO</p>
-              </div>
-            </div>
-
-            <div class="divider"></div>
-
           </div>
         </div>
-      </div>
 
+      </div>
     </div>
-  </div>
 
   </section>
 
-  
+
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/Golfin/src/main/resources/static/js/index.js"></script>
-  
+
 </body>
+
 </html>
