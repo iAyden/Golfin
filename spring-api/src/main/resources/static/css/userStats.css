@@ -6,13 +6,14 @@
       --text-dark: #FFF;
       --text-light: #fff;
     }
-    
-    body, html {
+
+    body,
+    html {
       min-height: 100vh;
       margin: 0;
       background-image: url("https://programadestinosmexico.com/wp-content/uploads/2023/09/image-1004.jpeg");
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      
+
     }
 
     .container-main {
@@ -94,7 +95,7 @@
       color: var(--primary-green);
       font-weight: 700;
       font-size: 1.4rem;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       text-align: center;
     }
 
@@ -149,7 +150,7 @@
       color: var(--primary-green);
       transition: all 0.3s ease;
       font-size: 1rem;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
     }
 
     @media (min-width: 576px) {
@@ -220,7 +221,7 @@
       color: var(--primary-green);
       font-size: 1.2rem;
       flex-shrink: 0;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
     }
 
     @media (min-width: 576px) {
@@ -298,7 +299,7 @@
       height: 8px;
       border-radius: 4px;
       background-color: #e0e0e0;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
     @media (min-width: 576px) {
@@ -353,7 +354,7 @@
       color: var(--primary-green);
       font-size: 1.1rem;
       flex-shrink: 0;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
     }
 
     @media (min-width: 576px) {
@@ -406,7 +407,7 @@
       border: 1px solid #e0e0e0;
       padding: 10px;
       margin-bottom: 15px;
-      background-color: rgba(255,255,255,0.8);
+      background-color: rgba(255, 255, 255, 0.8);
       transition: all 0.3s ease;
       width: 100%;
     }
@@ -538,7 +539,7 @@
       width: 100%;
       border-radius: 6px;
       margin-bottom: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease;
     }
 
@@ -551,7 +552,7 @@
 
     .game-cover:hover {
       transform: scale(1.02);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     }
 
     .sponsors-container {
@@ -579,6 +580,7 @@
       height: 250px;
     }
 
+<<<<<<< HEAD:spring-api/src/main/resources/static/css/userStats.css
     .textColor{
       color:#FFF;
     }
@@ -769,3 +771,8 @@
     font-size: 0.7rem;
   }
 } 
+=======
+    .textColor {
+      color: #FFF;
+    }
+>>>>>>> 4e9aa89 (footer added):src/main/resources/static/css/userStats.css
