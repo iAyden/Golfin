@@ -43,6 +43,9 @@ body {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 568801a (footer added)
     background-image: linear-gradient(135deg, rgba(69, 68, 68, 0.751)), url("https://www.golfstonebridgeutah.com/images/slider2/slideshow3.jpg");
     transition: all 0.5s ease;
 =======
@@ -100,6 +103,7 @@ body {
     border-radius: 8px;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     margin: 4px 16px !important;
 =======
     margin: 4px 16px;
@@ -107,6 +111,9 @@ body {
 =======
     margin: 4px 16px;
 >>>>>>> 5858311 (.)
+=======
+    margin: 4px 16px !important;
+>>>>>>> 568801a (footer added)
     white-space: nowrap;
     overflow: hidden;
 }
@@ -224,6 +231,7 @@ body {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     font-size: 5rem;
 =======
     font-size: 70px;
@@ -234,6 +242,9 @@ body {
 =======
     font-size: 3rem;
 >>>>>>> aba04fe (Frontend updates)
+=======
+    font-size: 5rem;
+>>>>>>> 568801a (footer added)
     text-align: center;
 }
 
@@ -271,10 +282,15 @@ body {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 /* --------Content 2nd phase------------------------------------------------ */
 
 =======
 >>>>>>> fb489d8 (More updates in Frontend)
+=======
+/* --------Content 2nd phase------------------------------------------------ */
+
+>>>>>>> 568801a (footer added)
 /* Mini golf imagery layout for contentPhase2 */
 
 .grid_wrapper {
@@ -320,6 +336,7 @@ body {
 }
 
 .textRight {
+<<<<<<< HEAD
 <<<<<<< HEAD
     display: grid;
     justify-content: center;
@@ -539,13 +556,15 @@ a:hover {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+=======
+    display: grid;
+>>>>>>> 568801a (footer added)
     justify-content: center;
-    text-align: right;
-    margin: 0 2rem 0 0;
-    height: 100%;
+    justify-items: center;
+    text-align: center;
+    margin-right: 8rem;
+    font-size: large;
 }
-
-/* --------Content 2nd phase------------------------------------------------ */
 
 /* HAMBURGER menu style */
 .hamburger {
@@ -617,6 +636,137 @@ a:hover {
 
 /* --------End of content phase 2------------------------------------------------ */
 
+/* --------Content phase 3 ------------------------------------------------ */
+.textLeft {
+    display: grid;
+    justify-content: center;
+    justify-items: center;
+    text-align: center;
+    margin-left: 8rem;
+    font-size: large;
+}
+
+/* --------End of content phase 3 ------------------------------------------------ */
+
+/* ------------------ Footer stuff ------------------------------------------------- */
+
+.footerContainer {
+    transition: all 0.5s ease;
+}
+
+body {
+    font-family: 'Signika', sans-serif;
+}
+
+.bg-grey {
+    background: #292929;
+}
+
+.logo-footer {
+    margin-bottom: 40px;
+}
+
+footer {
+    color: grey;
+}
+
+footer p,
+a {
+    font-size: 12px;
+    font-family: 'Roboto', sans-serif;
+}
+
+footer h6 {
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+footer h6:after {
+    position: absolute;
+    content: "";
+    background: grey;
+    width: 12%;
+    height: 1px;
+    left: 0;
+    bottom: -20px;
+}
+
+.btn-footer {
+    color: grey;
+
+    text-decoration: none;
+    border: 1px solid;
+    border-radius: 43px;
+    font-size: 13px;
+    padding: 7px 30px;
+    line-height: 47px;
+}
+
+.btn-footer:hover {
+
+    text-decoration: none;
+
+}
+
+.form-footer input[type="text"] {
+    border: none;
+    border-radius: 16px 0 0 16px;
+    outline: none;
+    padding-left: 10px;
+
+}
+
+::placeholder {
+    font-size: 10px;
+    padding-left: 10px;
+    font-style: italic;
+}
+
+.form-footer input[type="button"] {
+    border: none;
+    background: #232323;
+    margin-left: -5px;
+    color: #fff;
+    outline: none;
+    border-radius: 0 16px 16px 0;
+    padding: 2px 12px;
+}
+
+.social .fa {
+    color: grey;
+    font-size: 22px;
+    padding: 10px 15px;
+    background: #3c3c3c;
+}
+
+footer ul li {
+    list-style: none;
+    display: block;
+}
+
+footer ul {
+    padding-left: 0;
+}
+
+footer ul li a {
+    text-decoration: none;
+    color: grey;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+    color: #f5f5f5 !important;
+
+}
+
+.logo-part {
+    border-right: 1px solid grey;
+    height: 100%;
+}
+
+/* ------------------ End of Footer stuff ------------------------------------------------- */
 
 >>>>>>> fb489d8 (More updates in Frontend)
 /* -----------INICIO DE LA SECCION DE ESTILOS DEl LOG IN Y SIGN IN-------------------------- */
