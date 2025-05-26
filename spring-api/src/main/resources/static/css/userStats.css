@@ -581,6 +581,7 @@
     }
 
 <<<<<<< HEAD:spring-api/src/main/resources/static/css/userStats.css
+<<<<<<< HEAD:spring-api/src/main/resources/static/css/userStats.css
     .textColor{
       color:#FFF;
     }
@@ -771,6 +772,11 @@
     font-size: 0.7rem;
   }
 } 
+=======
+    .textColor {
+      color: #FFF;
+    }
+>>>>>>> 4e9aa89 (footer added):src/main/resources/static/css/userStats.css
 =======
     .textColor {
       color: #FFF;
