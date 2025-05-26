@@ -9,6 +9,7 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
     <link rel="stylesheet" href="/src/main/resources/static/css/styles.css">
@@ -21,6 +22,8 @@
 >>>>>>> 271555b (Login agregado)
 =======
 >>>>>>> 89279b6 (Rebase de los push de los demas)
+=======
+>>>>>>> a335d50 (merge)
 <link rel="stylesheet" href="/Golfin/src/main/resources/static/css/styles.css">
 <script src="/Golfin/src/main/resources/static/js/index.js"></script>
 
@@ -91,22 +94,12 @@
 
     <!-- SECCION DE MODALES (TODOS LOS MODALES VAN EN ESTA ZONA)------------------------------------------------->
 <div class="global_contain">
+<div class="global_contain">
 
         <!--SIGN IN AND LOG IN MODAL-->
+        <!--SIGN IN AND LOG IN MODAL-->
     <div class="modal fade" id="loginRegisterModal" tabindex="-1" aria-labelledby="loginRegisterModalLabel"
-<<<<<<< HEAD
-<<<<<<< HEAD
         aria-hidden="true" style="background: transparent;">
-=======
-<<<<<<< HEAD
-        aria-hidden="true">
-=======
-        aria-hidden="true" style="background: transparent;">
->>>>>>> fbdcf8f (Login agregado)
->>>>>>> 271555b (Login agregado)
-=======
-        aria-hidden="true" style="background: transparent;">
->>>>>>> 89279b6 (Rebase de los push de los demas)
         <div class="modal-dialog custom-modal-size" >
             <div class="modal-content" style="background: transparent;">
                 <div class="modal-body">
@@ -128,24 +121,30 @@
                         <div class="login_container-register">
                             <form action="" class="login_form">
                                 <h2>Log in</h2>
-                                <input type="text" placeholder="Email adress">
-                                <input type="password" placeholder="Password">
-                                <button>Entrar</button>
+                                <input type="text" id="l_email" placeholder="Email adress">
+                                <input type="password" id="l_pswd" placeholder="Password">
+                                <button id="login_btn">Entrar</button>
                             </form>
 
-                            <form action="" class="sign_in_form">
+                            <form id = "signup_form" class="sign_in_form">
                                 <h2>Sign in</h2>
-                                <input type="text" placeholder="Complete name">
-                                <input type="text" placeholder="Email adress">
-                                <input type="text" placeholder="User name">
-                                <input type="password" placeholder="Password">
-                                <button>Regístrarse</button>
+                                <input type="text" id = "s_name" placeholder="Name">
+                                <input type="text" id="s_email" placeholder="Email adress">
+                                <input type="text" id = "s_username" placeholder="Username">
+                                <input type="password" id = "s_pswd" placeholder="Password">
+                                <button type ="submit" id="signup_btn">Regístrarse</button>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>  
+
+
+</div>
+    
+
     </div>  
 
 
@@ -159,6 +158,8 @@
     <script src="/src/main/resources/static/js/index.js"></script>
     <script src="/Golfin/src/main/resources/static/js/index.js"></script>
     <script th:src="@{/js/index.js}"></script>
+    
+    <script th:src="@{/js/crud.js}"></script>
 
 
 </body>

@@ -28,7 +28,8 @@ body {
     transition: width 0.6s ease;
     width: var(--sidebar-width);
     height: 100vh;
-    background: linear-gradient(135deg, rgb(255, 229, 229) 0%, #03970f 100%);
+    background-image: url("https://www.golfstonebridgeutah.com/images/slider2/slideshow3.jpg");
+    /* background: linear-gradient(135deg, rgb(255, 229, 229) 0%, #03970f 100%); */
     transition: all 0.6s ease;
 }
 
@@ -63,7 +64,7 @@ body {
 }
 
 .sidebar-link {
-    color: #000000;
+    color: #ffffff;
     transition: all 0.2s ease;
     border-radius: 8px;
     margin: 4px 16px;
@@ -72,7 +73,7 @@ body {
 }
 
 .sidebar-link:hover {
-    color: #ffffff;
+    color: #5aec39;
     background: rgba(255, 255, 255, 0.1);
     transform: translateX(5px);
 }
@@ -86,7 +87,7 @@ body {
 .logo-text {
     background: linear-gradient(45deg, #000000, #000000);
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-text-fill-color: white;
     transition: opacity 0.3s ease;
 }
 
@@ -103,15 +104,6 @@ body {
 
 /* ------------------------Main Content shit----------------------------- */
 
-.contentPhase1 {
-    background-image: linear-gradient(#4041414f, #6f70704f), url("https://gizmodo.com/app/uploads/2022/08/4591d55307cb92fc7d9d9dca3bfc7779.gif");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 1000px;
-    display: flex;
-}
-
 .profile-section {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -126,12 +118,11 @@ body {
 }
 
 .container-fluid {
-    height: 700px;
     padding: 20px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-image: linear-gradient(#4041414f, #6f70704f), url("https://foleysports.b-cdn.net/app/uploads/2022/07/Creekside.jpg");
+    background-image: url("https://www.pgaplay.co.uk/media/4rkjsm2d/2019_pro-v1_with-driver.jpg?width=2048&height=838&rnd=133117055668970000");
     background-position: center;
     background-size: cover;
     display: flex;
