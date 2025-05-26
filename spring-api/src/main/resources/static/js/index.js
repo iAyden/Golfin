@@ -2,11 +2,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.querySelector('.sidebar');
     const mainContent = document.querySelector('.main-content');
+    const footer = document.querySelector('.footerContainer');
 
     let isCollapsed = false;
 
     sidebar.classList.add('collapsed');
     mainContent.style.marginLeft = 'var(--sidebar-width-collapsed)';
+    footer.style.marginLeft = 'var(--sidebar-width-collapsed)';
 
     document.addEventListener('mousemove', (event) => {
         const sidebarRect = sidebar.getBoundingClientRect();
@@ -14,16 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.clientX < sidebarRect.width + 50 && isCollapsed) {
             sidebar.classList.remove('collapsed');
             mainContent.style.marginLeft = 'var(--sidebar-width)';
+            footer.style.marginLeft = 'var(--sidebar-width)';
             isCollapsed = false;
         } else if (event.clientX >= sidebarRect.width + 50 && !isCollapsed) {
             sidebar.classList.add('collapsed');
             mainContent.style.marginLeft = 'var(--sidebar-width-collapsed)';
+            footer.style.marginLeft = 'var(--sidebar-width-collapsed)';
             isCollapsed = true;
         }
     });
-
-
-
 
     // INICIO DE LA SECCION DEL CODIGO QUE MANIPULA EL MODAL DE SIGN IN y LOG IN
     document.getElementById("btn__iniciar-sesion").addEventListener("click", iniciarSesion);
@@ -84,5 +85,22 @@ document.addEventListener('DOMContentLoaded', () => {
             caja_trasera_login.style.opacity = "1";
         }
     }
+
+    // FIN DE LA SECCION DE CODIGO QUE MANIPULA EL MODAL DE SIGN IN y LOG IN
+
+    // IF screen small, convert to burger menu
+    // Hamburger menu for mobile sidebar
+    const hamburger = document.getElementById('hamburgerMenu');
+    hamburger.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+    });
+
+    // Optional: Hide sidebar when clicking outside on mobile
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 900 && sidebar.classList.contains('active')) {
+            if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        }
+    });
 });
-// FIN DE LA SECCION DE CODIGO QUE MANIPULA EL MODAL DE SIGN IN y LOG IN
