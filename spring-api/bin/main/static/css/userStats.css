@@ -7,6 +7,7 @@
       --text-light: #fff;
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     body,
     html {
@@ -14,15 +15,23 @@
     
     body, html {
 >>>>>>> ddd56a5 (.)
+=======
+    
+    body, html {
+>>>>>>> 5858311 (.)
       min-height: 100vh;
       margin: 0;
       background-image: url("https://programadestinosmexico.com/wp-content/uploads/2023/09/image-1004.jpeg");
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
       
 >>>>>>> ddd56a5 (.)
+=======
+      
+>>>>>>> 5858311 (.)
     }
 
     .container-main {
@@ -105,10 +114,14 @@
       font-weight: 700;
       font-size: 1.4rem;
 <<<<<<< HEAD
+<<<<<<< HEAD
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 =======
       text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 >>>>>>> ddd56a5 (.)
+=======
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+>>>>>>> 5858311 (.)
       text-align: center;
     }
 
@@ -164,10 +177,14 @@
       transition: all 0.3s ease;
       font-size: 1rem;
 <<<<<<< HEAD
+<<<<<<< HEAD
       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 =======
       box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 >>>>>>> ddd56a5 (.)
+=======
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+>>>>>>> 5858311 (.)
     }
 
     @media (min-width: 576px) {
@@ -239,10 +256,14 @@
       font-size: 1.2rem;
       flex-shrink: 0;
 <<<<<<< HEAD
+<<<<<<< HEAD
       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 =======
       box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 >>>>>>> ddd56a5 (.)
+=======
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+>>>>>>> 5858311 (.)
     }
 
     @media (min-width: 576px) {
@@ -321,10 +342,14 @@
       border-radius: 4px;
       background-color: #e0e0e0;
 <<<<<<< HEAD
+<<<<<<< HEAD
       box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 =======
       box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 >>>>>>> ddd56a5 (.)
+=======
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+>>>>>>> 5858311 (.)
     }
 
     @media (min-width: 576px) {
@@ -380,10 +405,14 @@
       font-size: 1.1rem;
       flex-shrink: 0;
 <<<<<<< HEAD
+<<<<<<< HEAD
       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 =======
       box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 >>>>>>> ddd56a5 (.)
+=======
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+>>>>>>> 5858311 (.)
     }
 
     @media (min-width: 576px) {
@@ -437,10 +466,14 @@
       padding: 10px;
       margin-bottom: 15px;
 <<<<<<< HEAD
+<<<<<<< HEAD
       background-color: rgba(255, 255, 255, 0.8);
 =======
       background-color: rgba(255,255,255,0.8);
 >>>>>>> ddd56a5 (.)
+=======
+      background-color: rgba(255,255,255,0.8);
+>>>>>>> 5858311 (.)
       transition: all 0.3s ease;
       width: 100%;
     }
@@ -573,10 +606,14 @@
       border-radius: 6px;
       margin-bottom: 12px;
 <<<<<<< HEAD
+<<<<<<< HEAD
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 =======
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 >>>>>>> ddd56a5 (.)
+=======
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+>>>>>>> 5858311 (.)
       transition: all 0.3s ease;
     }
 
@@ -590,10 +627,14 @@
     .game-cover:hover {
       transform: scale(1.02);
 <<<<<<< HEAD
+<<<<<<< HEAD
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 =======
       box-shadow: 0 6px 20px rgba(0,0,0,0.15);
 >>>>>>> ddd56a5 (.)
+=======
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+>>>>>>> 5858311 (.)
     }
 
     .sponsors-container {
@@ -622,9 +663,12 @@
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:spring-api/bin/main/static/css/userStats.css
 =======
 >>>>>>> ddd56a5 (.)
+=======
+>>>>>>> 5858311 (.)
     .textColor{
       color:#FFF;
     }
@@ -815,6 +859,7 @@
     font-size: 0.7rem;
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
 } 
 =======
     .textColor {
@@ -824,3 +869,6 @@
 =======
 } 
 >>>>>>> ddd56a5 (.)
+=======
+} 
+>>>>>>> 5858311 (.)
