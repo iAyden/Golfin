@@ -58,3 +58,4 @@ surefire-reports/
 
 # === Otros ===
 node_modules/
+spring-api/bin/

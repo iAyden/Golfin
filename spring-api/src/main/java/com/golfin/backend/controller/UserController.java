@@ -6,8 +6,6 @@ import com.golfin.backend.model.User;
 import com.golfin.backend.repository.UserRepository;
 import org.springframework.web.bind.annotation.*;
 import com.golfin.backend.util.PasswordUtil;
-import com.golfin.backend.util.PasswordUtil;
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -24,11 +22,7 @@ public class UserController {
         
         User userData = userRepository.findByEmail(user.getEmail());
 
-        if(userData != null && PasswordUtil.matches(user.getPswd(),userData.getPswd())){
-            
-            return userData;
-        }
-
+        if(userData != null && PasswordUtil.matches(user.getPswd(),userData.getPswd())){ return userData; }
         User failedUser = new User();
         return failedUser;
     } 

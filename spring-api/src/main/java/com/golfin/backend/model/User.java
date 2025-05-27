@@ -2,7 +2,6 @@ package com.golfin.backend.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import com.golfin.backend.util.PasswordUtil;
 
 @Document(collection = "users")
 public class User {
