@@ -6,13 +6,14 @@
       --text-dark: #FFF;
       --text-light: #fff;
     }
-    
-    body, html {
+
+    body,
+    html {
       min-height: 100vh;
       margin: 0;
       background-image: url("https://programadestinosmexico.com/wp-content/uploads/2023/09/image-1004.jpeg");
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      
+
     }
 
     .container-main {
@@ -94,7 +95,7 @@
       color: var(--primary-green);
       font-weight: 700;
       font-size: 1.4rem;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       text-align: center;
     }
 
@@ -149,7 +150,7 @@
       color: var(--primary-green);
       transition: all 0.3s ease;
       font-size: 1rem;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
     }
 
     @media (min-width: 576px) {
@@ -220,7 +221,7 @@
       color: var(--primary-green);
       font-size: 1.2rem;
       flex-shrink: 0;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
     }
 
     @media (min-width: 576px) {
@@ -298,7 +299,7 @@
       height: 8px;
       border-radius: 4px;
       background-color: #e0e0e0;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
     @media (min-width: 576px) {
@@ -353,7 +354,7 @@
       color: var(--primary-green);
       font-size: 1.1rem;
       flex-shrink: 0;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
     }
 
     @media (min-width: 576px) {
@@ -406,7 +407,7 @@
       border: 1px solid #e0e0e0;
       padding: 10px;
       margin-bottom: 15px;
-      background-color: rgba(255,255,255,0.8);
+      background-color: rgba(255, 255, 255, 0.8);
       transition: all 0.3s ease;
       width: 100%;
     }
@@ -538,7 +539,7 @@
       width: 100%;
       border-radius: 6px;
       margin-bottom: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease;
     }
 
@@ -551,7 +552,7 @@
 
     .game-cover:hover {
       transform: scale(1.02);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     }
 
     .sponsors-container {
@@ -579,193 +580,193 @@
       height: 250px;
     }
 
-    .textColor{
-      color:#FFF;
+    .textColor {
+      color: #FFF;
     }
 
 
-/* Estilos para el ranking */
-.ranking-container {
-  margin-top: 10px;
-}
+    /* Estilos para el ranking */
+    .ranking-container {
+      margin-top: 10px;
+    }
 
-.ranking-item {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  margin-bottom: 8px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
-}
+    .ranking-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+    }
 
-.first-place {
-  background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), transparent);
-  border-left: 3px solid #FFD700;
-}
+    .first-place {
+      background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), transparent);
+      border-left: 3px solid #FFD700;
+    }
 
-.second-place {
-  background: linear-gradient(90deg, rgba(192, 192, 192, 0.2), transparent);
-  border-left: 3px solid #C0C0C0;
-}
+    .second-place {
+      background: linear-gradient(90deg, rgba(192, 192, 192, 0.2), transparent);
+      border-left: 3px solid #C0C0C0;
+    }
 
-.third-place {
-  background: linear-gradient(90deg, rgba(205, 127, 50, 0.2), transparent);
-  border-left: 3px solid #CD7F32;
-}
+    .third-place {
+      background: linear-gradient(90deg, rgba(205, 127, 50, 0.2), transparent);
+      border-left: 3px solid #CD7F32;
+    }
 
-.rank-badge {
-  font-size: 1.5rem;
-  margin-right: 10px;
-  width: 30px;
-  text-align: center;
-}
+    .rank-badge {
+      font-size: 1.5rem;
+      margin-right: 10px;
+      width: 30px;
+      text-align: center;
+    }
 
-.ranking-avatar {
-  margin-right: 12px;
-}
+    .ranking-avatar {
+      margin-right: 12px;
+    }
 
-.ranking-img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid white;
-}
+    .ranking-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid white;
+    }
 
-.ranking-info {
-  flex-grow: 1;
-}
+    .ranking-info {
+      flex-grow: 1;
+    }
 
-.ranking-info h6 {
-  margin: 0;
-  color: white;
-  font-size: 0.95rem;
-}
+    .ranking-info h6 {
+      margin: 0;
+      color: white;
+      font-size: 0.95rem;
+    }
 
-.ranking-stats {
-  margin: 3px 0 0 0;
-  font-size: 0.75rem;
-  color: #BDBDBD;
-}
+    .ranking-stats {
+      margin: 3px 0 0 0;
+      font-size: 0.75rem;
+      color: #BDBDBD;
+    }
 
-/* Lista de amigos estilo ranking */
-.friend-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 15px;
-}
+    /* Lista de amigos estilo ranking */
+    .friend-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
 
-.friend-item {
-  display: flex;
-  align-items: center;
-  padding: 12px 15px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  margin: 10px;
-}
+    .friend-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      margin: 10px;
+    }
 
-.friend-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateX(3px);
-}
+    .friend-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(3px);
+    }
 
-/* Estado de conexión */
-.status-indicator {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  margin-right: 15px;
-}
+    /* Estado de conexión */
+    .status-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 15px;
+    }
 
-.online .status-indicator {
-  background: #4CAF50;
-  box-shadow: 0 0 8px #4CAF50;
-}
+    .online .status-indicator {
+      background: #4CAF50;
+      box-shadow: 0 0 8px #4CAF50;
+    }
 
-.offline .status-indicator {
-  background: #9E9E9E;
-}
+    .offline .status-indicator {
+      background: #9E9E9E;
+    }
 
-.away .status-indicator {
-  background: #FFC107;
-  box-shadow: 0 0 8px #FFC107;
-}
+    .away .status-indicator {
+      background: #FFC107;
+      box-shadow: 0 0 8px #FFC107;
+    }
 
-/* Información del amigo */
-.friend-info {
-  flex: 1;
-  min-width: 0;
-}
+    /* Información del amigo */
+    .friend-info {
+      flex: 1;
+      min-width: 0;
+    }
 
-.friend-name {
-  margin: 0;
-  color: white;
-  font-size: 0.95rem;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+    .friend-name {
+      margin: 0;
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-.friend-status {
-  margin: 3px 0 0 0;
-  font-size: 0.75rem;
-  color: #BDBDBD;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+    .friend-status {
+      margin: 3px 0 0 0;
+      font-size: 0.75rem;
+      color: #BDBDBD;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-/* Botones de acción */
-.friend-actions {
-  display: flex;
-  gap: 8px;
-  margin-left: 15px;
-}
+    /* Botones de acción */
+    .friend-actions {
+      display: flex;
+      gap: 8px;
+      margin-left: 15px;
+    }
 
-.btn-friend {
-  border: none;
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
+    .btn-friend {
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
 
-.btn-invite {
-  background: #2E7D32;
-  color: white;
-}
+    .btn-invite {
+      background: #2E7D32;
+      color: white;
+    }
 
-.btn-invite:hover {
-  background: #1B5E20;
-}
+    .btn-invite:hover {
+      background: #1B5E20;
+    }
 
-.btn-invite:disabled {
-  background: #455A64;
-  cursor: not-allowed;
-}
+    .btn-invite:disabled {
+      background: #455A64;
+      cursor: not-allowed;
+    }
 
-.btn-remove {
-  background: rgba(244, 67, 54, 0.2);
-  color: #F44336;
-}
+    .btn-remove {
+      background: rgba(244, 67, 54, 0.2);
+      color: #F44336;
+    }
 
-.btn-remove:hover {
-  background: rgba(244, 67, 54, 0.3);
-}
+    .btn-remove:hover {
+      background: rgba(244, 67, 54, 0.3);
+    }
 
-/* Diseño responsive */
-@media (max-width: 768px) {
-  .friend-item {
-    padding: 10px 12px;
-  }
-  
-  .btn-friend {
-    padding: 5px 8px;
-    font-size: 0.7rem;
-  }
-} 
+    /* Diseño responsive */
+    @media (max-width: 768px) {
+      .friend-item {
+        padding: 10px 12px;
+      }
+
+      .btn-friend {
+        padding: 5px 8px;
+        font-size: 0.7rem;
+      }
+    }
