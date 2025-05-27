@@ -4,7 +4,11 @@
 }
 
 
+<<<<<<< HEAD
 * {
+=======
+*{
+>>>>>>> ddd56a5 (.)
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -28,8 +32,14 @@ body {
     transition: width 0.6s ease;
     width: var(--sidebar-width);
     height: 100vh;
+<<<<<<< HEAD
     background-image: linear-gradient(135deg, rgba(69, 68, 68, 0.751)), url("https://www.golfstonebridgeutah.com/images/slider2/slideshow3.jpg");
     transition: all 0.5s ease;
+=======
+    background-image: url("https://www.golfstonebridgeutah.com/images/slider2/slideshow3.jpg");
+    /* background: linear-gradient(135deg, rgb(255, 229, 229) 0%, #03970f 100%); */
+    transition: all 0.6s ease;
+>>>>>>> ddd56a5 (.)
 }
 
 .sidebar.collapsed {
@@ -66,20 +76,32 @@ body {
     color: #ffffff;
     transition: all 0.2s ease;
     border-radius: 8px;
+<<<<<<< HEAD
     margin: 4px 16px !important;
+=======
+    margin: 4px 16px;
+>>>>>>> ddd56a5 (.)
     white-space: nowrap;
     overflow: hidden;
 }
 
 .sidebar-link:hover {
     color: #5aec39;
+<<<<<<< HEAD
     background: rgba(255, 255, 255, 0.189) !important;
+=======
+    background: rgba(255, 255, 255, 0.1);
+>>>>>>> ddd56a5 (.)
     transform: translateX(5px);
 }
 
 .sidebar-link.active {
     color: #817e7e;
+<<<<<<< HEAD
     background: rgba(255, 255, 255, 0.274);
+=======
+    background: rgba(255, 255, 255, 0.1);
+>>>>>>> ddd56a5 (.)
 
 }
 
@@ -123,18 +145,32 @@ body {
     justify-content: center;
     background-image: url("https://www.pgaplay.co.uk/media/4rkjsm2d/2019_pro-v1_with-driver.jpg?width=2048&height=838&rnd=133117055668970000");
     background-position: center;
+<<<<<<< HEAD
     display: flex;
     transition: all 0.5s ease;
 }
 
 .main-content {
     transition: all 0.5s ease;
+=======
+    background-size: cover;
+    display: flex;
+    transition: all 0.6s ease;
+}
+
+.main-content {
+    transition: all 0.6s ease;
+>>>>>>> ddd56a5 (.)
 }
 
 #maintitle {
     color: beige;
     font: bold 50px "Courier New", Courier, monospace;
+<<<<<<< HEAD
     font-size: 5rem;
+=======
+    font-size: 70px;
+>>>>>>> ddd56a5 (.)
     text-align: center;
 }
 
@@ -169,6 +205,7 @@ body {
     font-family: monospace;
 }
 
+<<<<<<< HEAD
 /* --------Content 2nd phase------------------------------------------------ */
 
 /* Mini golf imagery layout for contentPhase2 */
@@ -407,6 +444,8 @@ a:hover {
 
 /* ------------------ End of Footer stuff ------------------------------------------------- */
 
+=======
+>>>>>>> ddd56a5 (.)
 /* -----------INICIO DE LA SECCION DE ESTILOS DEl LOG IN Y SIGN IN-------------------------- */
 .global_container {
     width: 100%;
@@ -575,15 +614,63 @@ a:hover {
     }
 }
 
+<<<<<<< HEAD
 .modal-content {
+=======
+.modal-content{
+>>>>>>> ddd56a5 (.)
     margin-top: 150px;
     align-items: center;
 }
 
 
+<<<<<<< HEAD
 .modal-body {
     width: 800px;
     padding: 0;
+=======
+.modal-body{
+    width: 800px;
+    padding:0;
+}
+
+
+
+
+/* Mini golf imagery layout for contentPhase2 */
+.contentPhase2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 350px;
+    margin-top: 2rem;
+}
+
+.golf-images {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+    min-width: 220px;
+}
+
+.golf-images img {
+    width: 500px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    background: #e0e0e0;
+}
+
+.textRight {
+    flex-grow: 1;
+    /* margin-left: 2rem; */
+    /* display: flex; */
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+>>>>>>> ddd56a5 (.)
 }
 
 @media (max-width: 900px) {
@@ -613,4 +700,16 @@ a:hover {
     }
 }
 
+<<<<<<< HEAD
 /* FIN DE LA SECCION DE ESTILOS DEL LOG IN Y SIGN IN*/
+=======
+/* FIN DE LA SECCION DE ESTILOS DEL LOG IN Y SIGN IN*/
+
+/* --------Content 2nd phase------------------------------------------------ */
+
+.textRight {
+    display: grid;
+    text-align: right;
+    grid-column: auto;
+}
+>>>>>>> ddd56a5 (.)
