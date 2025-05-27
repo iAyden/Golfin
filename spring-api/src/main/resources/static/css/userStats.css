@@ -1,772 +1,878 @@
-    :root {
-      --primary-green: #107C10;
-      --light-green: #2e7d32;
-      --dark-green: #1b5e20;
-      --accent-green: #4caf50;
-      --text-dark: #FFF;
-      --text-light: #fff;
-    }
-
-    body,
-    html {
-      min-height: 100vh;
-      margin: 0;
-      background-image: url("https://programadestinosmexico.com/wp-content/uploads/2023/09/image-1004.jpeg");
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
-    }
-
-    .container-main {
-      padding: 20px 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      margin-left: 30px;
-    }
-
-    .card {
-      background-color: rgba(10, 70, 12, 0.6);
-      border: none;
-      border-radius: 16px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      overflow: hidden;
-      position: relative;
-      backdrop-filter: blur(5px);
-      margin-bottom: 20px;
-      height: 100%;
-    }
-
-    @media (max-width: 768px) {
-      .card {
-        margin-bottom: 15px;
-      }
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
-    }
-
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 8px;
-      background: linear-gradient(90deg, var(--primary-green), var(--light-green));
-    }
-
-    .profile-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px 10px;
-      position: relative;
-    }
-
-    .profile-img {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 50%;
-      border: 5px solid white;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-      margin-bottom: 15px;
-      transition: all 0.3s ease;
-      background-color: #e0e0e0;
-    }
-
-    @media (min-width: 576px) {
-      .profile-img {
-        width: 140px;
-        height: 140px;
-      }
-    }
-
-    .profile-img:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 25px rgba(46, 125, 50, 0.4);
-    }
-
-    .card-title {
-      margin: 0;
-      color: var(--primary-green);
-      font-weight: 700;
-      font-size: 1.4rem;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      text-align: center;
-    }
-
-    @media (min-width: 576px) {
-      .card-title {
-        font-size: 1.6rem;
-      }
-    }
-
-    .badge-green {
-      background: linear-gradient(45deg, var(--primary-green), var(--light-green));
-      color: white;
-      font-weight: 600;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      margin: 10px 0;
-      box-shadow: 0 3px 10px rgba(46, 125, 50, 0.3);
-      display: inline-block;
-    }
-
-    .gamer-tag {
-      font-size: 0.95rem;
-      color: #78909c;
-      margin-bottom: 5px;
-      font-family: 'Courier New', monospace;
-      text-align: center;
-    }
-
-    .social-icons {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin: 5px 0;
-      flex-wrap: wrap;
-    }
-
-    @media (min-width: 576px) {
-      .social-icons {
-        gap: 15px;
-      }
-    }
-
-    .social-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background-color: #e8f5e9;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--primary-green);
-      transition: all 0.3s ease;
-      font-size: 1rem;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    @media (min-width: 576px) {
-      .social-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 1.1rem;
-      }
-    }
-
-    .social-icon:hover {
-      background-color: var(--primary-green);
-      color: white;
-      transform: translateY(-3px) scale(1.1);
-      box-shadow: 0 5px 15px rgba(46, 125, 50, 0.4);
-    }
-
-    .divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
-      margin: 1rem auto;
-      width: 85%;
-    }
-
-    .game-stats {
-      width: 100%;
-      padding: 0 15px;
-    }
-
-    @media (min-width: 576px) {
-      .game-stats {
-        padding: 0 25px;
-      }
-    }
-
-    .game-item {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-      background: rgba(232, 245, 233, 0.3);
-      padding: 12px;
-      border-radius: 10px;
-      transition: all 0.3s ease;
-    }
-
-    @media (min-width: 576px) {
-      .game-item {
-        padding: 15px;
-        border-radius: 12px;
-        margin-bottom: 25px;
-      }
-    }
-
-    .game-item:hover {
-      background: rgba(232, 245, 233, 0.5);
-      transform: translateX(5px);
-    }
-
-    .game-icon {
-      width: 45px;
-      height: 45px;
-      border-radius: 10px;
-      background-color: #e8f5e9;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 12px;
-      color: var(--primary-green);
-      font-size: 1.2rem;
-      flex-shrink: 0;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    @media (min-width: 576px) {
-      .game-icon {
-        width: 50px;
-        height: 50px;
-        font-size: 1.4rem;
-        margin-right: 15px;
-        border-radius: 12px;
-      }
-    }
-
-    .game-info {
-      flex-grow: 1;
-      min-width: 0;
-    }
-
-    .game-name {
-      font-weight: 700;
-      color: var(--text-dark);
-      margin-bottom: 5px;
-      font-size: 1rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    @media (min-width: 576px) {
-      .game-name {
-        font-size: 1.1rem;
-      }
-    }
-
-    .game-detail {
-      font-size: 0.85rem;
-      color: #78909c;
-      margin: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    @media (min-width: 576px) {
-      .game-detail {
-        font-size: 0.9rem;
-      }
-    }
-
-    .progress-container {
-      margin-top: 8px;
-    }
-
-    @media (min-width: 576px) {
-      .progress-container {
-        margin-top: 10px;
-      }
-    }
-
-    .progress-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.8rem;
-      margin-bottom: 6px;
-      color: var(--text-dark);
-    }
-
-    @media (min-width: 576px) {
-      .progress-label {
-        font-size: 0.85rem;
-        margin-bottom: 8px;
-      }
-    }
-
-    .progress {
-      height: 8px;
-      border-radius: 4px;
-      background-color: #e0e0e0;
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-
-    @media (min-width: 576px) {
-      .progress {
-        height: 10px;
-        border-radius: 5px;
-      }
-    }
-
-    .progress-bar {
-      border-radius: 4px;
-      background: linear-gradient(90deg, var(--light-green), var(--primary-green));
-      box-shadow: 0 2px 5px rgba(46, 125, 50, 0.3);
-    }
-
-    @media (min-width: 576px) {
-      .progress-bar {
-        border-radius: 5px;
-      }
-    }
-
-    .achievement-item {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-      padding: 10px;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-    }
-
-    @media (min-width: 576px) {
-      .achievement-item {
-        padding: 12px;
-        border-radius: 10px;
-        margin-bottom: 18px;
-      }
-    }
-
-    .achievement-item:hover {
-      background: rgba(232, 245, 233, 0.3);
-    }
-
-    .achievement-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      background-color: #e8f5e9;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 12px;
-      color: var(--primary-green);
-      font-size: 1.1rem;
-      flex-shrink: 0;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    @media (min-width: 576px) {
-      .achievement-icon {
-        width: 45px;
-        height: 45px;
-        font-size: 1.2rem;
-        margin-right: 15px;
-        border-radius: 12px;
-      }
-    }
-
-    .achievement-text {
-      min-width: 0;
-    }
-
-    .achievement-text h6 {
-      margin-bottom: 3px;
-      color: var(--text-dark);
-      font-size: 0.95rem;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    @media (min-width: 576px) {
-      .achievement-text h6 {
-        font-size: 1rem;
-      }
-    }
-
-    .achievement-text p {
-      margin: 0;
-      font-size: 0.8rem;
-      color: #78909c;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    @media (min-width: 576px) {
-      .achievement-text p {
-        font-size: 0.85rem;
-      }
-    }
-
-    .form-control {
-      border-radius: 8px;
-      border: 1px solid #e0e0e0;
-      padding: 10px;
-      margin-bottom: 15px;
-      background-color: rgba(255, 255, 255, 0.8);
-      transition: all 0.3s ease;
-      width: 100%;
-    }
-
-    @media (min-width: 576px) {
-      .form-control {
-        border-radius: 10px;
-        padding: 12px;
-        margin-bottom: 18px;
-      }
-    }
-
-    .form-control:focus {
-      border-color: var(--light-green);
-      box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.25);
-      background-color: white;
-    }
-
-    .btn-send {
-      background: linear-gradient(45deg, var(--primary-green), var(--light-green));
-      color: white;
-      border-radius: 8px;
-      padding: 10px;
-      border: none;
-      width: 100%;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-size: 0.85rem;
-    }
-
-    @media (min-width: 576px) {
-      .btn-send {
-        border-radius: 10px;
-        padding: 12px;
-        letter-spacing: 1px;
-        font-size: 0.9rem;
-      }
-    }
-
-    .btn-send:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(46, 125, 50, 0.4);
-      background: linear-gradient(45deg, var(--dark-green), var(--primary-green));
-    }
-
-    .section-title {
-      color: var(--primary-green);
-      font-size: 1.1rem;
-      text-align: center;
-      margin: 20px 0 15px 0;
-      font-weight: 700;
-      position: relative;
-      display: inline-block;
-      width: 100%;
-    }
-
-    @media (min-width: 576px) {
-      .section-title {
-        font-size: 1.2rem;
-        margin: 25px 0 20px 0;
-      }
-    }
-
-    .section-title::after {
-      content: '';
-      display: block;
-      width: 50px;
-      height: 3px;
-      background: linear-gradient(90deg, var(--light-green), var(--primary-green));
-      margin: 6px auto 0 auto;
-      border-radius: 3px;
-    }
-
-    @media (min-width: 576px) {
-      .section-title::after {
-        width: 60px;
-        margin: 8px auto 0 auto;
-      }
-    }
-
-    .platform-badge {
-      display: inline-block;
-      padding: 2px 6px;
-      border-radius: 3px;
-      font-size: 0.65rem;
-      font-weight: 600;
-      margin-left: 6px;
-      vertical-align: middle;
-    }
-
-    @media (min-width: 576px) {
-      .platform-badge {
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-size: 0.7rem;
-        margin-left: 8px;
-      }
-    }
-
-    .pc-badge {
-      background-color: #2196F3;
-      color: white;
-    }
-
-    .ps-badge {
-      background-color: #003791;
-      color: white;
-    }
-
-    .xbox-badge {
-      background-color: #107C10;
-      color: white;
-    }
-
-    .switch-badge {
-      background-color: #e60012;
-      color: white;
-    }
-
-    .rank-icon {
-      color: #FFD700;
-      margin-right: 4px;
-    }
-
-    .game-cover {
-      width: 100%;
-      border-radius: 6px;
-      margin-bottom: 12px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
-    }
-
-    @media (min-width: 576px) {
-      .game-cover {
-        border-radius: 8px;
-        margin-bottom: 15px;
-      }
-    }
-
-    .game-cover:hover {
-      transform: scale(1.02);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    }
-
-    .sponsors-container {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    .sponsor-img {
-      height: 30px;
-      border-radius: 4px;
-      margin: 5px 0;
-    }
-
-    @media (min-width: 576px) {
-      .sponsor-img {
-        height: 35px;
-      }
-    }
-
-    .imgTemporada {
-      height: 250px;
-    }
-
-    .textColor {
-      color: #FFF;
-    }
-
-
-    /* Estilos para el ranking */
-    .ranking-container {
-      margin-top: 10px;
-    }
-
-    .ranking-item {
-      display: flex;
-      align-items: center;
-      padding: 10px;
-      margin-bottom: 8px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .first-place {
-      background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), transparent);
-      border-left: 3px solid #FFD700;
-    }
-
-    .second-place {
-      background: linear-gradient(90deg, rgba(192, 192, 192, 0.2), transparent);
-      border-left: 3px solid #C0C0C0;
-    }
-
-    .third-place {
-      background: linear-gradient(90deg, rgba(205, 127, 50, 0.2), transparent);
-      border-left: 3px solid #CD7F32;
-    }
-
-    .rank-badge {
-      font-size: 1.5rem;
-      margin-right: 10px;
-      width: 30px;
-      text-align: center;
-    }
-
-    .ranking-avatar {
-      margin-right: 12px;
-    }
-
-    .ranking-img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid white;
-    }
-
-    .ranking-info {
-      flex-grow: 1;
-    }
-
-    .ranking-info h6 {
-      margin: 0;
-      color: white;
-      font-size: 0.95rem;
-    }
-
-    .ranking-stats {
-      margin: 3px 0 0 0;
-      font-size: 0.75rem;
-      color: #BDBDBD;
-    }
-
-    /* Lista de amigos estilo ranking */
-    .friend-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    .friend-item {
-      display: flex;
-      align-items: center;
-      padding: 12px 15px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      transition: all 0.2s ease;
-      margin: 10px;
-    }
-
-    .friend-item:hover {
-      background: rgba(255, 255, 255, 0.1);
-      transform: translateX(3px);
-    }
-
-    /* Estado de conexión */
-    .status-indicator {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-right: 15px;
-    }
-
-    .online .status-indicator {
-      background: #4CAF50;
-      box-shadow: 0 0 8px #4CAF50;
-    }
-
-    .offline .status-indicator {
-      background: #9E9E9E;
-    }
-
-    .away .status-indicator {
-      background: #FFC107;
-      box-shadow: 0 0 8px #FFC107;
-    }
-
-    /* Información del amigo */
-    .friend-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .friend-name {
-      margin: 0;
-      color: white;
-      font-size: 0.95rem;
-      font-weight: 500;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .friend-status {
-      margin: 3px 0 0 0;
-      font-size: 0.75rem;
-      color: #BDBDBD;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    /* Botones de acción */
-    .friend-actions {
-      display: flex;
-      gap: 8px;
-      margin-left: 15px;
-    }
-
-    .btn-friend {
-      border: none;
-      border-radius: 6px;
-      padding: 6px 12px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .btn-invite {
-      background: #2E7D32;
-      color: white;
-    }
-
-    .btn-invite:hover {
-      background: #1B5E20;
-    }
-
-    .btn-invite:disabled {
-      background: #455A64;
-      cursor: not-allowed;
-    }
-
-    .btn-remove {
-      background: rgba(244, 67, 54, 0.2);
-      color: #F44336;
-    }
-
-    .btn-remove:hover {
-      background: rgba(244, 67, 54, 0.3);
-    }
-
-    /* Diseño responsive */
-    @media (max-width: 768px) {
-      .friend-item {
-        padding: 10px 12px;
-      }
-
-      .btn-friend {
-        padding: 5px 8px;
-        font-size: 0.7rem;
-      }
-    }
+/* Sidebar */
+:root {
+  --sidebar-width: 230px;
+  --sidebar-width-collapsed: 80px;
+}
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+body {
+  overflow-x: hidden;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.sidebar {
+  margin: 0;
+  padding: 0;
+  width: 150px;
+  position: fixed;
+  height: 100%;
+  transition: width 0.6s ease;
+  width: var(--sidebar-width);
+  height: 100vh;
+  background-image: linear-gradient(135deg, rgba(69, 68, 68, 0.751)), url("https://www.golfstonebridgeutah.com/images/slider2/slideshow3.jpg");
+  transition: all 0.5s ease;
+}
+
+.sidebar.collapsed {
+  width: var(--sidebar-width-collapsed);
+}
+
+.sidebar.collapsed .nav {
+  display: flex !important;
+  justify-content: center;
+  gap: 1.2rem;
+}
+
+.sidebar.collapsed .sidebar-link {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center;
+  padding: 0.7rem 0 !important;
+  margin: 0 !important;
+  width: 100%;
+}
+
+.sidebar.collapsed .sidebar-link i {
+  font-size: 1.5rem;
+  margin: 0 !important;
+  display: block;
+}
+
+.sidebar.collapsed .sidebar-link .hide-on-collapse {
+  display: none !important;
+}
+
+.sidebar-link {
+  color: #ffffff;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  margin: 4px 16px !important;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar-link:hover {
+  color: #5aec39;
+  background: rgba(255, 255, 255, 0.189) !important;
+  transform: translateX(5px);
+}
+
+.sidebar-link.active {
+  color: #817e7e;
+  background: rgba(255, 255, 255, 0.274);
+
+}
+
+.logo-text {
+  background: linear-gradient(45deg, #000000, #000000);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: white;
+  transition: opacity 0.3s ease;
+}
+
+.notification-badge {
+  background: #ff6b6b;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+}
+
+#iconUser {
+  display: none;
+}
+
+/* Sidebar */
+
+:root {
+  --primary-green: #107C10;
+  --light-green: #2e7d32;
+  --dark-green: #1b5e20;
+  --accent-green: #4caf50;
+  --text-dark: #FFF;
+  --text-light: #fff;
+}
+
+body,
+html {
+  min-height: 100vh;
+  margin: 0;
+  background-image: url("https://programadestinosmexico.com/wp-content/uploads/2023/09/image-1004.jpeg");
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+}
+
+.container-main {
+  padding: 20px 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  margin-left: 30px;
+}
+
+.card {
+  background-color: rgba(10, 70, 12, 0.6);
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
+  position: relative;
+  backdrop-filter: blur(5px);
+  margin-bottom: 20px;
+  height: 100%;
+}
+
+@media (max-width: 768px) {
+  .card {
+    margin-bottom: 15px;
+  }
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(90deg, var(--primary-green), var(--light-green));
+}
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 10px;
+  position: relative;
+}
+
+.profile-img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 5px solid white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+  background-color: #e0e0e0;
+}
+
+@media (min-width: 576px) {
+  .profile-img {
+    width: 140px;
+    height: 140px;
+  }
+}
+
+.profile-img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 25px rgba(46, 125, 50, 0.4);
+}
+
+.card-title {
+  margin: 0;
+  color: var(--primary-green);
+  font-weight: 700;
+  font-size: 1.4rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+@media (min-width: 576px) {
+  .card-title {
+    font-size: 1.6rem;
+  }
+}
+
+.badge-green {
+  background: linear-gradient(45deg, var(--primary-green), var(--light-green));
+  color: white;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  margin: 10px 0;
+  box-shadow: 0 3px 10px rgba(46, 125, 50, 0.3);
+  display: inline-block;
+}
+
+.gamer-tag {
+  font-size: 0.95rem;
+  color: #78909c;
+  margin-bottom: 5px;
+  font-family: 'Courier New', monospace;
+  text-align: center;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 5px 0;
+  flex-wrap: wrap;
+}
+
+@media (min-width: 576px) {
+  .social-icons {
+    gap: 15px;
+  }
+}
+
+.social-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #e8f5e9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-green);
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 576px) {
+  .social-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+}
+
+.social-icon:hover {
+  background-color: var(--primary-green);
+  color: white;
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 5px 15px rgba(46, 125, 50, 0.4);
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+  margin: 1rem auto;
+  width: 85%;
+}
+
+.game-stats {
+  width: 100%;
+  padding: 0 15px;
+}
+
+@media (min-width: 576px) {
+  .game-stats {
+    padding: 0 25px;
+  }
+}
+
+.game-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  background: rgba(232, 245, 233, 0.3);
+  padding: 12px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 576px) {
+  .game-item {
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+  }
+}
+
+.game-item:hover {
+  background: rgba(232, 245, 233, 0.5);
+  transform: translateX(5px);
+}
+
+.game-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 10px;
+  background-color: #e8f5e9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  color: var(--primary-green);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 576px) {
+  .game-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.4rem;
+    margin-right: 15px;
+    border-radius: 12px;
+  }
+}
+
+.game-info {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.game-name {
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 5px;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 576px) {
+  .game-name {
+    font-size: 1.1rem;
+  }
+}
+
+.game-detail {
+  font-size: 0.85rem;
+  color: #78909c;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 576px) {
+  .game-detail {
+    font-size: 0.9rem;
+  }
+}
+
+.progress-container {
+  margin-top: 8px;
+}
+
+@media (min-width: 576px) {
+  .progress-container {
+    margin-top: 10px;
+  }
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  margin-bottom: 6px;
+  color: var(--text-dark);
+}
+
+@media (min-width: 576px) {
+  .progress-label {
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+  }
+}
+
+.progress {
+  height: 8px;
+  border-radius: 4px;
+  background-color: #e0e0e0;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 576px) {
+  .progress {
+    height: 10px;
+    border-radius: 5px;
+  }
+}
+
+.progress-bar {
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--light-green), var(--primary-green));
+  box-shadow: 0 2px 5px rgba(46, 125, 50, 0.3);
+}
+
+@media (min-width: 576px) {
+  .progress-bar {
+    border-radius: 5px;
+  }
+}
+
+.achievement-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 576px) {
+  .achievement-item {
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+  }
+}
+
+.achievement-item:hover {
+  background: rgba(232, 245, 233, 0.3);
+}
+
+.achievement-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: #e8f5e9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  color: var(--primary-green);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 576px) {
+  .achievement-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 1.2rem;
+    margin-right: 15px;
+    border-radius: 12px;
+  }
+}
+
+.achievement-text {
+  min-width: 0;
+}
+
+.achievement-text h6 {
+  margin-bottom: 3px;
+  color: var(--text-dark);
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 576px) {
+  .achievement-text h6 {
+    font-size: 1rem;
+  }
+}
+
+.achievement-text p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #78909c;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 576px) {
+  .achievement-text p {
+    font-size: 0.85rem;
+  }
+}
+
+.form-control {
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  padding: 10px;
+  margin-bottom: 15px;
+  background-color: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+@media (min-width: 576px) {
+  .form-control {
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 18px;
+  }
+}
+
+.form-control:focus {
+  border-color: var(--light-green);
+  box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.25);
+  background-color: white;
+}
+
+.btn-send {
+  background: linear-gradient(45deg, var(--primary-green), var(--light-green));
+  color: white;
+  border-radius: 8px;
+  padding: 10px;
+  border: none;
+  width: 100%;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.85rem;
+}
+
+@media (min-width: 576px) {
+  .btn-send {
+    border-radius: 10px;
+    padding: 12px;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+  }
+}
+
+.btn-send:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(46, 125, 50, 0.4);
+  background: linear-gradient(45deg, var(--dark-green), var(--primary-green));
+}
+
+.section-title {
+  color: var(--primary-green);
+  font-size: 1.1rem;
+  text-align: center;
+  margin: 20px 0 15px 0;
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+@media (min-width: 576px) {
+  .section-title {
+    font-size: 1.2rem;
+    margin: 25px 0 20px 0;
+  }
+}
+
+.section-title::after {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--light-green), var(--primary-green));
+  margin: 6px auto 0 auto;
+  border-radius: 3px;
+}
+
+@media (min-width: 576px) {
+  .section-title::after {
+    width: 60px;
+    margin: 8px auto 0 auto;
+  }
+}
+
+.platform-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+@media (min-width: 576px) {
+  .platform-badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    margin-left: 8px;
+  }
+}
+
+.pc-badge {
+  background-color: #2196F3;
+  color: white;
+}
+
+.ps-badge {
+  background-color: #003791;
+  color: white;
+}
+
+.xbox-badge {
+  background-color: #107C10;
+  color: white;
+}
+
+.switch-badge {
+  background-color: #e60012;
+  color: white;
+}
+
+.rank-icon {
+  color: #FFD700;
+  margin-right: 4px;
+}
+
+.game-cover {
+  width: 100%;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 576px) {
+  .game-cover {
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+}
+
+.game-cover:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.sponsors-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.sponsor-img {
+  height: 30px;
+  border-radius: 4px;
+  margin: 5px 0;
+}
+
+@media (min-width: 576px) {
+  .sponsor-img {
+    height: 35px;
+  }
+}
+
+.imgTemporada {
+  height: 250px;
+}
+
+.textColor {
+  color: #FFF;
+}
+
+
+/* Estilos para el ranking */
+.ranking-container {
+  margin-top: 10px;
+}
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.first-place {
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), transparent);
+  border-left: 3px solid #FFD700;
+}
+
+.second-place {
+  background: linear-gradient(90deg, rgba(192, 192, 192, 0.2), transparent);
+  border-left: 3px solid #C0C0C0;
+}
+
+.third-place {
+  background: linear-gradient(90deg, rgba(205, 127, 50, 0.2), transparent);
+  border-left: 3px solid #CD7F32;
+}
+
+.rank-badge {
+  font-size: 1.5rem;
+  margin-right: 10px;
+  width: 30px;
+  text-align: center;
+}
+
+.ranking-avatar {
+  margin-right: 12px;
+}
+
+.ranking-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+}
+
+.ranking-info {
+  flex-grow: 1;
+}
+
+.ranking-info h6 {
+  margin: 0;
+  color: white;
+  font-size: 0.95rem;
+}
+
+.ranking-stats {
+  margin: 3px 0 0 0;
+  font-size: 0.75rem;
+  color: #BDBDBD;
+}
+
+/* Lista de amigos estilo ranking */
+.friend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.friend-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  margin: 10px;
+}
+
+.friend-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(3px);
+}
+
+/* Estado de conexión */
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.online .status-indicator {
+  background: #4CAF50;
+  box-shadow: 0 0 8px #4CAF50;
+}
+
+.offline .status-indicator {
+  background: #9E9E9E;
+}
+
+.away .status-indicator {
+  background: #FFC107;
+  box-shadow: 0 0 8px #FFC107;
+}
+
+/* Información del amigo */
+.friend-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.friend-name {
+  margin: 0;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.friend-status {
+  margin: 3px 0 0 0;
+  font-size: 0.75rem;
+  color: #BDBDBD;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Botones de acción */
+.friend-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: 15px;
+}
+
+.btn-friend {
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-invite {
+  background: #2E7D32;
+  color: white;
+}
+
+.btn-invite:hover {
+  background: #1B5E20;
+}
+
+.btn-invite:disabled {
+  background: #455A64;
+  cursor: not-allowed;
+}
+
+.btn-remove {
+  background: rgba(244, 67, 54, 0.2);
+  color: #F44336;
+}
+
+.btn-remove:hover {
+  background: rgba(244, 67, 54, 0.3);
+}
+
+/* Diseño responsive */
+@media (max-width: 768px) {
+  .friend-item {
+    padding: 10px 12px;
+  }
+
+  .btn-friend {
+    padding: 5px 8px;
+    font-size: 0.7rem;
+  }
+}
