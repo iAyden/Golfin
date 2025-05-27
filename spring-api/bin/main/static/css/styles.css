@@ -7,16 +7,22 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 873fbc4 (.)
 * {
 =======
 *{
 >>>>>>> ddd56a5 (.)
+<<<<<<< HEAD
 =======
 *{
 >>>>>>> 5858311 (.)
 =======
 * {
 >>>>>>> fb489d8 (More updates in Frontend)
+=======
+>>>>>>> 873fbc4 (.)
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -44,12 +50,16 @@ body {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 568801a (footer added)
+=======
+>>>>>>> 873fbc4 (.)
     background-image: linear-gradient(135deg, rgba(69, 68, 68, 0.751)), url("https://www.golfstonebridgeutah.com/images/slider2/slideshow3.jpg");
     transition: all 0.5s ease;
 =======
     background-image: url("https://www.golfstonebridgeutah.com/images/slider2/slideshow3.jpg");
+<<<<<<< HEAD
 =======
     background-image: linear-gradient(135deg, rgba(69, 68, 68, 0.452)), url("https://www.golfstonebridgeutah.com/images/slider2/slideshow3.jpg");
 >>>>>>> aba04fe (Frontend updates)
@@ -65,6 +75,11 @@ body {
 =======
     transition: all 0.5s ease;
 >>>>>>> fb489d8 (More updates in Frontend)
+=======
+    /* background: linear-gradient(135deg, rgb(255, 229, 229) 0%, #03970f 100%); */
+    transition: all 0.6s ease;
+>>>>>>> ddd56a5 (.)
+>>>>>>> 873fbc4 (.)
 }
 
 .sidebar.collapsed {
@@ -104,16 +119,22 @@ body {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 873fbc4 (.)
     margin: 4px 16px !important;
 =======
     margin: 4px 16px;
 >>>>>>> ddd56a5 (.)
+<<<<<<< HEAD
 =======
     margin: 4px 16px;
 >>>>>>> 5858311 (.)
 =======
     margin: 4px 16px !important;
 >>>>>>> 568801a (footer added)
+=======
+>>>>>>> 873fbc4 (.)
     white-space: nowrap;
     overflow: hidden;
 }
@@ -123,16 +144,22 @@ body {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 873fbc4 (.)
     background: rgba(255, 255, 255, 0.189) !important;
 =======
     background: rgba(255, 255, 255, 0.1);
 >>>>>>> ddd56a5 (.)
+<<<<<<< HEAD
 =======
     background: rgba(255, 255, 255, 0.1);
 >>>>>>> 5858311 (.)
 =======
     background: rgba(255, 255, 255, 0.189) !important;
 >>>>>>> aba04fe (Frontend updates)
+=======
+>>>>>>> 873fbc4 (.)
     transform: translateX(5px);
 }
 
@@ -141,16 +168,22 @@ body {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 873fbc4 (.)
     background: rgba(255, 255, 255, 0.274);
 =======
     background: rgba(255, 255, 255, 0.1);
 >>>>>>> ddd56a5 (.)
+<<<<<<< HEAD
 =======
     background: rgba(255, 255, 255, 0.1);
 >>>>>>> 5858311 (.)
 =======
     background: rgba(255, 255, 255, 0.274);
 >>>>>>> aba04fe (Frontend updates)
+=======
+>>>>>>> 873fbc4 (.)
 
 }
 
@@ -197,8 +230,11 @@ body {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> aba04fe (Frontend updates)
+=======
+>>>>>>> 873fbc4 (.)
     display: flex;
     transition: all 0.5s ease;
 }
@@ -206,6 +242,7 @@ body {
 .main-content {
     transition: all 0.5s ease;
 =======
+<<<<<<< HEAD
 =======
 >>>>>>> 5858311 (.)
     background-size: cover;
@@ -223,6 +260,16 @@ body {
 =======
     transition: all 0.5s ease;
 >>>>>>> fb489d8 (More updates in Frontend)
+=======
+    background-size: cover;
+    display: flex;
+    transition: all 0.6s ease;
+}
+
+.main-content {
+    transition: all 0.6s ease;
+>>>>>>> ddd56a5 (.)
+>>>>>>> 873fbc4 (.)
 }
 
 #maintitle {
@@ -232,10 +279,14 @@ body {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 873fbc4 (.)
     font-size: 5rem;
 =======
     font-size: 70px;
 >>>>>>> ddd56a5 (.)
+<<<<<<< HEAD
 =======
     font-size: 70px;
 >>>>>>> 5858311 (.)
@@ -245,6 +296,8 @@ body {
 =======
     font-size: 5rem;
 >>>>>>> 568801a (footer added)
+=======
+>>>>>>> 873fbc4 (.)
     text-align: center;
 }
 
@@ -283,6 +336,9 @@ body {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 873fbc4 (.)
 /* --------Content 2nd phase------------------------------------------------ */
 
 =======
@@ -550,6 +606,7 @@ a:hover {
 
 =======
 >>>>>>> ddd56a5 (.)
+<<<<<<< HEAD
 =======
 >>>>>>> 5858311 (.)
 =======
@@ -769,6 +826,8 @@ a:hover {
 /* ------------------ End of Footer stuff ------------------------------------------------- */
 
 >>>>>>> fb489d8 (More updates in Frontend)
+=======
+>>>>>>> 873fbc4 (.)
 /* -----------INICIO DE LA SECCION DE ESTILOS DEl LOG IN Y SIGN IN-------------------------- */
 .global_container {
     width: 100%;
@@ -940,16 +999,22 @@ a:hover {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 873fbc4 (.)
 .modal-content {
 =======
 .modal-content{
 >>>>>>> ddd56a5 (.)
+<<<<<<< HEAD
 =======
 .modal-content{
 >>>>>>> 5858311 (.)
 =======
 .modal-content {
 >>>>>>> fb489d8 (More updates in Frontend)
+=======
+>>>>>>> 873fbc4 (.)
     margin-top: 150px;
     align-items: center;
 }
@@ -958,12 +1023,18 @@ a:hover {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 873fbc4 (.)
 .modal-body {
     width: 800px;
     padding: 0;
 =======
+<<<<<<< HEAD
 =======
 >>>>>>> 5858311 (.)
+=======
+>>>>>>> 873fbc4 (.)
 .modal-body{
     width: 800px;
     padding:0;
@@ -1006,6 +1077,7 @@ a:hover {
     justify-content: center;
     text-align: center;
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> ddd56a5 (.)
 =======
 >>>>>>> 5858311 (.)
@@ -1014,6 +1086,9 @@ a:hover {
     width: 800px;
     padding: 0;
 >>>>>>> fb489d8 (More updates in Frontend)
+=======
+>>>>>>> ddd56a5 (.)
+>>>>>>> 873fbc4 (.)
 }
 
 @media (max-width: 900px) {
@@ -1046,6 +1121,7 @@ a:hover {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 /* FIN DE LA SECCION DE ESTILOS DEL LOG IN Y SIGN IN*/
 =======
 =======
@@ -1053,12 +1129,19 @@ a:hover {
 /* FIN DE LA SECCION DE ESTILOS DEL LOG IN Y SIGN IN*/
 
 <<<<<<< HEAD
+=======
+/* FIN DE LA SECCION DE ESTILOS DEL LOG IN Y SIGN IN*/
+=======
+/* FIN DE LA SECCION DE ESTILOS DEL LOG IN Y SIGN IN*/
+
+>>>>>>> 873fbc4 (.)
 /* --------Content 2nd phase------------------------------------------------ */
 
 .textRight {
     display: grid;
     text-align: right;
     grid-column: auto;
+<<<<<<< HEAD
 <<<<<<< HEAD
 }
 >>>>>>> ddd56a5 (.)
@@ -1071,3 +1154,7 @@ a:hover {
 =======
 /* FIN DE LA SECCION DE ESTILOS DEL LOG IN Y SIGN IN*/
 >>>>>>> aba04fe (Frontend updates)
+=======
+}
+>>>>>>> ddd56a5 (.)
+>>>>>>> 873fbc4 (.)
