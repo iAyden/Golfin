@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Pressable, StyleSheet, Animated, Easing } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import Sidebar from '@/components/Sidebar'; // Ajusta la ruta según tu estructura
+import Sidebar from '@/components/Sidebar';
 import { Text } from '@/components/Themed';
 
 const App: React.FC = () => {
   const [sidebarVisible, setSidebarVisible] = useState(true);
-  const [activeMenu, setActiveMenu] = useState('two');
+  const [activeMenu, setActiveMenu] = useState('home'); // Cambiado a 'home'
   const sidebarWidth = useRef(new Animated.Value(250)).current;
 
   useEffect(() => {
@@ -20,7 +20,6 @@ const App: React.FC = () => {
 
   const handleMenuPress = (menuItem: string) => {
     setActiveMenu(menuItem);
-    // se puede agregar lOgica adicional cuando se selecci o na un tiem
   };
 
   return (
@@ -32,7 +31,6 @@ const App: React.FC = () => {
         activeMenuItem={activeMenu}
       />
 
-      {/* Contenido principal */}
       <View style={styles.mainContent}>
         <Pressable
           style={styles.hamburgerButton}
@@ -42,8 +40,9 @@ const App: React.FC = () => {
           <FontAwesome name="bars" size={24} color="#2f855a" />
         </Pressable>
 
-        <View style={styles.ejemplo}> <Text>HOLAA</Text> </View>
-
+        <View style={styles.ejemplo}>
+          <Text>HOLAA</Text>
+        </View>
       </View>
     </View>
   );
@@ -58,17 +57,16 @@ const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
     padding: 20,
+    zIndex: 0, // Asegura que el contenido esté detrás del sidebar
   },
   hamburgerButton: {
     marginBottom: 20,
   },
-  ejemplo :{
-    backgroundColor: '#FFFF',
+  ejemplo: { // Corregido el espacio antes de los dos puntos
+    backgroundColor: '#FFF', // Corregido el color
     width: 100,
     height: 100
   }
-
-
 });
 
 export default App;
