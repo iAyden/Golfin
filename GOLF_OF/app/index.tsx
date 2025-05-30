@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Pressable, StyleSheet, Animated, Easing } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import Sidebar from '@/components/Sidebar';
-import { Text } from '@/components/Themed';
-import ImagenSinFondo from '@/components/ImagenSinFondo';
+import Sidebar from '@/components/Structures/Sidebar';
+// import { Text } from '@/components/Themed';
+import ImagenSinFondo from '@/components/VisualComponents/ImagenSinFondo';
 
 
 const App: React.FC = () => {
