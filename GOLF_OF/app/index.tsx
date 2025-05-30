@@ -3,7 +3,7 @@ import { View, Pressable, StyleSheet, Animated, Easing } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import Sidebar from '@/components/Sidebar';
 import { Text } from '@/components/Themed';
-
+import ImagenSinFondo from '@/components/ImagenSinFondo';
 
 
 const App: React.FC = () => {
@@ -42,8 +42,8 @@ const App: React.FC = () => {
           <FontAwesome name="bars" size={24} color="#2f855a" />
         </Pressable>
 
-        <View style={styles.ejemplo}>
-          <Text>HOLAA</Text>
+        <View style={styles.imgGameContainer}>
+          <ImagenSinFondo source={require('../assets/images/favicon.png')} width={200} height={200} redirectTo='/createLobby' />
         </View>
       </View>
     </View>
@@ -68,7 +68,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF', // Corregido el color
     width: 100,
     height: 100
+  },
+
+  imgGameContainer: {              
+    justifyContent: 'space-between',   
+    alignItems: 'center',  
+    margin: 100           
+  },
+  cardsContainer: {
+    flex: 1, 
+    alignContent : 'center',
+    justifyContent : 'center',
   }
+  
 });
 
 export default App;
