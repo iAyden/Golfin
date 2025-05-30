@@ -1,70 +1,29 @@
-    :root {
-      --primary-green: #107C10;
-      --light-green: #2e7d32;
-      --dark-green: #1b5e20;
-      --accent-green: #4caf50;
-      --text-dark: #FFF;
-      --text-light: #fff;
+:root {
+    --primary-green: #107C10;
+    --light-green: #2e7d32;
+    --dark-green: #1b5e20;
+    --accent-green: #4caf50;
+    --text-dark: #FFF;
+    --text-light: #fff;
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 873fbc4 (.)
 
-    body,
-    html {
-=======
-    
-    body, html {
->>>>>>> ddd56a5 (.)
-<<<<<<< HEAD
-=======
-    
-    body, html {
->>>>>>> 5858311 (.)
-=======
-
-    body,
-    html {
->>>>>>> 568801a (footer added)
-=======
->>>>>>> 873fbc4 (.)
+body, html {
       min-height: 100vh;
       margin: 0;
       background-image: url("https://programadestinosmexico.com/wp-content/uploads/2023/09/image-1004.jpeg");
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 873fbc4 (.)
-
-=======
-      
->>>>>>> ddd56a5 (.)
-<<<<<<< HEAD
-=======
-      
->>>>>>> 5858311 (.)
-=======
-
->>>>>>> 568801a (footer added)
-=======
->>>>>>> 873fbc4 (.)
     }
 
-    .container-main {
+.container-main {
       padding: 20px 0;
       min-height: 100vh;
       display: flex;
       align-items: center;
       margin-left: 30px;
+      transition: all 0.5s ease;
     }
 
-    .card {
+.card {
       background-color: rgba(10, 70, 12, 0.6);
       border: none;
       border-radius: 16px;
@@ -135,25 +94,7 @@
       color: var(--primary-green);
       font-weight: 700;
       font-size: 1.4rem;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 873fbc4 (.)
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-=======
-      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
->>>>>>> ddd56a5 (.)
-<<<<<<< HEAD
-=======
-      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
->>>>>>> 5858311 (.)
-=======
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
->>>>>>> 568801a (footer added)
-=======
->>>>>>> 873fbc4 (.)
       text-align: center;
     }
 
@@ -207,26 +148,8 @@
       justify-content: center;
       color: var(--primary-green);
       transition: all 0.3s ease;
-      font-size: 1rem;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 873fbc4 (.)
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-=======
+      font-size: 1rem;box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
       box-shadow: 0 3px 8px rgba(0,0,0,0.1);
->>>>>>> ddd56a5 (.)
-<<<<<<< HEAD
-=======
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
->>>>>>> 5858311 (.)
-=======
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
->>>>>>> 568801a (footer added)
-=======
->>>>>>> 873fbc4 (.)
     }
 
     @media (min-width: 576px) {
@@ -297,25 +220,7 @@
       color: var(--primary-green);
       font-size: 1.2rem;
       flex-shrink: 0;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 873fbc4 (.)
       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-=======
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
->>>>>>> ddd56a5 (.)
-<<<<<<< HEAD
-=======
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
->>>>>>> 5858311 (.)
-=======
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
->>>>>>> 568801a (footer added)
-=======
->>>>>>> 873fbc4 (.)
     }
 
     @media (min-width: 576px) {
@@ -393,25 +298,7 @@
       height: 8px;
       border-radius: 4px;
       background-color: #e0e0e0;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 873fbc4 (.)
       box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-=======
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
->>>>>>> ddd56a5 (.)
-<<<<<<< HEAD
-=======
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
->>>>>>> 5858311 (.)
-=======
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
->>>>>>> 568801a (footer added)
-=======
->>>>>>> 873fbc4 (.)
     }
 
     @media (min-width: 576px) {
@@ -466,25 +353,7 @@
       color: var(--primary-green);
       font-size: 1.1rem;
       flex-shrink: 0;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 873fbc4 (.)
       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-=======
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
->>>>>>> ddd56a5 (.)
-<<<<<<< HEAD
-=======
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
->>>>>>> 5858311 (.)
-=======
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
->>>>>>> 568801a (footer added)
-=======
->>>>>>> 873fbc4 (.)
     }
 
     @media (min-width: 576px) {
@@ -537,25 +406,7 @@
       border: 1px solid #e0e0e0;
       padding: 10px;
       margin-bottom: 15px;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 873fbc4 (.)
       background-color: rgba(255, 255, 255, 0.8);
-=======
-      background-color: rgba(255,255,255,0.8);
->>>>>>> ddd56a5 (.)
-<<<<<<< HEAD
-=======
-      background-color: rgba(255,255,255,0.8);
->>>>>>> 5858311 (.)
-=======
-      background-color: rgba(255, 255, 255, 0.8);
->>>>>>> 568801a (footer added)
-=======
->>>>>>> 873fbc4 (.)
       transition: all 0.3s ease;
       width: 100%;
     }
@@ -687,25 +538,7 @@
       width: 100%;
       border-radius: 6px;
       margin-bottom: 12px;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 873fbc4 (.)
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-=======
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
->>>>>>> ddd56a5 (.)
-<<<<<<< HEAD
-=======
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
->>>>>>> 5858311 (.)
-=======
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
->>>>>>> 568801a (footer added)
-=======
->>>>>>> 873fbc4 (.)
       transition: all 0.3s ease;
     }
 
@@ -718,25 +551,7 @@
 
     .game-cover:hover {
       transform: scale(1.02);
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 873fbc4 (.)
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-=======
-      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
->>>>>>> ddd56a5 (.)
-<<<<<<< HEAD
-=======
-      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
->>>>>>> 5858311 (.)
-=======
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
->>>>>>> 568801a (footer added)
-=======
->>>>>>> 873fbc4 (.)
     }
 
     .sponsors-container {
@@ -763,28 +578,6 @@
     .imgTemporada {
       height: 250px;
     }
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD:spring-api/bin/main/static/css/userStats.css
-=======
->>>>>>> ddd56a5 (.)
-=======
->>>>>>> 5858311 (.)
-=======
-<<<<<<< HEAD:spring-api/bin/main/static/css/userStats.css
->>>>>>> 568801a (footer added)
-=======
-<<<<<<< HEAD:spring-api/bin/main/static/css/userStats.css
-=======
->>>>>>> ddd56a5 (.)
->>>>>>> 873fbc4 (.)
-    .textColor{
-      color:#FFF;
-    }
-
 
 /* Estilos para el ranking */
 .ranking-container {
@@ -970,32 +763,7 @@
     padding: 5px 8px;
     font-size: 0.7rem;
   }
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 568801a (footer added)
-=======
->>>>>>> 873fbc4 (.)
-} 
-=======
     .textColor {
       color: #FFF;
-    }
->>>>>>> 4e9aa89 (footer added):src/main/resources/static/css/userStats.css
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-} 
->>>>>>> ddd56a5 (.)
-=======
-} 
->>>>>>> 5858311 (.)
-=======
->>>>>>> 568801a (footer added)
-=======
-=======
-} 
->>>>>>> ddd56a5 (.)
->>>>>>> 873fbc4 (.)
+  }
+}
