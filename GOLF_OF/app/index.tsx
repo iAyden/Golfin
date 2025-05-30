@@ -4,6 +4,8 @@ import { FontAwesome } from '@expo/vector-icons';
 import Sidebar from '@/components/Sidebar';
 import { Text } from '@/components/Themed';
 
+
+
 const App: React.FC = () => {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [activeMenu, setActiveMenu] = useState('home'); // Cambiado a 'home'
