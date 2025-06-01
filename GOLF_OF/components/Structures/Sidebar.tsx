@@ -22,7 +22,7 @@ type MenuItem = {
 const MENU_ITEMS: MenuItem[] = [
   { id: 'createLobby', title: 'Home', icon: 'home' },
   { id: 'gameplay', title: 'Porfile', icon: 'newspaper-o' },
-  { id: 'porfileStats', title: 'Settings', icon: 'cog' }
+  { id: 'LogUser', title: 'Settings', icon: 'cog' }
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ 
@@ -39,7 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           {/* AQUI ESTA EL ENCABEZADO DE LA SIDE BAR, HAY QUE VER EL LOGO PARA VER COMO SE PUEDE HACER */}
           <View style={styles.sidebarHeader}>
             <Image 
-              source={require('../assets/images/icon.png')} 
+              source={require('@/assets/images/icon.png')} 
               style={styles.sidebarLogo}
               accessibilityLabel="Logo Eco Noticias"
             />

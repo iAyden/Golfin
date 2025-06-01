@@ -8,7 +8,7 @@ type ImagenSinFondoProps = {
   height?: number;
   containerWidth?: number;
   containerHeight?: number;
-  redirectTo?: Route; // REDIRIGIMOS A UNA RUTA
+  redirectTo?: Route; // REDIRIGIMOS A UNA RUTA CUIDADO POR FAVOR
 };
 
 const ImagenSinFondo: React.FC<ImagenSinFondoProps> = ({
@@ -21,11 +21,7 @@ const ImagenSinFondo: React.FC<ImagenSinFondoProps> = ({
 }) => {
   const router = useRouter();
 
-  const handlePress = () => {
-    if (redirectTo) {
-      router.push(redirectTo);
-    }
-  };
+   const handlePress = () => { if (redirectTo) { router.push(redirectTo);} };
 
   return (
     <Pressable onPress={handlePress}>

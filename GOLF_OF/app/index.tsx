@@ -59,13 +59,13 @@ const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
     padding: 20,
-    zIndex: 0, // Asegura que el contenido esté detrás del sidebar
+    zIndex: 0, 
   },
   hamburgerButton: {
     marginBottom: 20,
   },
-  ejemplo: { // Corregido el espacio antes de los dos puntos
-    backgroundColor: '#FFF', // Corregido el color
+  ejemplo: { 
+    backgroundColor: '#FFF',
     width: 100,
     height: 100
   },
