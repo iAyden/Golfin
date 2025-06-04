@@ -1,3 +1,4 @@
+import { Try } from 'expo-router/build/views/Try';
 import React, { useState, useRef } from 'react';
 import {
   View,
@@ -23,19 +24,48 @@ const GolfLogin = () => {
   
   const flipAnimation = useRef(new Animated.Value(0)).current;
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {  Alert.alert('Error', 'INGRESE SUS DATOS');  return; }
-    Alert.alert('Bienvenido', `Bienvenido NALGON, ${email}`);
+    
+    try {
+      const response  =await fetch('http://users/login',{
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          email, 
+          password : password  
+        }),
+      });
+      const data = await Response.json; 
+      const text = (Response) ? Alert.alert('Welcome', `Welcome ${email}`) : Alert.alert('Error',`error 505 Line 45`);
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'No se pudo conectar al servidor. ');
+    }
   };
 
-  const handleRegister = () => {
+
+  const handleRegister = async () => {
     if (!name || !email || !password || !confirmPassword) { Alert.alert('Error', 'LLENE LOS CAMPOS'); return; }
 
-    if (password !== confirmPassword) {Alert.alert('Error', 'PROGRAMACION EN PHP'); return;
-    }
+    if (password !== confirmPassword) {Alert.alert('Error', 'PROGRAMACION EN PHP'); return;}
     
-    Alert.alert('Registro exitoso', `Bienvenido ${name}`);
-    flipCard();
+    try {
+      const response = await fetch('http://users/register', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          name,
+          email,
+          password
+          }),
+          });
+      const data = await response.json();
+      const text = (response ) ? Alert.alert('Welcome', `Welcome ${email}`) : Alert.alert('Error', `error 505 Line 63`);
+    } catch (error) {
+      console.error('ERROR AL REGISTRO: ', error);
+      Alert.alert('error', 'No se pudo conectat al lol ');
+    }
   };
 
 
