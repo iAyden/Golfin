@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import GolfLogin from '@/components/UserComponents/GolfLogin';
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import GolfLogin from "@/components/UserComponents/GolfLogin";
 
 export default function login() {
   return (
@@ -13,6 +13,6 @@ export default function login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
 });

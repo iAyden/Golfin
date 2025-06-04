@@ -1,14 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, Pressable, StyleSheet, Animated, Easing } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
-import Sidebar from '@/components/Structures/Sidebar';
+import React, { useState, useRef, useEffect } from "react";
+import { View, Pressable, StyleSheet, Animated, Easing } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import Sidebar from "@/components/Structures/Sidebar";
 // import { Text } from '@/components/Themed';
-import ImagenSinFondo from '@/components/VisualComponents/ImagenSinFondo';
-
+import ImagenSinFondo from "@/components/VisualComponents/ImagenSinFondo";
 
 const App: React.FC = () => {
   const [sidebarVisible, setSidebarVisible] = useState(true);
-  const [activeMenu, setActiveMenu] = useState('home'); // Cambiado a 'home'
+  const [activeMenu, setActiveMenu] = useState("home"); // Cambiado a 'home'
   const sidebarWidth = useRef(new Animated.Value(250)).current;
 
   useEffect(() => {
@@ -26,8 +25,8 @@ const App: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Sidebar  
-        isVisible={sidebarVisible} 
+      <Sidebar
+        isVisible={sidebarVisible}
         width={sidebarWidth}
         onMenuItemPress={handleMenuPress}
         activeMenuItem={activeMenu}
@@ -43,7 +42,12 @@ const App: React.FC = () => {
         </Pressable>
 
         <View style={styles.imgGameContainer}>
-          <ImagenSinFondo source={require('../assets/images/favicon.png')} width={200} height={200} redirectTo='/createLobby' />
+          <ImagenSinFondo
+            source={require("../assets/images/favicon.png")}
+            width={200}
+            height={200}
+            redirectTo="/createLobby"
+          />
         </View>
       </View>
     </View>
@@ -53,34 +57,33 @@ const App: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'row',
-    backgroundColor: '#f0fff4',
+    flexDirection: "row",
+    backgroundColor: "#f0fff4",
   },
   mainContent: {
     flex: 1,
     padding: 20,
-    zIndex: 0, 
+    zIndex: 0,
   },
   hamburgerButton: {
     marginBottom: 20,
   },
-  ejemplo: { 
-    backgroundColor: '#FFF',
+  ejemplo: {
+    backgroundColor: "#FFF",
     width: 100,
-    height: 100
+    height: 100,
   },
 
-  imgGameContainer: {              
-    justifyContent: 'space-between',   
-    alignItems: 'center',  
-    margin: 100           
+  imgGameContainer: {
+    justifyContent: "space-between",
+    alignItems: "center",
+    margin: 100,
   },
   cardsContainer: {
-    flex: 1, 
-    alignContent : 'center',
-    justifyContent : 'center',
-  }
-  
+    flex: 1,
+    alignContent: "center",
+    justifyContent: "center",
+  },
 });
 
 export default App;

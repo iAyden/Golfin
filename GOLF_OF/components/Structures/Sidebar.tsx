@@ -1,7 +1,14 @@
-import React from 'react';
-import { Animated, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
-import { Route, useRouter } from 'expo-router';
+import React from "react";
+import {
+  Animated,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+} from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import { Route, useRouter } from "expo-router";
 
 // DEFINIMOS LOS TIPOS PARA LAS PROPS DEL COMPONENTE
 type SidebarProps = {
@@ -11,35 +18,36 @@ type SidebarProps = {
   activeMenuItem: string;
 };
 
-// DEFINIMOS EL TIPO PARA LOS ITEMS DEL MENU 
+// DEFINIMOS EL TIPO PARA LOS ITEMS DEL MENU
 type MenuItem = {
   id: string;
   title: string;
-  icon: React.ComponentProps<typeof FontAwesome>['name'];
+  icon: React.ComponentProps<typeof FontAwesome>["name"];
 };
 
 // DATOS DEL MENU CORTO AQUI MODIFICAMOS LOS REDIRECCIONAMIENTOS
 const MENU_ITEMS: MenuItem[] = [
-  { id: 'createLobby', title: 'Home', icon: 'home' },
-  { id: 'gameplay', title: 'Porfile', icon: 'newspaper-o' },
-  { id: 'LogUser', title: 'Settings', icon: 'cog' }
+  { id: "index", title: "Home", icon: "home" },
+  { id: "createLobby", title: "New Game", icon: "gamepad" },
+  { id: "profileStats", title: "Profile", icon: "newspaper-o" },
+  { id: "LogUser", title: "Settings", icon: "cog" },
 ];
 
-const Sidebar: React.FC<SidebarProps> = ({ 
-  isVisible, 
-  width, 
+const Sidebar: React.FC<SidebarProps> = ({
+  isVisible,
+  width,
   onMenuItemPress,
-  activeMenuItem 
+  activeMenuItem,
 }) => {
-    const router = useRouter(); // EL MALDITO COMPONENTE NUNCA ELIMINAR
+  const router = useRouter(); // EL MALDITO COMPONENTE NUNCA ELIMINAR
   return (
     <Animated.View style={[styles.sidebar, { width }]}>
       {isVisible && (
         <>
           {/* AQUI ESTA EL ENCABEZADO DE LA SIDE BAR, HAY QUE VER EL LOGO PARA VER COMO SE PUEDE HACER */}
           <View style={styles.sidebarHeader}>
-            <Image 
-              source={require('@/assets/images/icon.png')} 
+            <Image
+              source={require("@/assets/images/icon.png")}
               style={styles.sidebarLogo}
               accessibilityLabel="Logo Eco Noticias"
             />
@@ -52,18 +60,14 @@ const Sidebar: React.FC<SidebarProps> = ({
               key={item.id}
               style={[
                 styles.sidebarButton,
-                activeMenuItem === item.id && styles.activeButton
+                activeMenuItem === item.id && styles.activeButton,
               ]}
               onPress={() => {
-              onMenuItemPress(item.id);
-              router.push(item.id as Route);
-            }}
+                onMenuItemPress(item.id);
+                router.push(item.id as Route);
+              }}
             >
-              <FontAwesome 
-                name={item.icon} 
-                size={18} 
-                color="#f0fff4" 
-              />
+              <FontAwesome name={item.icon} size={18} color="#f0fff4" />
               <Text style={styles.sidebarButtonText}> {item.title}</Text>
             </TouchableOpacity>
           ))}
@@ -80,22 +84,22 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 const styles = StyleSheet.create({
   sidebar: {
-    backgroundColor: '#22543d',
+    backgroundColor: "#22543d",
     padding: 20,
-    overflow: 'hidden',
-    shadowColor: '#000',
+    overflow: "hidden",
+    shadowColor: "#000",
     shadowOffset: { width: 2, height: 0 },
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 5,
   },
   sidebarHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 30,
     paddingBottom: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#38a169',
+    borderBottomColor: "#38a169",
   },
   sidebarLogo: {
     width: 40,
@@ -104,41 +108,41 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   sidebarTitle: {
-    color: '#c6f6d5',
+    color: "#c6f6d5",
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   sidebarButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 12,
     paddingVertical: 10,
     paddingLeft: 15,
     borderRadius: 8,
   },
   activeButton: {
-    backgroundColor: '#2f855a',
+    backgroundColor: "#2f855a",
   },
   sidebarButtonText: {
-    color: '#f0fff4',
+    color: "#f0fff4",
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
     marginLeft: 8,
   },
   sidebarFooter: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 20,
     left: 20,
     right: 20,
     borderTopWidth: 1,
-    borderTopColor: '#38a169',
+    borderTopColor: "#38a169",
     paddingTop: 10,
   },
   footerText: {
-    color: '#c6f6d5',
+    color: "#c6f6d5",
     fontSize: 12,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
 
-export default Sidebar; 
+export default Sidebar;
