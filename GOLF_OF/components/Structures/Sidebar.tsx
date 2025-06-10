@@ -84,7 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 const styles = StyleSheet.create({
   sidebar: {
-    backgroundColor: "#22543d",
+    backgroundColor: "rgba(15, 76, 45, 0.98)",
     padding: 20,
     overflow: "hidden",
     shadowColor: "#000",

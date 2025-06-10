@@ -1,5 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, Pressable, StyleSheet, Animated, Easing } from "react-native";
+import {
+  View,
+  Pressable,
+  StyleSheet,
+  Animated,
+  Easing,
+  Text,
+} from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import Sidebar from "@/components/Structures/Sidebar";
 // import { Text } from '@/components/Themed';
@@ -42,6 +49,7 @@ const App: React.FC = () => {
         </Pressable>
 
         <View style={styles.imgGameContainer}>
+          <Text style={styles.cardsContainer}>Tricky Valley</Text>
           <ImagenSinFondo
             source={require("../assets/images/favicon.png")}
             width={200}
