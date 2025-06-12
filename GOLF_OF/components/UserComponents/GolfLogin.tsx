@@ -1,6 +1,6 @@
 import { Try } from 'expo-router/build/views/Try';
 import React, { useState, useRef } from 'react';
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -27,55 +27,55 @@ const GolfLogin = () => {
   const [showFront, setShowFront] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+  const {control, handleSubmit} = useForm();
   const flipAnimation = useRef(new Animated.Value(0)).current;
 
   // const { control, handleSubmit, formState: { errors } } = useForm({
   //   resolver: yupResolver(loginSchema),
   // });
-  
+
   const handleLogin = async () => {
-    if (!email || !password) {  Alert.alert('Error', 'INGRESE SUS DATOS');  return; }
+    // if (!email || !password) {  Alert.alert('Error', 'INGRESE SUS DATOS');  return; }
     
-    try {
-      const response  =await fetch('http://users/login',{
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          email, 
-          password : password  
-        }),
-      });
-      const data = await Response.json; 
-      const text = (Response) ? Alert.alert('Welcome', `Welcome ${email}`) : Alert.alert('Error',`error 505 Line 45`);
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'No se pudo conectar al servidor. ');
-    }   
+    // try {
+    //   const response  =await fetch('http://users/login',{
+    //     method: 'POST',
+    //     headers: {'Content-Type': 'application/json'},
+    //     body: JSON.stringify({
+    //       email, 
+    //       password : password  
+    //     }),
+    //   });
+    //   const data = await Response.json; 
+    //   const text = (Response) ? Alert.alert('Welcome', `Welcome ${email}`) : Alert.alert('Error',`error 505 Line 45`);
+    // } catch (error) {
+    //   console.error(error);
+    //   Alert.alert('Error', 'No se pudo conectar al servidor. ');
+    // }   
   };
 
 
   const handleRegister = async () => {
-    if (!name || !email || !password || !confirmPassword) { Alert.alert('Error', 'LLENE LOS CAMPOS'); return; }
+  //   if (!name || !email || !password || !confirmPassword) { Alert.alert('Error', 'LLENE LOS CAMPOS'); return; }
 
-    if (password !== confirmPassword) {Alert.alert('Error', 'PROGRAMACION EN PHP'); return;}
+  //   if (password !== confirmPassword) {Alert.alert('Error', 'PROGRAMACION EN PHP'); return;}
     
-    try {
-      const response = await fetch('http://users/register', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          name,
-          email,
-          password
-          }),
-          });
-      const data = await response.json();
-      const text = (response ) ? Alert.alert('Welcome', `Welcome ${email}`) : Alert.alert('Error', `error 505 Line 63`);
-    } catch (error) {
-      console.error('ERROR AL REGISTRO: ', error);
-      Alert.alert('error', 'No se pudo conectat al lol ');
-    }
+  //   try {
+  //     const response = await fetch('http://users/register', {
+  //       method: 'POST',
+  //       headers: {'Content-Type': 'application/json'},
+  //       body: JSON.stringify({
+  //         name,
+  //         email,
+  //         password
+  //         }),
+  //         });
+  //     const data = await response.json();
+  //     const text = (response ) ? Alert.alert('Welcome', `Welcome ${email}`) : Alert.alert('Error', `error 505 Line 63`);
+  //   } catch (error) {
+  //     console.error('ERROR AL REGISTRO: ', error);
+  //     Alert.alert('error', 'No se pudo conectat al lol ');
+  //   }
   };
 
 
@@ -117,7 +117,7 @@ const GolfLogin = () => {
             <Image source={require('@/assets/images/golf.png')} style={styles.logo} />
             <Text style={styles.cardTitle}>Hi again</Text>
             
-            <TextInput
+            {/* { <TextInput
               style={styles.input}
               placeholder="Email"
               value={email}
@@ -143,8 +143,19 @@ const GolfLogin = () => {
                 <Text>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
               </TouchableOpacity>
             </View>
-            
-            <TouchableOpacity style={styles.actionButton} onPress={handleLogin}>
+             } */}
+            <Controller 
+              control = {control}
+              name= "email"
+              render={() => <TextInput style={styles.input}
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              placeholderTextColor="#666" ></TextInput>}
+            />
+            <TouchableOpacity style={styles.actionButton} onPress={handleSubmit(handleLogin)}>
               <Text style={styles.buttonText}>Log in</Text>
             </TouchableOpacity>
             

@@ -34,15 +34,9 @@
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.10.0",
-<<<<<<< HEAD
-    "react-native-video": "^6.14.1",
-    "react-native-web": "~0.20.0",
-    "expo-av": "~15.1.5"
-=======
     "react-native-web": "~0.20.0",
     "yup": "^1.6.1",
     "zod": "^3.25.61"
->>>>>>> 542f3d2 (pull por desactualizacion)
   },
   "devDependencies": {
     "@react-native-community/cli": "latest",
