@@ -27,10 +27,10 @@ type MenuItem = {
 
 // DATOS DEL MENU CORTO AQUI MODIFICAMOS LOS REDIRECCIONAMIENTOS
 const MENU_ITEMS: MenuItem[] = [
-  { id: "index", title: "Home", icon: "home" },
-  { id: "gameplay", title: "New Game", icon: "gamepad" },
+  { id: "/", title: "Home", icon: "home" },
+  { id: "createLobby", title: "New Game", icon: "gamepad" },
   { id: "profileStats", title: "Profile", icon: "newspaper-o" },
-  { id: "LogUser", title: "Settings", icon: "cog" },
+  { id: "LogUser", title: "Sign Up", icon: "user" },
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({

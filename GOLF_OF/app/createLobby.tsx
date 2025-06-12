@@ -29,7 +29,7 @@ export default function CreateLobbyScreen() {
   return (
     <View style={styles.bg}>
       <ImageBackground
-        source={require("../assets/images/GolfBG.gif")}
+        source={require("../assets/images/Enhanced_BG_Video.gif")}
         style={styles.imageBg}
         resizeMode="cover"
       >

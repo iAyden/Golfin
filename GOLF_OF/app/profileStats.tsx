@@ -87,7 +87,7 @@ const App: React.FC = () => {
   return (
     <ImageBackground
       source={require("../assets/images/BG IMG GLF.png")}
-      style={{ flex: 1 }}
+      style={styles.imageBg}
       resizeMode="cover"
     >
       <View
@@ -96,7 +96,6 @@ const App: React.FC = () => {
           {
             backgroundColor: "rgba(255, 255, 255, 0)",
             flex: 1,
-            minHeight: "100%",
           },
         ]}
       >
@@ -607,6 +606,12 @@ const App: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  imageBg: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+  },
   container: {
     flex: 1,
     flexDirection: "row",
