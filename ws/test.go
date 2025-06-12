@@ -1,76 +1,130 @@
-package main 
-
+package main
 
 import (
+	"crypto/rand"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"bufio"
+	"sync"
+
+	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
-	"os"
 )
 
-// Upgrade HTTP connection to WebSocket
-//we instantiate a upgrader struct
-var upgrader = websocket.Upgrader{
-	
-	CheckOrigin: func(r *http.Request) bool {
-		//anonymous function that allows all origin
+var (
+	clients   = make(map[*websocket.Conn]bool) // All connected clients
+	broadcast = make(chan []byte)              // Messages to be sent
+	mutex     = &sync.Mutex{}                  // Thread safety
+	upgrader  = websocket.Upgrader{
+		CheckOrigin: func(r *http.Request) bool { return true },
+	}
+)
 
-		//normally if the clients request was made from a different origin than the one of
-		//the server it rejects it
-
-		//with this we allow all origins 
-
-		return true 	
-	},
-		
+type Message struct {
+	Type    string          `json:"type"`
+	Payload json.RawMessage `json:"payload"` // can decode later based on Type
 }
 
-func handleWebSocket(w http.ResponseWriter, r *http.Request) {
-	// Upgrade connection
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		fmt.Println("Upgrade error:", err)
-		return
-	}
-	fmt.Println("Connected")
-	//cuando la funcion returnee cerramos la conexión
-	
-	defer conn.Close()
+type User struct {
+	UserConn map[*websocket.Conn]bool
+	//se necesita inicializar el mapa con make()
+	Name   string `json:"name"`
+	Points int    `json:"points"`
+	Karma  int    `json:"karma"`
+}
 
-	for {
-		// Read message
-		msgType, msg, err := conn.ReadMessage()
-		if err != nil {
-			fmt.Println("Read error:", err)
-			break
-		}
-		fmt.Printf("Received: %s\n", msg)
-
-		reader := bufio.NewReader(os.Stdin)
-		// Echo back the message
-    	fmt.Print("Enter a line: ")
-    	line, err := reader.ReadString('\n')
-		
-    	fmt.Println("You entered:", line)
-		
-		var byteArr []byte
-		
-		for i:= 0 ; i < len(line) ; i++ {
-			byteArr[i] = byte( line[i])
-		}
-		err = conn.WriteMessage(msgType, byteArr)
-		if err != nil {
-			fmt.Println("Write error:", err)
-			break
-		}
-	}
+type Party struct {
+	Id      string `json:"id"`
+	Code    string `json:"code"`
+	Members []User `json:"members"`
 }
 
 func main() {
-	
+	http.HandleFunc("/game", handleConnections)
+	http.Handle("/", http.FileServer(http.Dir("static")))
+	go handleMessages() // Background goroutine for broadcasting
 
-	http.HandleFunc("/ws", handleWebSocket)
 	fmt.Println("Server started at :8080")
-	http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":8080", nil)
+	if err != nil {
+		panic("ListenAndServe: " + err.Error())
+	}
+}
+
+func genCode() string {
+	b := make([]byte, 4) // 4 bytes = 8 hex digits
+	_, err := rand.Read(b)
+	if err != nil {
+		panic(err)
+	}
+
+	hexStr := hex.EncodeToString(b)
+	return hexStr[1:5]
+}
+
+func handleConnections(w http.ResponseWriter, r *http.Request) {
+
+	ws, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		fmt.Println("WebSocket upgrade failed:", err)
+		return
+	}
+	defer ws.Close()
+
+	mutex.Lock()
+	clients[ws] = true
+	mutex.Unlock()
+	for {
+		_, rawMsg, err := ws.ReadMessage()
+
+		var msg Message
+
+		json.Unmarshal(rawMsg, &msg)
+		switch msg.Type {
+		case "createParty":
+
+			id := uuid.New().String()
+			usr := User{
+				Name: "placeholder",
+			}
+			party := Party{
+				Id:   id,
+				Code: genCode(),
+			}
+			fmt.Println("vamo' a crear party")
+
+			party.Members = append(party.Members, usr)
+
+			ws.WriteJSON(party)
+
+		}
+		if err != nil {
+			fmt.Println("Client disconnected:", err)
+			mutex.Lock()
+			delete(clients, ws)
+			mutex.Unlock()
+			break
+		}
+		broadcast <- rawMsg
+	}
+}
+
+func handleMessages() {
+
+	for {
+		msg := <-broadcast
+
+		mutex.Lock()
+		for client := range clients {
+			err := client.WriteMessage(websocket.TextMessage, msg)
+			if err != nil {
+
+				fmt.Println("Write error:", err)
+				client.Close()
+				delete(clients, client)
+			}
+		}
+		mutex.Unlock()
+	}
 }
