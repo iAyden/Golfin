@@ -7,13 +7,16 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "web-build": "expo build:web"
   },
   "jest": {
     "preset": "jest-expo"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
+    "@hookform/devtools": "^4.4.0",
+    "@hookform/resolvers": "^5.0.1",
     "@react-navigation/native": "^7.1.6",
     "expo": "~53.0.9",
     "expo-font": "~13.3.1",
@@ -31,9 +34,15 @@
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.10.0",
+<<<<<<< HEAD
     "react-native-video": "^6.14.1",
     "react-native-web": "~0.20.0",
     "expo-av": "~15.1.5"
+=======
+    "react-native-web": "~0.20.0",
+    "yup": "^1.6.1",
+    "zod": "^3.25.61"
+>>>>>>> 542f3d2 (pull por desactualizacion)
   },
   "devDependencies": {
     "@react-native-community/cli": "latest",

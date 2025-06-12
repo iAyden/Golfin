@@ -1,5 +1,8 @@
 import { Try } from 'expo-router/build/views/Try';
 import React, { useState, useRef } from 'react';
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   View,
   Text,
@@ -13,6 +16,9 @@ import {
   Easing
 } from 'react-native';
 
+//Importar Zod Schema para login
+export { loginSchema } from '../../schemas/AuthSchemas';
+
 const GolfLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,6 +30,10 @@ const GolfLogin = () => {
   
   const flipAnimation = useRef(new Animated.Value(0)).current;
 
+  // const { control, handleSubmit, formState: { errors } } = useForm({
+  //   resolver: yupResolver(loginSchema),
+  // });
+  
   const handleLogin = async () => {
     if (!email || !password) {  Alert.alert('Error', 'INGRESE SUS DATOS');  return; }
     
@@ -41,7 +51,7 @@ const GolfLogin = () => {
     } catch (error) {
       console.error(error);
       Alert.alert('Error', 'No se pudo conectar al servidor. ');
-    }
+    }   
   };
 
 
@@ -165,7 +175,7 @@ const GolfLogin = () => {
             
             <TextInput
               style={styles.input}
-              placeholder="Email addres"
+              placeholder="Email address"
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
