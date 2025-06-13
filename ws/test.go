@@ -1,12 +1,16 @@
 package main
 
 import (
-	"crypto/rand"
+	cryptoRand "crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+
 	"fmt"
 	"net/http"
 	"sync"
+
+	mathRand "math/rand"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -27,11 +31,12 @@ type Message struct {
 }
 
 type User struct {
-	UserConn map[*websocket.Conn]bool
+	UserConn *websocket.Conn
 	//se necesita inicializar el mapa con make()
-	Name   string `json:"name"`
-	Points int    `json:"points"`
-	Karma  int    `json:"karma"`
+	Name     string `json:"username"`
+	Points   int    `json:"points"`
+	Karma    int    `json:"karma"`
+	JoinCode string `json:"code"`
 }
 
 type Party struct {
@@ -39,6 +44,8 @@ type Party struct {
 	Code    string `json:"code"`
 	Members []User `json:"members"`
 }
+
+var partys = make(map[string]Party)
 
 func main() {
 	http.HandleFunc("/game", handleConnections)
@@ -53,8 +60,8 @@ func main() {
 }
 
 func genCode() string {
-	b := make([]byte, 4) // 4 bytes = 8 hex digits
-	_, err := rand.Read(b)
+	b := make([]byte, 4)
+	_, err := cryptoRand.Read(b)
 	if err != nil {
 		panic(err)
 	}
@@ -83,21 +90,57 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		json.Unmarshal(rawMsg, &msg)
 		switch msg.Type {
 		case "createParty":
+			//checar como se pueden obtener los datos del payload
 
 			id := uuid.New().String()
 			usr := User{
-				Name: "placeholder",
+				UserConn: ws,
 			}
+			//npi como puedo obtener el payload
+
+			json.Unmarshal(msg.Payload, &usr)
+
+			code := genCode()
 			party := Party{
 				Id:   id,
-				Code: genCode(),
+				Code: code,
 			}
 			fmt.Println("vamo' a crear party")
-
+			//chafa pq pueden generarse dos codigos iguales, baja probabilidad pero chafa igual.
+			partys[code] = party
 			party.Members = append(party.Members, usr)
 
 			ws.WriteJSON(party)
 
+		case "joinParty":
+			usr := User{}
+
+			json.Unmarshal(msg.Payload, &usr)
+
+			if partys[usr.JoinCode].Code != "" {
+				usr.UserConn = ws
+				party := partys[usr.JoinCode]
+
+				party.Members = append(party.Members, usr)
+
+				ws.WriteJSON(party)
+			}
+
+			//regresar que no se encontro la party
+		case "startGame":
+			var payload map[string]interface{}
+
+			json.Unmarshal(msg.Payload, &payload)
+			code := payload["code"].(string)
+
+			party := partys[code]
+			for _, player := range party.Members {
+
+				mathRand.Seed(time.Now().UnixNano())
+				randInt := mathRand.Intn(200) + 100
+				player.Karma = randInt
+
+			}
 		}
 		if err != nil {
 			fmt.Println("Client disconnected:", err)
