@@ -2,7 +2,6 @@ import { Try } from 'expo-router/build/views/Try';
 import React, { useState, useRef } from 'react';
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import {
   View,
   Text,
@@ -17,7 +16,10 @@ import {
 } from 'react-native';
 
 //Importar Zod Schema para login
-export { loginSchema } from '../../schemas/AuthSchemas';
+import { loginSchema, loginSchemaType } from '../../schemas/AuthSchemas';
+//Importar Zod Schema para SignUp
+import { signupSchema, signupSchemaType } from '../../schemas/AuthSchemas';
+
 
 const GolfLogin = () => {
   const [email, setEmail] = useState('');
@@ -27,55 +29,30 @@ const GolfLogin = () => {
   const [showFront, setShowFront] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const {control, handleSubmit} = useForm();
   const flipAnimation = useRef(new Animated.Value(0)).current;
+  const {
+    control: loginControl,
+    handleSubmit: handleLoginSubmit,
+    formState: { errors: loginErrors }
+  } = useForm<loginSchemaType>({
+    resolver: zodResolver(loginSchema)
+  });
 
-  // const { control, handleSubmit, formState: { errors } } = useForm({
-  //   resolver: yupResolver(loginSchema),
-  // });
+  const {
+    control: signupControl,
+    handleSubmit: handleRegisterSubmit,
+    formState: {errors: signupErrors}
+  } = useForm<signupSchemaType>({
+    resolver: zodResolver(signupSchema)
+  });
 
   const handleLogin = async () => {
-    // if (!email || !password) {  Alert.alert('Error', 'INGRESE SUS DATOS');  return; }
-    
-    // try {
-    //   const response  =await fetch('http://users/login',{
-    //     method: 'POST',
-    //     headers: {'Content-Type': 'application/json'},
-    //     body: JSON.stringify({
-    //       email, 
-    //       password : password  
-    //     }),
-    //   });
-    //   const data = await Response.json; 
-    //   const text = (Response) ? Alert.alert('Welcome', `Welcome ${email}`) : Alert.alert('Error',`error 505 Line 45`);
-    // } catch (error) {
-    //   console.error(error);
-    //   Alert.alert('Error', 'No se pudo conectar al servidor. ');
-    // }   
+    console.log(email)
   };
 
 
   const handleRegister = async () => {
-  //   if (!name || !email || !password || !confirmPassword) { Alert.alert('Error', 'LLENE LOS CAMPOS'); return; }
 
-  //   if (password !== confirmPassword) {Alert.alert('Error', 'PROGRAMACION EN PHP'); return;}
-    
-  //   try {
-  //     const response = await fetch('http://users/register', {
-  //       method: 'POST',
-  //       headers: {'Content-Type': 'application/json'},
-  //       body: JSON.stringify({
-  //         name,
-  //         email,
-  //         password
-  //         }),
-  //         });
-  //     const data = await response.json();
-  //     const text = (response ) ? Alert.alert('Welcome', `Welcome ${email}`) : Alert.alert('Error', `error 505 Line 63`);
-  //   } catch (error) {
-  //     console.error('ERROR AL REGISTRO: ', error);
-  //     Alert.alert('error', 'No se pudo conectat al lol ');
-  //   }
   };
 
 
@@ -116,46 +93,42 @@ const GolfLogin = () => {
             
             <Image source={require('@/assets/images/golf.png')} style={styles.logo} />
             <Text style={styles.cardTitle}>Hi again</Text>
-            
-            {/* { <TextInput
-              style={styles.input}
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              placeholderTextColor="#666"
-            />
-            
-            <View style={styles.passwordContainer}>
-              <TextInput
-                style={[styles.input, styles.passwordInput]}
-                placeholder="Passwod"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={!showPassword}
-                placeholderTextColor="#666"
-              />
-              <TouchableOpacity 
-                style={styles.eyeIcon}
-                onPress={() => setShowPassword(!showPassword)}
-              >
-                <Text>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
-              </TouchableOpacity>
-            </View>
-             } */}
             <Controller 
-              control = {control}
+              control = {loginControl}
               name= "email"
-              render={() => <TextInput style={styles.input}
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              placeholderTextColor="#666" ></TextInput>}
-            />
-            <TouchableOpacity style={styles.actionButton} onPress={handleSubmit(handleLogin)}>
+              render={({field} ) => 
+                <TextInput style={styles.input}
+                placeholder="Email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                placeholderTextColor="#666" 
+                {...field}
+                />}
+              />
+              {loginErrors.email && <Text style={{color: 'red'}}>{loginErrors.email.message}</Text>}
+              <Controller
+              control={loginControl}
+              name = "password"
+              render={({field} ) =>
+                <View style={styles.passwordContainer}>
+                <TextInput
+                  style={[styles.input, styles.passwordInput]}
+                  placeholder="Password"
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                  placeholderTextColor="#666"
+                  {...field}
+                />
+                <TouchableOpacity 
+                  style={styles.eyeIcon}
+                  onPress={() => setShowPassword(!showPassword)}
+                  >
+                  <Text>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
+                </TouchableOpacity>
+                </View> 
+            } />
+            {loginErrors.password && <Text style={{color: 'red'}}>{loginErrors.password.message}</Text>}
+            <TouchableOpacity style={styles.actionButton} onPress={handleLoginSubmit(handleLogin)}>
               <Text style={styles.buttonText}>Log in</Text>
             </TouchableOpacity>
             
@@ -176,31 +149,50 @@ const GolfLogin = () => {
             <Image source={require('@/assets/images/register.png')} style={styles.logo} />
             <Text style={styles.cardTitle}>New player</Text>
             
-            <TextInput
-              style={styles.input}
-              placeholder="Complete name"
-              value={name}
-              onChangeText={setName}
-              placeholderTextColor="#666"
+           
+            <Controller 
+              control={signupControl}
+              name ="complete_name"
+              render={({field}) =>
+                <TextInput
+                style={styles.input}
+                placeholder="Complete Name"
+                onChangeText={setName}
+                placeholderTextColor="#666"
+                {...field}
+              /> 
+              }
             />
+            {signupErrors.complete_name && <Text style={{color: 'red'}}>{signupErrors.complete_name.message}</Text>}
+         
+            <Controller
+            control={signupControl}
+            name="email"
+            render={({field}) =>
+              <TextInput
+            style={styles.input}
+            placeholder="Email address"
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            placeholderTextColor="#666"
+            {...field}
+          />
+          }
+          />
+          {signupErrors.email && <Text style={{color: 'red'}}>{signupErrors.email.message}</Text>}
             
-            <TextInput
-              style={styles.input}
-              placeholder="Email address"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              placeholderTextColor="#666"
-            />
-            
-            <View style={styles.passwordContainer}>
+            <Controller 
+            control={signupControl}
+            name="password"
+            render={({field}) => 
+              <View style={styles.passwordContainer}>
               <TextInput
                 style={[styles.input, styles.passwordInput]}
                 placeholder="Pasword"
-                value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showConfirmPassword}
                 placeholderTextColor="#666"
+                {...field}
               />
               <TouchableOpacity 
                 style={styles.eyeIcon}
@@ -209,15 +201,22 @@ const GolfLogin = () => {
                 <Text>{showConfirmPassword ? '👁️' : '👁️‍🗨️'}</Text>
               </TouchableOpacity>
             </View>
+            }
+            />
+            {signupErrors.password && <Text style={{color: 'red'}}>{signupErrors.password.message}</Text>}
             
-            <View style={styles.passwordContainer}>
+            <Controller
+             control={signupControl}
+             name="confirm_password"
+             render={({field}) => 
+              <View style={styles.passwordContainer}>
               <TextInput
                 style={[styles.input, styles.passwordInput]}
                 placeholder="Confirm Pasword"
-                value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 secureTextEntry={!showConfirmPassword}
                 placeholderTextColor="#666"
+                {...field}
               />
               <TouchableOpacity 
                 style={styles.eyeIcon}
@@ -226,8 +225,10 @@ const GolfLogin = () => {
                 <Text>{showConfirmPassword ? '👁️' : '👁️‍🗨️'}</Text>
               </TouchableOpacity>
             </View>
-            
-            <TouchableOpacity style={styles.actionButton} onPress={handleRegister}>
+            }
+            />
+            {signupErrors.confirm_password && <Text style={{color:'red'}}>{signupErrors.confirm_password.message}</Text>}
+            <TouchableOpacity style={styles.actionButton} onPress={handleRegisterSubmit(handleRegister)}>
               <Text style={styles.buttonText}>Sign up</Text>
             </TouchableOpacity>
             
