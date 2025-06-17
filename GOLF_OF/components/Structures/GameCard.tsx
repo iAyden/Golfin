@@ -29,7 +29,7 @@ type UserCardType = {
 type ShopItemType = {
   id: string;
   name: string;
-  icon: ImageSourcePropType; // Changed from string to ImageSourcePropType
+  icon: ImageSourcePropType; 
   cost: number;
   backgroundColor: string;
 };
@@ -57,8 +57,8 @@ const isTablet = width >= 768;
 
 const icons: icons = {
   karmaIcon: require('@/assets/images/fireC.png'),
-  scoreIcon: require('@/assets/images/fireC.png'),
-  clock: require('@/assets/images/fireC.png'),
+  scoreIcon: require('@/assets/images/starC.png'),
+  clock: require('@/assets/images/clock.png'),
   ramp: require('@/assets/images/fireC.png'),
   slap: require('@/assets/images/fireC.png'),
   obstacle: require('@/assets/images/fireC.png'),
