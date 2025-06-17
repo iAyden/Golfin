@@ -27,6 +27,7 @@
     "expo-status-bar": "~2.2.3",
     "expo-system-ui": "~5.0.7",
     "expo-web-browser": "~14.1.6",
+    "latest": "^0.2.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-native": "0.79.2",
@@ -35,11 +36,10 @@
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.10.0",
-
+    "react-native-video": "^6.14.1",
     "react-native-web": "~0.20.0",
     "yup": "^1.6.1",
     "zod": "^3.25.61"
-    "react-native-video": "^6.14.1",
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
