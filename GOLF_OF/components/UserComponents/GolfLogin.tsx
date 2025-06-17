@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 import { Try } from "expo-router/build/views/Try";
 import React, { useState, useRef } from "react";
+=======
+import { Try } from 'expo-router/build/views/Try';
+import React, { useState, useRef } from 'react';
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+>>>>>>> 99e73ae2e9383bd4aed84dc8b61b0ea0d306e9c5
 import {
   View,
   Text,
@@ -13,6 +21,9 @@ import {
   Easing,
 } from "react-native";
 
+//Importar Zod Schema para login
+export { loginSchema } from '../../schemas/AuthSchemas';
+
 const GolfLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,10 +32,19 @@ const GolfLogin = () => {
   const [showFront, setShowFront] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+<<<<<<< HEAD
 
+=======
+  const {control, handleSubmit} = useForm();
+>>>>>>> 99e73ae2e9383bd4aed84dc8b61b0ea0d306e9c5
   const flipAnimation = useRef(new Animated.Value(0)).current;
 
+  // const { control, handleSubmit, formState: { errors } } = useForm({
+  //   resolver: yupResolver(loginSchema),
+  // });
+
   const handleLogin = async () => {
+<<<<<<< HEAD
     if (!email || !password) {
       Alert.alert("Error", "INGRESE SUS DATOS");
       return;
@@ -47,9 +67,29 @@ const GolfLogin = () => {
       console.error(error);
       Alert.alert("Error", "No se pudo conectar al servidor. ");
     }
+=======
+    // if (!email || !password) {  Alert.alert('Error', 'INGRESE SUS DATOS');  return; }
+    
+    // try {
+    //   const response  =await fetch('http://users/login',{
+    //     method: 'POST',
+    //     headers: {'Content-Type': 'application/json'},
+    //     body: JSON.stringify({
+    //       email, 
+    //       password : password  
+    //     }),
+    //   });
+    //   const data = await Response.json; 
+    //   const text = (Response) ? Alert.alert('Welcome', `Welcome ${email}`) : Alert.alert('Error',`error 505 Line 45`);
+    // } catch (error) {
+    //   console.error(error);
+    //   Alert.alert('Error', 'No se pudo conectar al servidor. ');
+    // }   
+>>>>>>> 99e73ae2e9383bd4aed84dc8b61b0ea0d306e9c5
   };
 
   const handleRegister = async () => {
+<<<<<<< HEAD
     if (!name || !email || !password || !confirmPassword) {
       Alert.alert("Error", "LLENE LOS CAMPOS");
       return;
@@ -78,6 +118,28 @@ const GolfLogin = () => {
       console.error("ERROR AL REGISTRO: ", error);
       Alert.alert("error", "No se pudo conectat al lol ");
     }
+=======
+  //   if (!name || !email || !password || !confirmPassword) { Alert.alert('Error', 'LLENE LOS CAMPOS'); return; }
+
+  //   if (password !== confirmPassword) {Alert.alert('Error', 'PROGRAMACION EN PHP'); return;}
+    
+  //   try {
+  //     const response = await fetch('http://users/register', {
+  //       method: 'POST',
+  //       headers: {'Content-Type': 'application/json'},
+  //       body: JSON.stringify({
+  //         name,
+  //         email,
+  //         password
+  //         }),
+  //         });
+  //     const data = await response.json();
+  //     const text = (response ) ? Alert.alert('Welcome', `Welcome ${email}`) : Alert.alert('Error', `error 505 Line 63`);
+  //   } catch (error) {
+  //     console.error('ERROR AL REGISTRO: ', error);
+  //     Alert.alert('error', 'No se pudo conectat al lol ');
+  //   }
+>>>>>>> 99e73ae2e9383bd4aed84dc8b61b0ea0d306e9c5
   };
 
   // ANIMACION DE TAILDWIND NO LE MUEVAN
@@ -125,8 +187,13 @@ const GolfLogin = () => {
               style={styles.logo}
             />
             <Text style={styles.cardTitle}>Hi again</Text>
+<<<<<<< HEAD
 
             <TextInput
+=======
+            
+            {/* { <TextInput
+>>>>>>> 99e73ae2e9383bd4aed84dc8b61b0ea0d306e9c5
               style={styles.input}
               placeholder="Email"
               value={email}
@@ -152,8 +219,24 @@ const GolfLogin = () => {
                 <Text>{showPassword ? "👁️" : "👁️‍🗨️"}</Text>
               </TouchableOpacity>
             </View>
+<<<<<<< HEAD
 
             <TouchableOpacity style={styles.actionButton} onPress={handleLogin}>
+=======
+             } */}
+            <Controller 
+              control = {control}
+              name= "email"
+              render={() => <TextInput style={styles.input}
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              placeholderTextColor="#666" ></TextInput>}
+            />
+            <TouchableOpacity style={styles.actionButton} onPress={handleSubmit(handleLogin)}>
+>>>>>>> 99e73ae2e9383bd4aed84dc8b61b0ea0d306e9c5
               <Text style={styles.buttonText}>Log in</Text>
             </TouchableOpacity>
 
@@ -187,7 +270,7 @@ const GolfLogin = () => {
 
             <TextInput
               style={styles.input}
-              placeholder="Email addres"
+              placeholder="Email address"
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
