@@ -35,7 +35,6 @@ const App: React.FC = () => {
     <ImageBackground
       source={require("../assets/images/BG IMG GLF.png")}
       style={styles.imageBg}
-      resizeMode="cover"
     >
       <View style={styles.container}>
         <Sidebar
@@ -43,17 +42,17 @@ const App: React.FC = () => {
           width={sidebarWidth}
           onMenuItemPress={handleMenuPress}
           activeMenuItem={activeMenu}
+          style={styles.sidebarAbsolute}
         />
+        <Pressable
+          style={[styles.hamburgerButton, { left: sidebarVisible ? 200 : 0 }]}
+          onPress={() => setSidebarVisible(!sidebarVisible)}
+          accessibilityLabel="Toggle Sidebar"
+        >
+          <FontAwesome name="bars" size={28} color="#2f855a" />
+        </Pressable>
 
         <View style={styles.mainContent}>
-          <Pressable
-            style={styles.hamburgerButton}
-            onPress={() => setSidebarVisible(!sidebarVisible)}
-            accessibilityLabel="Toggle Sidebar"
-          >
-            <FontAwesome name="bars" size={24} color="#2f855a" />
-          </Pressable>
-
           <View style={styles.cardsRow}>
             {[
               {
@@ -79,7 +78,7 @@ const App: React.FC = () => {
               },
             ].map((card, idx) => (
               <Pressable
-                key={card.title}
+                key={card.title + idx}
                 style={styles.card}
                 onPress={() => {
                   // Use navigation or router if available, fallback to window.location
@@ -115,22 +114,35 @@ const App: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "row",
-    // backgroundColor: "#f0fff4",
   },
   imageBg: {
     flex: 1,
     width: "100%",
     height: "100%",
     position: "absolute",
+    resizeMode: "cover",
+  },
+  sidebarAbsolute: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    zIndex: 10,
   },
   mainContent: {
     flex: 1,
     padding: 20,
     zIndex: 0,
+    marginLeft: 25, //This right here is the key to have the maincontent not clip into the sidebar
   },
   hamburgerButton: {
-    marginBottom: 20,
+    // marginBottom: 20,
+    position: "absolute",
+    top: 30,
+    zIndex: 20,
+    borderRadius: 20,
+    padding: 6,
+    elevation: 5,
   },
   ejemplo: {
     backgroundColor: "#FFF",
@@ -143,17 +155,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 100,
   },
-  cardsContainer: {
-    flex: 1,
-    alignContent: "center",
-    justifyContent: "center",
-  },
-  cardsRow: {
-    width: "100%",
-    flexDirection: "column",
-    gap: 24,
-    marginTop: 32,
-  },
   card: {
     width: "100%",
     backgroundColor: "#fff",
@@ -165,6 +166,18 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
+    elevation: 3,
+  },
+  cardsContainer: {
+    flex: 1,
+    alignContent: "center",
+    justifyContent: "center",
+  },
+  cardsRow: {
+    width: "100%",
+    flexDirection: "column",
+    gap: 24,
+
     elevation: 3,
   },
   cardContent: {

@@ -1,5 +1,5 @@
-import { Try } from 'expo-router/build/views/Try';
-import React, { useState, useRef } from 'react';
+import { Try } from "expo-router/build/views/Try";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -10,64 +10,75 @@ import {
   SafeAreaView,
   Alert,
   Animated,
-  Easing
-} from 'react-native';
+  Easing,
+} from "react-native";
 
 const GolfLogin = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [name, setName] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState("");
   const [showFront, setShowFront] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+
   const flipAnimation = useRef(new Animated.Value(0)).current;
 
   const handleLogin = async () => {
-    if (!email || !password) {  Alert.alert('Error', 'INGRESE SUS DATOS');  return; }
-    
+    if (!email || !password) {
+      Alert.alert("Error", "INGRESE SUS DATOS");
+      return;
+    }
+
     try {
-      const response  =await fetch('http://users/login',{
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+      const response = await fetch("http://users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email, 
-          password : password  
+          email,
+          password: password,
         }),
       });
-      const data = await Response.json; 
-      const text = (Response) ? Alert.alert('Welcome', `Welcome ${email}`) : Alert.alert('Error',`error 505 Line 45`);
+      const data = await Response.json;
+      const text = Response
+        ? Alert.alert("Welcome", `Welcome ${email}`)
+        : Alert.alert("Error", `error 505 Line 45`);
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'No se pudo conectar al servidor. ');
+      Alert.alert("Error", "No se pudo conectar al servidor. ");
     }
   };
 
-
   const handleRegister = async () => {
-    if (!name || !email || !password || !confirmPassword) { Alert.alert('Error', 'LLENE LOS CAMPOS'); return; }
+    if (!name || !email || !password || !confirmPassword) {
+      Alert.alert("Error", "LLENE LOS CAMPOS");
+      return;
+    }
 
-    if (password !== confirmPassword) {Alert.alert('Error', 'PROGRAMACION EN PHP'); return;}
-    
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "PROGRAMACION EN PHP");
+      return;
+    }
+
     try {
-      const response = await fetch('http://users/register', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+      const response = await fetch("http://users/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name,
           email,
-          password
-          }),
-          });
+          password,
+        }),
+      });
       const data = await response.json();
-      const text = (response ) ? Alert.alert('Welcome', `Welcome ${email}`) : Alert.alert('Error', `error 505 Line 63`);
+      const text = response
+        ? Alert.alert("Welcome", `Welcome ${email}`)
+        : Alert.alert("Error", `error 505 Line 63`);
     } catch (error) {
-      console.error('ERROR AL REGISTRO: ', error);
-      Alert.alert('error', 'No se pudo conectat al lol ');
+      console.error("ERROR AL REGISTRO: ", error);
+      Alert.alert("error", "No se pudo conectat al lol ");
     }
   };
-
 
   // ANIMACION DE TAILDWIND NO LE MUEVAN
   const flipCard = () => {
@@ -81,9 +92,15 @@ const GolfLogin = () => {
     });
   };
 
-  const frontInterpolate = flipAnimation.interpolate({ inputRange: [0, 180], outputRange: ['0deg', '180deg'] });
+  const frontInterpolate = flipAnimation.interpolate({
+    inputRange: [0, 180],
+    outputRange: ["0deg", "180deg"],
+  });
 
-  const backInterpolate = flipAnimation.interpolate({ inputRange: [0, 180], outputRange: ['180deg', '360deg'] });
+  const backInterpolate = flipAnimation.interpolate({
+    inputRange: [0, 180],
+    outputRange: ["180deg", "360deg"],
+  });
 
   const frontAnimatedStyle = { transform: [{ rotateY: frontInterpolate }] };
   const backAnimatedStyle = { transform: [{ rotateY: backInterpolate }] };
@@ -92,21 +109,23 @@ const GolfLogin = () => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <Text style={styles.title}>🏌️ Golf Pro Login 🏌️‍♂️</Text>
-        
+
         <View style={styles.cardContainer}>
           {/* PARTE DEL FRENTE DE LA CARTA LOGIN*/}
-          <Animated.View 
+          <Animated.View
             style={[
-              styles.cardFace, 
-              styles.cardFront, 
+              styles.cardFace,
+              styles.cardFront,
               frontAnimatedStyle,
-              { display: showFront ? 'flex' : 'none' }//  NO LE MUEVAN POR FAVOR
+              { display: showFront ? "flex" : "none" }, //  NO LE MUEVAN POR FAVOR
             ]}
           >
-            
-            <Image source={require('@/assets/images/golf.png')} style={styles.logo} />
+            <Image
+              source={require("@/assets/images/golf.png")}
+              style={styles.logo}
+            />
             <Text style={styles.cardTitle}>Hi again</Text>
-            
+
             <TextInput
               style={styles.input}
               placeholder="Email"
@@ -116,7 +135,7 @@ const GolfLogin = () => {
               autoCapitalize="none"
               placeholderTextColor="#666"
             />
-            
+
             <View style={styles.passwordContainer}>
               <TextInput
                 style={[styles.input, styles.passwordInput]}
@@ -126,35 +145,38 @@ const GolfLogin = () => {
                 secureTextEntry={!showPassword}
                 placeholderTextColor="#666"
               />
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.eyeIcon}
                 onPress={() => setShowPassword(!showPassword)}
               >
-                <Text>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
+                <Text>{showPassword ? "👁️" : "👁️‍🗨️"}</Text>
               </TouchableOpacity>
             </View>
-            
+
             <TouchableOpacity style={styles.actionButton} onPress={handleLogin}>
               <Text style={styles.buttonText}>Log in</Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity onPress={flipCard} style={styles.flipButton}>
               <Text style={styles.flipText}>Are you new? Sign up</Text>
             </TouchableOpacity>
           </Animated.View>
-          
+
           {/* PARTE DE ATRAS DE LA CARTA REGISTER */}
-          <Animated.View 
+          <Animated.View
             style={[
-              styles.cardFace, 
-              styles.backFace, 
+              styles.cardFace,
+              styles.backFace,
               backAnimatedStyle,
-              { display: showFront ? 'none' : 'flex' } // NO LE MUEVAN POR FAVOR
+              { display: showFront ? "none" : "flex" }, // NO LE MUEVAN POR FAVOR
             ]}
           >
-            <Image source={require('@/assets/images/register.png')} style={styles.logo} />
+            <Image
+              source={require("@/assets/images/register.png")}
+              style={styles.logo}
+            />
             <Text style={styles.cardTitle}>New player</Text>
-            
+
             <TextInput
               style={styles.input}
               placeholder="Complete name"
@@ -162,7 +184,7 @@ const GolfLogin = () => {
               onChangeText={setName}
               placeholderTextColor="#666"
             />
-            
+
             <TextInput
               style={styles.input}
               placeholder="Email addres"
@@ -171,7 +193,7 @@ const GolfLogin = () => {
               keyboardType="email-address"
               placeholderTextColor="#666"
             />
-            
+
             <View style={styles.passwordContainer}>
               <TextInput
                 style={[styles.input, styles.passwordInput]}
@@ -181,14 +203,14 @@ const GolfLogin = () => {
                 secureTextEntry={!showConfirmPassword}
                 placeholderTextColor="#666"
               />
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.eyeIcon}
                 onPress={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                <Text>{showConfirmPassword ? '👁️' : '👁️‍🗨️'}</Text>
+                <Text>{showConfirmPassword ? "👁️" : "👁️‍🗨️"}</Text>
               </TouchableOpacity>
             </View>
-            
+
             <View style={styles.passwordContainer}>
               <TextInput
                 style={[styles.input, styles.passwordInput]}
@@ -198,24 +220,27 @@ const GolfLogin = () => {
                 secureTextEntry={!showConfirmPassword}
                 placeholderTextColor="#666"
               />
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.eyeIcon}
                 onPress={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                <Text>{showConfirmPassword ? '👁️' : '👁️‍🗨️'}</Text>
+                <Text>{showConfirmPassword ? "👁️" : "👁️‍🗨️"}</Text>
               </TouchableOpacity>
             </View>
-            
-            <TouchableOpacity style={styles.actionButton} onPress={handleRegister}>
+
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={handleRegister}
+            >
               <Text style={styles.buttonText}>Sign up</Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity onPress={flipCard} style={styles.flipButton}>
               <Text style={styles.flipText}>Already registered? Sign in</Text>
             </TouchableOpacity>
           </Animated.View>
         </View>
-        
+
         <Text style={styles.footer}>MICRO RATONES</Text>
       </View>
     </SafeAreaView>
@@ -225,124 +250,124 @@ const GolfLogin = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#2e7d32',
+    fontWeight: "bold",
+    color: "#2e7d32",
     marginBottom: 30,
-    textAlign: 'center',
-    textShadowColor: 'rgba(0,0,0,0.1)',
+    textAlign: "center",
+    textShadowColor: "rgba(0,0,0,0.1)",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
   },
   cardContainer: {
-    width: '100%',
+    width: "100%",
     maxWidth: 400,
     height: 700,
     borderRadius: 20,
-    overflow: 'hidden',
-    position: 'relative',
+    overflow: "hidden",
+    position: "relative",
   },
   cardFace: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
     padding: 25,
-    backfaceVisibility: 'hidden',
-    position: 'absolute',
+    backfaceVisibility: "hidden",
+    position: "absolute",
     top: 0,
     left: 0,
   },
   cardFront: {
-    backgroundColor: '#e8f5e9',
+    backgroundColor: "#e8f5e9",
   },
   backFace: {
-    backgroundColor: '#c8e6c9',
-    transform: [{ rotateY: '180deg' }],
+    backgroundColor: "#c8e6c9",
+    transform: [{ rotateY: "180deg" }],
   },
   cardTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1b5e20',
+    fontWeight: "bold",
+    color: "#1b5e20",
     marginBottom: 25,
-    textAlign: 'center',
+    textAlign: "center",
   },
   logo: {
     width: 100,
     height: 100,
     marginBottom: 20,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
   input: {
-    width: '100%',
+    width: "100%",
     height: 50,
     borderWidth: 1,
-    borderColor: '#81c784',
+    borderColor: "#81c784",
     borderRadius: 10,
     paddingHorizontal: 15,
     marginBottom: 15,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   passwordContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 15,
-    position: 'relative',
+    position: "relative",
   },
   passwordInput: {
     flex: 1,
     marginBottom: 0,
   },
   eyeIcon: {
-    position: 'absolute',
+    position: "absolute",
     right: 15,
     padding: 10,
   },
   actionButton: {
-    width: '100%',
+    width: "100%",
     height: 50,
-    backgroundColor: '#2e7d32',
+    backgroundColor: "#2e7d32",
     borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 10,
     marginBottom: 15,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
     elevation: 3,
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   flipButton: {
     marginTop: 10,
     padding: 8,
   },
   flipText: {
-    color: '#1b5e20',
+    color: "#1b5e20",
     fontSize: 16,
-    textDecorationLine: 'underline',
-    textAlign: 'center',
+    textDecorationLine: "underline",
+    textAlign: "center",
   },
   footer: {
     marginTop: 30,
-    color: '#666',
+    color: "#666",
     fontSize: 14,
   },
 });

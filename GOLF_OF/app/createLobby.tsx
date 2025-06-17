@@ -6,9 +6,14 @@ import {
   TextInput,
   TouchableOpacity,
   ImageBackground,
+  useWindowDimensions,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function CreateLobbyScreen() {
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const isSmallScreen = width < 700;
   const hasAccount = true;
   const [lobbyCode, setLobbyCode] = useState("");
   const [error, setError] = useState("");
@@ -27,7 +32,9 @@ export default function CreateLobbyScreen() {
   };
 
   return (
-    <View style={styles.bg}>
+    <View
+      style={[styles.bg, { paddingTop: isSmallScreen ? insets.top || 24 : 0 }]}
+    >
       <ImageBackground
         source={require("../assets/images/Enhanced_BG_Video.gif")}
         style={styles.imageBg}
@@ -79,6 +86,7 @@ const styles = StyleSheet.create({
   bg: {
     flex: 1,
     position: "relative",
+    backgroundColor: "rgba(15, 76, 45, 0.98)",
   },
   imageBg: {
     flex: 1,

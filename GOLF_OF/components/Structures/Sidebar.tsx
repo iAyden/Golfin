@@ -33,15 +33,16 @@ const MENU_ITEMS: MenuItem[] = [
   { id: "LogUser", title: "Sign Up", icon: "user" },
 ];
 
-const Sidebar: React.FC<SidebarProps> = ({
+const Sidebar: React.FC<SidebarProps & { style?: any }> = ({
   isVisible,
   width,
   onMenuItemPress,
   activeMenuItem,
+  style,
 }) => {
   const router = useRouter(); // EL MALDITO COMPONENTE NUNCA ELIMINAR
   return (
-    <Animated.View style={[styles.sidebar, { width }]}>
+    <Animated.View style={[styles.sidebar, style, { width }]}>
       {isVisible && (
         <>
           {/* AQUI ESTA EL ENCABEZADO DE LA SIDE BAR, HAY QUE VER EL LOGO PARA VER COMO SE PUEDE HACER */}
@@ -51,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               style={styles.sidebarLogo}
               accessibilityLabel="Logo Eco Noticias"
             />
-            <Text style={styles.sidebarTitle}>Golfin</Text>
+            <Text style={styles.sidebarTitle}>Golfin'</Text>
           </View>
 
           {/* AQUI ESTAN LOS ITEMS DE LOS MENUS*/}
