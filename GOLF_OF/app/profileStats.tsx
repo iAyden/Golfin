@@ -48,6 +48,7 @@ const App: React.FC = () => {
       alignItems: width < 700 ? "stretch" : "flex-start",
       gap: width < 500 ? 8 : 16,
       width: "100%",
+      padding: 24, // add padding around the group of cards
     },
     card: {
       backgroundColor: "rgb(99, 150, 57)",
@@ -104,13 +105,14 @@ const App: React.FC = () => {
           width={sidebarWidth}
           onMenuItemPress={handleMenuPress}
           activeMenuItem={activeMenu}
+          style={styles.sidebarAbsolute}
         />
         <Pressable
-          style={styles.hamburgerButton}
+          style={[styles.hamburgerButton, { left: sidebarVisible ? 200 : 0 }]}
           onPress={() => setSidebarVisible(!sidebarVisible)}
           accessibilityLabel="Toggle Sidebar"
         >
-          <FontAwesome name="bars" size={24} color="#2f855a" />
+          <FontAwesome name="bars" size={28} color="#2f855a" />
         </Pressable>
 
         <View
@@ -171,7 +173,6 @@ const App: React.FC = () => {
                       }}
                       style={styles.profileImg}
                     />
-                    <Text style={styles.cardTitle}>Juanito el mas capito</Text>
                     <Text style={styles.badgeGreen}>pro en frifayer</Text>
                     <Text style={styles.gamerTag}>ejemplo@gmail.com</Text>
                     <View style={styles.socialIcons}>
@@ -621,14 +622,30 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     zIndex: 0,
+    marginLeft: 25, //This right here is the key to have the maincontent not clip into the sidebar
+  },
+  sidebarAbsolute: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    zIndex: 10,
   },
   mainContentWrapper: {
     flex: 1,
     flexDirection: "column",
     zIndex: 0,
+    marginLeft: 55,
+    marginRight: 10,
   },
   hamburgerButton: {
-    margin: 15,
+    // margin: 15,
+    position: "absolute",
+    top: 30,
+    zIndex: 20,
+    borderRadius: 20,
+    padding: 6,
+    elevation: 5,
   },
   ejemplo: {
     backgroundColor: "#FFF",
