@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>Go WebSocket Test</title>
+</head>
+<body>
+	<h3>WebSocket Message Sender</h3>
+	<input id="username" type="text" placeholder="Username" />
+	<input type="text" id="code" placeholder="Code">
+	<button onclick="createParty()">Create Party</button>
+
+	<button onclick="joinParty()">Join Party </button>
+	<ul id="messages"></ul>
+
+	<script>
+		const ws = new WebSocket("ws://localhost:8080/game");
+
+		ws.onmessage = function(event) {
+			const messages = document.getElementById("messages");
+			const li = document.createElement("li");
+			let data = JSON.parse(event.data)
+
+			console.log(data.payload)
+			li.textContent = JSON.stringify(data.payload) 
+			messages.appendChild(li);
+		};
+		
+		function createParty(){
+			let name = document.getElementById("username").value
+			let data = {
+				type : "createParty",
+				payload : {
+					username : name
+				}
+			}	
+			
+			console.log(data)
+			ws.send(JSON.stringify(data))
+
+		}
+
+		function joinParty(){
+			console.log("hola")
+			let name = document.getElementById("username").value
+			let code = document.getElementById("code").value
+			let data = {
+				type : "joinParty",
+				payload : {
+					username : name,
+					code : code 
+				}
+			}	
+			
+			console.log(data)
+			ws.send(JSON.stringify(data))
+
+		}
+		function sendMessage() {
+			const input = document.getElementById("msg");
+			if(ws.readyState === WebSocket.OPEN) {
+				ws.send(input.value);
+				const messages = document.getElementById("messages");
+				const li = document.createElement("li");
+				li.textContent = "You: " + input.value;
+				messages.appendChild(li);
+				input.value = "";
+			} else {
+				alert("WebSocket is not open.");
+			}
+		}
+	</script>
+</body>
+</html>
