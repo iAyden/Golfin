@@ -148,10 +148,11 @@ const UserCard: React.FC = () => {
       image: require('@/assets/images/golf.png')
     }
   ];
+
+  // Variables del OWNER 
   const owner:string  = (true) ? 'Empezar' : 'En espera';
   const isDisabled = owner === 'En espera';
-
-  // Updated shop items with images instead of emojis
+  
   const shopItems: ShopItemType[] = [
     {
       id: '1',
@@ -307,12 +308,9 @@ const UserCard: React.FC = () => {
               ))}
             </View>
             {!gameStarted ? (
-              
-                 <TouchableOpacity // BOTON PARA EL OWNER DE LA PARTY 
-      disabled={isDisabled} // ESTADO DEL OWNER DE LA PARTY
-      style={{ backgroundColor: isDisabled ? '#95a5a6' : '#2ecc71', padding: 15, borderRadius: 25, opacity: isDisabled ? 0.6 : 1, alignSelf: 'center'}}>
-      <Text style={{ color: 'white', fontWeight: 'bold' }}>{owner}</Text>
-    </TouchableOpacity>
+              <TouchableOpacity disabled={isDisabled} style={{ backgroundColor: isDisabled ? '#95a5a6' : '#2ecc71', padding: 15, borderRadius: 25, opacity: isDisabled ? 0.6 : 1, alignSelf: 'center'}} onPress={startGame}>
+                <Text style={{ color: 'white', fontWeight: 'bold' }}>{owner}</Text>
+              </TouchableOpacity>
             ) : (
               <TouchableOpacity style={styles.flipButton} onPress={flipCard}>
                 <Text style={styles.flipButtonText}>Ir a la Tienda</Text>
