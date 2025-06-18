@@ -86,7 +86,6 @@ const UserCard: React.FC = () => {
   const [gameStarted, setGameStarted] = useState<boolean>(false);
   ///////////////////////////////////////////////////////////////////////
 
-
   const flipAnimation = useRef(new Animated.Value(0)).current; // Esta es para la animacion del volteo. 
 
   // ESTA ES LA FCKING PARTE DEL TIMER NO LE MUEVAN SUFRI MUCHO POR UNAS DEPENDENCIAS DE NODE
@@ -149,6 +148,8 @@ const UserCard: React.FC = () => {
       image: require('@/assets/images/golf.png')
     }
   ];
+  const owner:string  = (true) ? 'Empezar' : 'En espera';
+   const isDisabled = owner === 'En espera';
 
   // Updated shop items with images instead of emojis
   const shopItems: ShopItemType[] = [
@@ -306,9 +307,12 @@ const UserCard: React.FC = () => {
               ))}
             </View>
             {!gameStarted ? (
-              <TouchableOpacity style={styles.startButton} onPress={startGame}>
-                <Text style={styles.startButtonText}>EMPEZAR</Text>
-              </TouchableOpacity>
+              
+                 <TouchableOpacity // BOTON PARA EL OWNER DE LA PARTY 
+      disabled={isDisabled} // ESTADO DEL OWNER DE LA PARTY
+      style={{ backgroundColor: isDisabled ? '#95a5a6' : '#2ecc71', padding: 15, borderRadius: 25, opacity: isDisabled ? 0.6 : 1, alignSelf: 'center'}}>
+      <Text style={{ color: 'white', fontWeight: 'bold' }}>{owner}</Text>
+    </TouchableOpacity>
             ) : (
               <TouchableOpacity style={styles.flipButton} onPress={flipCard}>
                 <Text style={styles.flipButtonText}>Ir a la Tienda</Text>
