@@ -149,7 +149,7 @@ const UserCard: React.FC = () => {
     }
   ];
   const owner:string  = (true) ? 'Empezar' : 'En espera';
-   const isDisabled = owner === 'En espera';
+  const isDisabled = owner === 'En espera';
 
   // Updated shop items with images instead of emojis
   const shopItems: ShopItemType[] = [
