@@ -22,10 +22,10 @@ import { signupSchema, signupSchemaType } from '../../schemas/AuthSchemas';
 
 
 const GolfLogin = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [name, setName] = useState('');
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
+  // const [confirmPassword, setConfirmPassword] = useState('');
+  // const [name, setName] = useState('');
   const [showFront, setShowFront] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -46,13 +46,52 @@ const GolfLogin = () => {
     resolver: zodResolver(signupSchema)
   });
 
-  const handleLogin = async () => {
-    console.log(email)
+  const handleLogin = async (formData: loginSchemaType) => {
+    console.log(formData.email)
+    console.log(formData.password)
+    if (!formData.email || !formData.password){
+      console.log("error email y password no encontrados")
+      return;
+    }
+    Alert.alert("Bienvenido amigo {$email}")
+    try{
+      const response = await fetch("http://127.0.0.1:8080/users/login",{
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        email: formData.email,
+        pswd: formData.password
+      }),
+    });
+    }catch(error){
+      console.log(error);
+      Alert.alert("error,","no se pudo conectar con el servidor")
+    }
   };
 
-
-  const handleRegister = async () => {
-
+  const handleRegister = async (formData: signupSchemaType) => {
+    console.log("username"+formData.username)
+    console.log("email"+formData.email)     
+    console.log("password"+formData.password)
+    console.log("confirm_password"+formData.confirm_password)
+    if(! formData.username || !formData.email || !formData.password || !formData.confirm_password){
+      console.log("error faltan datos del signup")
+      return;
+    }
+    try{
+      const response = await fetch ("http://127.0.0.1:8080/users/signup",{
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.confirm_password
+        }),
+      });
+    }catch(error){
+      console.log(error)
+      Alert.alert("error fallo signup")
+    }
   };
 
 
@@ -114,7 +153,6 @@ const GolfLogin = () => {
                 <TextInput
                   style={[styles.input, styles.passwordInput]}
                   placeholder="Password"
-                  onChangeText={setPassword}
                   secureTextEntry={!showPassword}
                   placeholderTextColor="#666"
                   {...field}
@@ -152,18 +190,17 @@ const GolfLogin = () => {
            
             <Controller 
               control={signupControl}
-              name ="complete_name"
+              name ="username"
               render={({field}) =>
                 <TextInput
                 style={styles.input}
-                placeholder="Complete Name"
-                onChangeText={setName}
+                placeholder="Username"
                 placeholderTextColor="#666"
                 {...field}
               /> 
               }
             />
-            {signupErrors.complete_name && <Text style={{color: 'red'}}>{signupErrors.complete_name.message}</Text>}
+            {signupErrors.username && <Text style={{color: 'red'}}>{signupErrors.username.message}</Text>}
          
             <Controller
             control={signupControl}
@@ -172,7 +209,6 @@ const GolfLogin = () => {
               <TextInput
             style={styles.input}
             placeholder="Email address"
-            onChangeText={setEmail}
             keyboardType="email-address"
             placeholderTextColor="#666"
             {...field}
@@ -188,8 +224,7 @@ const GolfLogin = () => {
               <View style={styles.passwordContainer}>
               <TextInput
                 style={[styles.input, styles.passwordInput]}
-                placeholder="Pasword"
-                onChangeText={setPassword}
+                placeholder="Password"
                 secureTextEntry={!showConfirmPassword}
                 placeholderTextColor="#666"
                 {...field}
@@ -213,7 +248,7 @@ const GolfLogin = () => {
               <TextInput
                 style={[styles.input, styles.passwordInput]}
                 placeholder="Confirm Pasword"
-                onChangeText={setConfirmPassword}
+              //  onChangeText={setConfirmPassword}
                 secureTextEntry={!showConfirmPassword}
                 placeholderTextColor="#666"
                 {...field}

@@ -15,7 +15,7 @@ export const loginSchema = z.object({
 export type loginSchemaType = z.infer<typeof loginSchema>; //exportar schema del login
 
 export const signupSchema = z.object({
-  complete_name: z
+  username: z
   .string()
   .min(3)
   .trim(),
