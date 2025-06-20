@@ -30,6 +30,7 @@ const MENU_ITEMS: MenuItem[] = [
   { id: "/", title: "Home", icon: "home" },
   { id: "createLobby", title: "New Game", icon: "gamepad" },
   { id: "profileStats", title: "Profile", icon: "newspaper-o" },
+  { id: "LeaderBoard", title: "Ranking", icon: "trophy" },
   { id: "LogUser", title: "Sign Up", icon: "user" },
   {id: "gameplay", title: "Log Out", icon: "sign-out"},
 ];
