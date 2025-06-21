@@ -12,7 +12,6 @@ import (
 
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
@@ -40,10 +39,10 @@ type User struct {
 }
 
 type Party struct {
-	Id        string       `json:"id"`
 	Owner     string       `json:"owner"`
 	Code      string       `json:"code"`
 	Members   []*User      `json:"members"`
+	Round     int          `json:"round"`
 	Broadcast chan Message `json:"-"`
 }
 
@@ -93,8 +92,6 @@ func (user *User) readMessages() {
 			//no hay validación si ya tiene una party
 			//reconnects ig
 
-			id := uuid.New().String()
-
 			// var payloadd map[string]interface{}
 			err = json.Unmarshal(msg.Payload, user)
 			if err != nil {
@@ -102,10 +99,9 @@ func (user *User) readMessages() {
 			}
 
 			code := genCode()
-			owner := user.Name + "'s Party"
+			owner := user.Name
 			fmt.Println(owner)
 			party := &Party{
-				Id:        id,
 				Owner:     owner,
 				Code:      code,
 				Broadcast: make(chan Message),
@@ -134,7 +130,9 @@ func (user *User) readMessages() {
 			json.Unmarshal(msg.Payload, user)
 			//truena horrorosamente cuando la party no existe
 			fmt.Println("checamos que exista la party")
-			if partys[user.JoinCode].Code != "" {
+			_, ok := partys[user.JoinCode]
+
+			if ok {
 				party := partys[user.JoinCode]
 				party.Members = append(party.Members, user)
 
@@ -151,7 +149,15 @@ func (user *User) readMessages() {
 				}
 
 				party.Broadcast <- response
+
+				break
 			}
+
+			msg := Message{
+				Type: "joinParty",
+			}
+
+			user.Msg <- msg
 
 		case "startGame":
 			//req
@@ -162,14 +168,26 @@ func (user *User) readMessages() {
 			json.Unmarshal(msg.Payload, &rqPayload)
 			code := rqPayload["code"].(string)
 
+			mathRand.Seed(time.Now().UnixNano())
 			party := partys[code]
-			for _, player := range party.Members {
+			for i := range party.Members {
 
-				mathRand.Seed(time.Now().UnixNano())
 				randInt := mathRand.Intn(250) + 100
-				player.Karma = randInt
-			}
+				fmt.Println(randInt)
+				party.Members[i].Karma = randInt
 
+				randInt = mathRand.Intn(len(party.Members))
+
+				fmt.Println(randInt)
+				playerP := party.Members[randInt]
+
+				party.Members[randInt] = party.Members[i]
+				party.Members[i] = playerP
+
+				//existe la manera para swapear a,b = b,a
+
+			}
+			party.Round = 1
 			payload, _ := json.Marshal(party)
 
 			response := Message{
