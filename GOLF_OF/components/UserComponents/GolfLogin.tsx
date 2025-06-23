@@ -1,4 +1,5 @@
 import { Try } from "expo-router/build/views/Try";
+import { FontAwesome } from "@expo/vector-icons";
 import React, { useState, useRef } from "react";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -85,6 +86,16 @@ const GolfLogin = () => {
       setShowFront(!showFront);
     });
   };
+
+  // DEFINIMOS EL TIPO PARA LOS ITEMS DEL MENU
+  type MenuItem = {
+    id: string;
+    title: string;
+    icon: React.ComponentProps<typeof FontAwesome>["name"];
+  };
+
+  // DATOS DEL MENU CORTO AQUI MODIFICAMOS LOS REDIRECCIONAMIENTOS
+  const MENU_ITEMS: MenuItem[] = [{ id: "/", title: "Home", icon: "home" }];
 
   const frontInterpolate = flipAnimation.interpolate({
     inputRange: [0, 180],

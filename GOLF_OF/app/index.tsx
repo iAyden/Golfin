@@ -57,21 +57,21 @@ const App: React.FC = () => {
             {[
               {
                 title: "Golf Course",
-                image: require("../assets/images/golf.png"),
+                image: require("../assets/images/MiniCourse1.jpg"),
                 description:
                   "Play on the best golf courses and challenge your friends!",
                 route: "/createLobby",
               },
               {
                 title: "Golf Course",
-                image: require("../assets/images/golf.png"),
+                image: require("../assets/images/MiniCourse2.jpg"),
                 description:
                   "Play on the best golf courses and challenge your friends!",
                 route: "/createLobby",
               },
               {
                 title: "Golf Course",
-                image: require("../assets/images/golf.png"),
+                image: require("../assets/images/MiniCourse3.jpg"),
                 description:
                   "Play on the best golf courses and challenge your friends!",
                 route: "/createLobby",

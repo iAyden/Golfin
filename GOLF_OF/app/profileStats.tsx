@@ -266,32 +266,15 @@ const App: React.FC = () => {
                       <View style={[styles.progressBar, { width: "87%" }]} />
                     </View>
                   </View>
-                  <View style={styles.progressContainer}>
-                    <Text style={styles.progressLabel}>
-                      <FontAwesome name="tachometer" size={16} /> Rendimiento:
-                      320%
-                    </Text>
-                    <View style={styles.progressBarBg}>
-                      <View style={[styles.progressBar, { width: "80%" }]} />
-                    </View>
-                  </View>
-                  <View style={styles.progressContainer}>
-                    <Text style={styles.progressLabel}>
-                      <FontAwesome name="users" size={16} /> Tiros por partida:
-                      95%
-                    </Text>
-                    <View style={styles.progressBarBg}>
-                      <View style={[styles.progressBar, { width: "95%" }]} />
-                    </View>
-                  </View>
-                  <View style={styles.progressContainer}>
+
+                  {/* <View style={styles.progressContainer}>
                     <Text style={styles.progressLabel}>
                       <FontAwesome name="user" size={16} /> Friends: 89%
                     </Text>
                     <View style={styles.progressBarBg}>
                       <View style={[styles.progressBar, { width: "89%" }]} />
                     </View>
-                  </View>
+                  </View> */}
                   <View style={styles.divider} />
                   <Text style={styles.sectionTitle}>Golf Achievements</Text>
                   <View style={styles.achievementItem}>
@@ -497,23 +480,7 @@ const App: React.FC = () => {
                       <View style={[styles.progressBar, { width: "80%" }]} />
                     </View>
                   </View>
-                  <View style={styles.progressContainer}>
-                    <Text style={styles.progressLabel}>
-                      <FontAwesome name="users" size={16} /> Tiros por partida:
-                      95%
-                    </Text>
-                    <View style={styles.progressBarBg}>
-                      <View style={[styles.progressBar, { width: "95%" }]} />
-                    </View>
-                  </View>
-                  <View style={styles.progressContainer}>
-                    <Text style={styles.progressLabel}>
-                      <FontAwesome name="user" size={16} /> Friends: 89%
-                    </Text>
-                    <View style={styles.progressBarBg}>
-                      <View style={[styles.progressBar, { width: "89%" }]} />
-                    </View>
-                  </View>
+
                   <View style={styles.divider} />
                   <Text style={styles.sectionTitle}>Golf Achievements</Text>
                   <View style={styles.achievementItem}>
