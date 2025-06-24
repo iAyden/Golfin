@@ -19,6 +19,7 @@ import com.golfin.backend.util.PasswordUtil;
 
 import jakarta.validation.Valid;
 
+import java.util.Map; //Para pasar un Json al frontend
 @RestController
 
 @CrossOrigin(origins = "*")
@@ -37,9 +38,11 @@ public class UserController {
         User userData = userRepository.findByEmail(loginRequest.getEmail());
         
         if(userData != null && PasswordUtil.matches(loginRequest.getPassword(),userData.getPswd())){ 
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("correo o contraseñas invalidos"); }
-        LoginResponse loginResponse = new LoginResponse(userData.getName(), userData.getEmail(), "fake-jwt-token");
-        return ResponseEntity.ok(loginResponse);
+            LoginResponse loginResponse = new LoginResponse(userData.getName(), userData.getEmail(), "fake-jwt-token");
+            return ResponseEntity.ok(loginResponse);
+            }
+         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(Map.of("error","Correo o Contraseña Invalidos"));
     } 
     
 
@@ -47,7 +50,8 @@ public class UserController {
     public ResponseEntity<?> createUser(@Valid @RequestBody SignupDTO signupDTO) {
 
         if (userRepository.existsByEmail(signupDTO.getEmail())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email ya en uso.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body
+            (Map.of("error","Email ya en uso."));
         }
         User newUser = new User();
         newUser.setEmail(signupDTO.getEmail());
@@ -55,5 +59,6 @@ public class UserController {
         newUser.setPswd(PasswordUtil.hash(signupDTO.getPassword()))  ;
         userRepository.save(newUser);
         return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado con exito.");
-}
+    }
+
 }

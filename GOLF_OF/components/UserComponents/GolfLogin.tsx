@@ -15,11 +15,15 @@ import {
   Easing
 } from 'react-native';
 
+//Google Signup
+import * as Google from 'expo-auth-session/providers/google';
+import * as WebBrowser from 'expo-web-browser';
+import Constants from 'expo-constants';
+
 //Importar Zod Schema para login
 import { loginSchema, loginSchemaType } from '../../schemas/AuthSchemas';
 //Importar Zod Schema para SignUp
 import { signupSchema, signupSchemaType } from '../../schemas/AuthSchemas';
-
 
 const GolfLogin = () => {
   // const [email, setEmail] = useState('');
@@ -30,6 +34,7 @@ const GolfLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const flipAnimation = useRef(new Animated.Value(0)).current;
+  const [errorMsg, setErrorMsg] = useState("");
   const {
     control: loginControl,
     handleSubmit: handleLoginSubmit,
@@ -47,6 +52,7 @@ const GolfLogin = () => {
   });
 
   const handleLogin = async (formData: loginSchemaType) => {
+    setErrorMsg("");
     console.log(formData.email)
     console.log(formData.password)
     if (!formData.email || !formData.password){
@@ -63,13 +69,24 @@ const GolfLogin = () => {
         pswd: formData.password
       }),
     });
+    if(!response.ok){
+      const errorBody = await response.json();
+      setErrorMsg(errorBody.error || "Error desconocido")
+      console.log(errorMsg)
+    }else{
+      //REDIRIGIR AL perfil
+      console.log("perfil")
+      
+    }
     }catch(error){
       console.log(error);
+      setErrorMsg("No se pudo conectar con el servidor")
       Alert.alert("error,","no se pudo conectar con el servidor")
     }
   };
 
   const handleRegister = async (formData: signupSchemaType) => {
+    setErrorMsg("");
     console.log("username"+formData.username)
     console.log("email"+formData.email)     
     console.log("password"+formData.password)
@@ -88,6 +105,15 @@ const GolfLogin = () => {
           password: formData.confirm_password
         }),
       });
+      if(!response.ok){
+      const errorBody = await response.json();
+      setErrorMsg(errorBody.error || "Error desconocido")
+      console.log(errorMsg)
+    }else{
+      //REDIRIGIR AL perfil
+      console.log("perfil")
+      
+    }
     }catch(error){
       console.log(error)
       Alert.alert("error fallo signup")
@@ -105,6 +131,7 @@ const GolfLogin = () => {
     }).start(() => {
       setShowFront(!showFront);
     });
+    setErrorMsg("");
   };
 
   const frontInterpolate = flipAnimation.interpolate({ inputRange: [0, 180], outputRange: ['0deg', '180deg'] });
@@ -145,6 +172,7 @@ const GolfLogin = () => {
                 />}
               />
               {loginErrors.email && <Text style={{color: 'red'}}>{loginErrors.email.message}</Text>}
+              
               <Controller
               control={loginControl}
               name = "password"
@@ -166,6 +194,7 @@ const GolfLogin = () => {
                 </View> 
             } />
             {loginErrors.password && <Text style={{color: 'red'}}>{loginErrors.password.message}</Text>}
+            {errorMsg && <Text style={{color: 'red'}}>{errorMsg}</Text>}
             <TouchableOpacity style={styles.actionButton} onPress={handleLoginSubmit(handleLogin)}>
               <Text style={styles.buttonText}>Log in</Text>
             </TouchableOpacity>
@@ -263,6 +292,7 @@ const GolfLogin = () => {
             }
             />
             {signupErrors.confirm_password && <Text style={{color:'red'}}>{signupErrors.confirm_password.message}</Text>}
+            {errorMsg && <Text style={{color: 'red'}}>{errorMsg}</Text>}
             <TouchableOpacity style={styles.actionButton} onPress={handleRegisterSubmit(handleRegister)}>
               <Text style={styles.buttonText}>Sign up</Text>
             </TouchableOpacity>
