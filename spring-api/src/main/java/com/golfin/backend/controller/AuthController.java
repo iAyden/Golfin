@@ -15,7 +15,9 @@ import com.golfin.backend.util.PasswordUtil;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
-
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/auth")
@@ -60,5 +62,11 @@ public class AuthController {
     }
 
     @PostMapping("/google")
-    public ResponseEntity<?> createUser(@Valid @)
+    public ResponseEntity<?> googleLogin(@RequestBody Map<String, String> body){
+        String idTokeString = body.get("id:token");
+        if(idTokeString == null || idTokeString.isEmpty()){
+            return ResponseEntity.badRequest().body(Map.of("error","id_token es requerido"));
+        }
+        return ResponseEntity.ok(null);
+    }
 }

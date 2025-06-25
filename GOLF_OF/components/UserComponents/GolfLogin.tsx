@@ -14,22 +14,19 @@ import {
   Animated,
   Easing
 } from 'react-native';
+import * as AuthSession from 'expo-auth-session';
 
+//Importar componente del boton de Google Singin
+import GoogleButton from '../VisualComponents/GoogleButton';
 //Google Signup
 import * as Google from 'expo-auth-session/providers/google';
-import * as WebBrowser from 'expo-web-browser';
-import Constants from 'expo-constants';
-import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
+
 //Importar Zod Schema para login
 import { loginSchema, loginSchemaType } from '../../schemas/AuthSchemas';
 //Importar Zod Schema para SignUp
 import { signupSchema, signupSchemaType } from '../../schemas/AuthSchemas';
 
 const GolfLogin = () => {
-  // const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
-  // const [confirmPassword, setConfirmPassword] = useState('');
-  // const [name, setName] = useState('');
   const [showFront, setShowFront] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -54,16 +51,26 @@ const GolfLogin = () => {
   const [request, response, promptAsync] = Google.useAuthRequest({
     clientId: "467124897071-etfu4to0fh6i2rcpgvol7f15m5cdnthj.apps.googleusercontent.com",
     scopes: ['openid','email','profile'],
+    responseType: 'id_token',
+    redirectUri: AuthSession.makeRedirectUri(),
   });
-
-  const handeleGoogleLogin = async () => {
+  const handleGoogleLogin = async () => {
     const result = await promptAsync();
+    console.log(result)
     if(result?.type === 'success'){
       const idToken = result.authentication?.idToken;
-    }
-    const backendresponse = await fetch("http://localhost:8080/auth/")
+    try{
+      const backendresponse = await fetch("http://127.0.0.1:8080/auth/google", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ id_token: idToken}),
+    });
+    
   }
-
+  catch(error){
+    console.log(error);
+  }
+}}
   const handleLogin = async (formData: loginSchemaType) => {
     setErrorMsg("");
     console.log(formData.email)
@@ -208,15 +215,10 @@ const GolfLogin = () => {
             } />
             {loginErrors.password && <Text style={{color: 'red'}}>{loginErrors.password.message}</Text>}
             {errorMsg && <Text style={{color: 'red'}}>{errorMsg}</Text>}
-            <GoogleSigninButton
-              size={GoogleSigninButton.Size.Wide}
-              color={GoogleSigninButton.Color.Dark}
-              onPress={() => {
-             // initiate sign in
-                }}
-               disabled={false}
-              />
-            <TouchableOpacity style={styles.actionButton} onPress={handleLoginSubmit(handleLogin)}>
+           
+            <GoogleButton onPress={handleGoogleLogin} />  
+
+            <TouchableOpacity style={styles.actionButton} onPress={handleLoginSubmit(handleLogin)}> 
               <Text style={styles.buttonText}>Log in</Text>
             </TouchableOpacity>
             
@@ -314,6 +316,8 @@ const GolfLogin = () => {
             />
             {signupErrors.confirm_password && <Text style={{color:'red'}}>{signupErrors.confirm_password.message}</Text>}
             {errorMsg && <Text style={{color: 'red'}}>{errorMsg}</Text>}
+
+             <GoogleButton onPress={handleGoogleLogin} text="Sign up with Google"/>  
             <TouchableOpacity style={styles.actionButton} onPress={handleRegisterSubmit(handleRegister)}>
               <Text style={styles.buttonText}>Sign up</Text>
             </TouchableOpacity>

@@ -28,8 +28,9 @@ dependencies {
 	implementation("jakarta.validation:jakarta.validation-api:3.0.2")
 	implementation ("org.hibernate.validator:hibernate-validator:8.0.1.Final")
 	implementation ("org.glassfish:jakarta.el:4.0.2")
-	//implementation ("org.springframework.boot:spring-boot-starter-oauth2-client")
-	//implementation ("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+ 	implementation("com.google.api-client:google-api-client:2.5.0")
+    implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
+    implementation("com.google.http-client:google-http-client-gson:1.42.3")
 
 
 }
