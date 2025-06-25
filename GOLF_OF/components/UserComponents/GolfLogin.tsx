@@ -19,7 +19,7 @@ import {
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
 import Constants from 'expo-constants';
-
+import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 //Importar Zod Schema para login
 import { loginSchema, loginSchemaType } from '../../schemas/AuthSchemas';
 //Importar Zod Schema para SignUp
@@ -51,6 +51,19 @@ const GolfLogin = () => {
     resolver: zodResolver(signupSchema)
   });
 
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    clientId: "467124897071-etfu4to0fh6i2rcpgvol7f15m5cdnthj.apps.googleusercontent.com",
+    scopes: ['openid','email','profile'],
+  });
+
+  const handeleGoogleLogin = async () => {
+    const result = await promptAsync();
+    if(result?.type === 'success'){
+      const idToken = result.authentication?.idToken;
+    }
+    const backendresponse = await fetch("http://localhost:8080/auth/")
+  }
+
   const handleLogin = async (formData: loginSchemaType) => {
     setErrorMsg("");
     console.log(formData.email)
@@ -61,7 +74,7 @@ const GolfLogin = () => {
     }
     Alert.alert("Bienvenido amigo {$email}")
     try{
-      const response = await fetch("http://127.0.0.1:8080/users/login",{
+      const response = await fetch("http://127.0.0.1:8080/auth/login",{
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -96,7 +109,7 @@ const GolfLogin = () => {
       return;
     }
     try{
-      const response = await fetch ("http://127.0.0.1:8080/users/signup",{
+      const response = await fetch ("http://127.0.0.1:8080/auth/signup",{
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -195,6 +208,14 @@ const GolfLogin = () => {
             } />
             {loginErrors.password && <Text style={{color: 'red'}}>{loginErrors.password.message}</Text>}
             {errorMsg && <Text style={{color: 'red'}}>{errorMsg}</Text>}
+            <GoogleSigninButton
+              size={GoogleSigninButton.Size.Wide}
+              color={GoogleSigninButton.Color.Dark}
+              onPress={() => {
+             // initiate sign in
+                }}
+               disabled={false}
+              />
             <TouchableOpacity style={styles.actionButton} onPress={handleLoginSubmit(handleLogin)}>
               <Text style={styles.buttonText}>Log in</Text>
             </TouchableOpacity>
