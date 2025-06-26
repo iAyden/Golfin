@@ -5,6 +5,8 @@ COPY --chown=gradle:gradle . /app
 
 WORKDIR /app    
 
+COPY .env /app/.env
+
 RUN ./gradlew build --no-daemon
 
 #------PHASE 2: FINAL IMAGE------

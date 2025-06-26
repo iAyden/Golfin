@@ -1,6 +1,7 @@
 import { Try } from 'expo-router/build/views/Try';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
+import { useNavigation } from '@react-navigation/native';
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   View,
@@ -10,11 +11,17 @@ import {
   StyleSheet,
   Image,
   SafeAreaView,
-  Alert,
   Animated,
+  Alert,
   Easing
 } from 'react-native';
 import * as AuthSession from 'expo-auth-session';
+
+//Importar función para autentificar token
+import { checkAuthToken } from '@/utils/auth';
+
+//Importar metodos para majear JWTs
+import {saveToken, getToken, clearToken } from '../../utils/jwtStorage'
 
 //Importar componente del boton de Google Singin
 import GoogleButton from '../VisualComponents/GoogleButton';
@@ -32,14 +39,26 @@ const GolfLogin = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const flipAnimation = useRef(new Animated.Value(0)).current;
   const [errorMsg, setErrorMsg] = useState("");
+  const navigation = useNavigation();
+
+  useEffect(()=>{
+    const verifyToken = async () => {
+      const isLoggedIn = await checkAuthToken();
+      if(isLoggedIn){
+        window.location.href = "/profileStats";     
+      }
+    };
+    verifyToken();
+  }, []);
+  
   const {
     control: loginControl,
     handleSubmit: handleLoginSubmit,
     formState: { errors: loginErrors }
   } = useForm<loginSchemaType>({
     resolver: zodResolver(loginSchema)
+    
   });
-
   const {
     control: signupControl,
     handleSubmit: handleRegisterSubmit,
@@ -54,6 +73,7 @@ const GolfLogin = () => {
     responseType: 'id_token',
     redirectUri: AuthSession.makeRedirectUri(),
   });
+  
   const handleGoogleLogin = async () => {
     const result = await promptAsync();
     console.log(result)
@@ -71,6 +91,7 @@ const GolfLogin = () => {
     console.log(error);
   }
 }}
+
   const handleLogin = async (formData: loginSchemaType) => {
     setErrorMsg("");
     console.log(formData.email)
@@ -86,7 +107,7 @@ const GolfLogin = () => {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         email: formData.email,
-        pswd: formData.password
+        password: formData.password
       }),
     });
     if(!response.ok){
@@ -96,7 +117,12 @@ const GolfLogin = () => {
     }else{
       //REDIRIGIR AL perfil
       console.log("perfil")
-      
+      const data = await response.json();
+      const token = data.token;
+      saveToken(token);
+      if (typeof window !== "undefined" && window.location) {
+        window.location.href = "/profileStats";
+      }
     }
     }catch(error){
       console.log(error);
@@ -132,7 +158,9 @@ const GolfLogin = () => {
     }else{
       //REDIRIGIR AL perfil
       console.log("perfil")
-      
+      const data = await response.json();
+      const token = data.token;
+      saveToken(token);
     }
     }catch(error){
       console.log(error)

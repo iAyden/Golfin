@@ -11,6 +11,7 @@ import com.golfin.backend.dto.LoginResponse;
 import com.golfin.backend.dto.SignupDTO;
 import com.golfin.backend.model.User;
 import com.golfin.backend.repository.UserRepository;
+import com.golfin.backend.security.JwtUtil;
 import com.golfin.backend.util.PasswordUtil;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,9 +24,11 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 @RequestMapping("/auth")
 public class AuthController {
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
-    public AuthController(UserRepository userRepository) {
+    public AuthController(UserRepository userRepository, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/login")
@@ -34,7 +37,12 @@ public class AuthController {
         User userData = userRepository.findByEmail(loginRequest.getEmail());
         
         if(userData != null && PasswordUtil.matches(loginRequest.getPassword(),userData.getPswd())){ 
-            LoginResponse loginResponse = new LoginResponse(userData.getUsername(), userData.getEmail(), "fake-jwt-token");
+            String jwt = jwtUtil.generateToken(userData.getEmail());
+            if(jwt==null || jwt.isEmpty()){
+                System.out.println("Falló el jwt");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error","No se pudo generar el jwt"));
+            }
+            LoginResponse loginResponse = new LoginResponse(userData.getUsername(), userData.getEmail(), jwt);
             return ResponseEntity.ok(loginResponse);
             }
          return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
