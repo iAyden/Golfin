@@ -1,14 +1,19 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform  } from 'react-native';
+const isWeb = Platform.OS === 'web';
 
-const isWeb = typeof window !== 'undefined';
-
-const KEY = 'auth_token';
+const KEY = 'jwt_token';
 
 export const saveToken = async (token: string): Promise<void> => {
+    console.log("dentro de SaveToken "+token)
     if(isWeb){
+        console.log("lo he guardado en web");
         localStorage.setItem(KEY, token);
+        const savedTokenLS= localStorage.getItem(KEY);
+        console.log("Savedtoken" +savedTokenLS);
     }
     else{
+        console.log("lo he guardado en otro pedo");
         await AsyncStorage.setItem(KEY, token);
     }
 };

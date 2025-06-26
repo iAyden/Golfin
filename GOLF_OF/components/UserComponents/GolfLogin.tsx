@@ -42,9 +42,12 @@ const GolfLogin = () => {
   const navigation = useNavigation();
 
   useEffect(()=>{
+    console.log("use efect")
     const verifyToken = async () => {
       const isLoggedIn = await checkAuthToken();
+      console.log("isloggedin "+isLoggedIn);
       if(isLoggedIn){
+        console.log("usuario logeado")
         window.location.href = "/profileStats";     
       }
     };
@@ -119,6 +122,7 @@ const GolfLogin = () => {
       console.log("perfil")
       const data = await response.json();
       const token = data.token;
+      console.log("token guardado del login"+token)
       saveToken(token);
       if (typeof window !== "undefined" && window.location) {
         window.location.href = "/profileStats";

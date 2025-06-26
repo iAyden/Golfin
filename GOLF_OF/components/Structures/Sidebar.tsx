@@ -31,7 +31,8 @@ const MENU_ITEMS: MenuItem[] = [
   { id: "createLobby", title: "New Game", icon: "gamepad" },
   { id: "profileStats", title: "Profile", icon: "newspaper-o" },
   { id: "LogUser", title: "Sign Up", icon: "user" },
-  {id: "gameplay", title: "Log Out", icon: "sign-out"},
+  {id: "gameplay", title: "Party", icon: "sign-out"},
+  {id: "", title: "Log Out", icon: "sign-out"},
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({
