@@ -12,6 +12,7 @@
 	<button onclick="createParty()">Create Party</button>
 
 	<button onclick="joinParty()">Join Party </button>
+	<button onclick="startGame()">Start Game</button>
 	<ul id="messages"></ul>
 
 	<script>
@@ -55,6 +56,26 @@
 			
 			console.log(data)
 			ws.send(JSON.stringify(data))
+
+		}
+
+		function startGame(){
+		//provicionalmente vamos a obtener el código desde el text input
+		//el codigo se obtiene del mismo html cuando ya esté bien implementado
+		//el boton que acciona el inicio del juego solo debería aparecerle al dueno de la partyj
+		 
+			let codigo = document.getElementById("code").value
+
+			let data = {
+				type : "startGame",
+				payload : {
+					code : codigo
+				} 
+
+			}
+
+			ws.send(JSON.stringify(data))
+
 
 		}
 		function sendMessage() {
