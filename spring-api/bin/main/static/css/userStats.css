@@ -1,30 +1,29 @@
-    :root {
-      --primary-green: #107C10;
-      --light-green: #2e7d32;
-      --dark-green: #1b5e20;
-      --accent-green: #4caf50;
-      --text-dark: #FFF;
-      --text-light: #fff;
+:root {
+    --primary-green: #107C10;
+    --light-green: #2e7d32;
+    --dark-green: #1b5e20;
+    --accent-green: #4caf50;
+    --text-dark: #FFF;
+    --text-light: #fff;
     }
 
-    body,
-    html {
+body, html {
       min-height: 100vh;
       margin: 0;
       background-image: url("https://programadestinosmexico.com/wp-content/uploads/2023/09/image-1004.jpeg");
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
     }
 
-    .container-main {
+.container-main {
       padding: 20px 0;
       min-height: 100vh;
       display: flex;
       align-items: center;
       margin-left: 30px;
+      transition: all 0.5s ease;
     }
 
-    .card {
+.card {
       background-color: rgba(10, 70, 12, 0.6);
       border: none;
       border-radius: 16px;
@@ -149,8 +148,8 @@
       justify-content: center;
       color: var(--primary-green);
       transition: all 0.3s ease;
-      font-size: 1rem;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+      font-size: 1rem;box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
     }
 
     @media (min-width: 576px) {
@@ -580,21 +579,10 @@
       height: 250px;
     }
 
-<<<<<<< HEAD
-    .textColor {
-      color: #FFF;
-=======
-<<<<<<< HEAD:spring-api/src/main/resources/static/css/userStats.css
-    .textColor{
-      color:#FFF;
->>>>>>> a1713a8 (footer added)
-    }
-
-
-    /* Estilos para el ranking */
-    .ranking-container {
-      margin-top: 10px;
-    }
+/* Estilos para el ranking */
+.ranking-container {
+  margin-top: 10px;
+}
 
     .ranking-item {
       display: flex;
@@ -765,19 +753,6 @@
       background: rgba(244, 67, 54, 0.3);
     }
 
-<<<<<<< HEAD
-    /* Diseño responsive */
-    @media (max-width: 768px) {
-      .friend-item {
-        padding: 10px 12px;
-      }
-
-      .btn-friend {
-        padding: 5px 8px;
-        font-size: 0.7rem;
-      }
-    }
-=======
 /* Diseño responsive */
 @media (max-width: 768px) {
   .friend-item {
@@ -788,10 +763,7 @@
     padding: 5px 8px;
     font-size: 0.7rem;
   }
-} 
-=======
     .textColor {
       color: #FFF;
-    }
->>>>>>> 4e9aa89 (footer added):src/main/resources/static/css/userStats.css
->>>>>>> a1713a8 (footer added)
+  }
+}

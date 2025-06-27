@@ -16,8 +16,15 @@ import { FontAwesome } from "@expo/vector-icons";
 import Sidebar from "@/components/Structures/Sidebar";
 // import { Text } from '@/components/Themed';
 import ImagenSinFondo from "@/components/VisualComponents/ImagenSinFondo";
+import { useFonts } from "expo-font";
 
 const App: React.FC = () => {
+  // Load gharison font globally
+  const [fontsLoaded] = useFonts({
+    gharison: require("../assets/fonts/gharison.ttf"),
+  });
+  if (!fontsLoaded) return null;
+
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [activeMenu, setActiveMenu] = useState("home");
   const sidebarWidth = useRef(new Animated.Value(250)).current;
@@ -48,6 +55,7 @@ const App: React.FC = () => {
       alignItems: width < 700 ? "stretch" : "flex-start",
       gap: width < 500 ? 8 : 16,
       width: "100%",
+      padding: 24, // add padding around the group of cards
     },
     card: {
       backgroundColor: "rgb(99, 150, 57)",
@@ -84,6 +92,55 @@ const App: React.FC = () => {
     },
   });
 
+  // Here are the freakin' "tabs" for when the screen is small
+  const folderTabStyles = StyleSheet.create({
+    tabRow: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "flex-end",
+      height: 44,
+      marginBottom: -12,
+      zIndex: 10,
+      width: "100%",
+      position: "relative",
+    },
+    tab: {
+      minWidth: 90,
+      paddingVertical: 8,
+      paddingHorizontal: 18,
+      backgroundColor: "rgb(99, 150, 57)",
+      borderTopLeftRadius: 12,
+      borderTopRightRadius: 12,
+      borderBottomLeftRadius: 0,
+      borderBottomRightRadius: 0,
+      marginHorizontal: -8,
+      marginBottom: 0,
+      alignItems: "center",
+      elevation: 2,
+      borderWidth: 2,
+      borderColor: "#7bb661",
+      borderBottomWidth: 0,
+      position: "relative",
+      top: 12,
+      zIndex: 1,
+    },
+    tabActive: {
+      backgroundColor: "rgb(99, 150, 57)",
+      elevation: 6,
+      zIndex: 2,
+      borderColor: "#fad21e",
+      top: 0,
+    },
+    tabText: {
+      color: "white",
+      fontWeight: "bold",
+      fontSize: 15,
+    },
+    tabTextActive: {
+      color: "white",
+    },
+  });
+
   return (
     <ImageBackground
       source={require("../assets/images/BG IMG GLF.png")}
@@ -104,13 +161,14 @@ const App: React.FC = () => {
           width={sidebarWidth}
           onMenuItemPress={handleMenuPress}
           activeMenuItem={activeMenu}
+          style={styles.sidebarAbsolute}
         />
         <Pressable
-          style={styles.hamburgerButton}
+          style={[styles.hamburgerButton, { left: sidebarVisible ? 200 : 0 }]}
           onPress={() => setSidebarVisible(!sidebarVisible)}
           accessibilityLabel="Toggle Sidebar"
         >
-          <FontAwesome name="bars" size={24} color="#2f855a" />
+          <FontAwesome name="bars" size={28} color="#2f855a" />
         </Pressable>
 
         <View
@@ -126,257 +184,290 @@ const App: React.FC = () => {
               showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}
             >
-              <View style={dynamicStyles.tabButtonsRow}>
-                <TouchableOpacity
-                  style={[
-                    dynamicStyles.tabButton,
-                    activeCard === "profile"
-                      ? dynamicStyles.tabButtonActive
-                      : null,
-                  ]}
-                  onPress={() => setActiveCard("profile")}
-                >
-                  <Text style={dynamicStyles.tabButtonText}>Profile Stats</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[
-                    dynamicStyles.tabButton,
-                    activeCard === "history"
-                      ? dynamicStyles.tabButtonActive
-                      : null,
-                  ]}
-                  onPress={() => setActiveCard("history")}
-                >
-                  <Text style={dynamicStyles.tabButtonText}>History</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[
-                    dynamicStyles.tabButton,
-                    activeCard === "friends"
-                      ? dynamicStyles.tabButtonActive
-                      : null,
-                  ]}
-                  onPress={() => setActiveCard("friends")}
-                >
-                  <Text style={dynamicStyles.tabButtonText}>Friends</Text>
-                </TouchableOpacity>
+              {/* Folder Tabs */}
+              <View
+                style={{
+                  width: "100%",
+                  alignItems: "center",
+                  marginBottom: 0,
+                  position: "relative",
+                  zIndex: 10,
+                }}
+              >
+                <View style={folderTabStyles.tabRow}>
+                  {(
+                    [
+                      { key: "profile", label: "Stats" },
+                      { key: "history", label: "History" },
+                      { key: "friends", label: "Friends" },
+                    ] as const
+                  ).map((tab, idx) => (
+                    <TouchableOpacity
+                      key={tab.key}
+                      style={[
+                        folderTabStyles.tab,
+                        activeCard === tab.key && folderTabStyles.tabActive,
+                        idx === 0 ? { borderTopLeftRadius: 12 } : {},
+                        idx === 2 ? { borderTopRightRadius: 12 } : {},
+                        activeCard === tab.key ? { marginBottom: -4 } : {},
+                        // Connect tab to card
+                        {
+                          borderBottomLeftRadius: idx === 0 ? 0 : 0,
+                          borderBottomRightRadius: idx === 2 ? 0 : 0,
+                        },
+                        { borderBottomColor: "transparent" },
+                      ]}
+                      onPress={() =>
+                        setActiveCard(tab.key as typeof activeCard)
+                      }
+                    >
+                      <Text
+                        style={[
+                          folderTabStyles.tabText,
+                          activeCard === tab.key &&
+                            folderTabStyles.tabTextActive,
+                        ]}
+                      >
+                        {tab.label}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
               </View>
-              {activeCard === "profile" && (
-                <View style={dynamicStyles.card}>
-                  {/* Profile Card */}
-                  <View style={styles.profileSection}>
-                    <Image
-                      source={{
-                        uri: "https://i.pinimg.com/236x/36/b9/9d/36b99dd44debc8614db0c7445ac57b3b.jpg",
-                      }}
-                      style={styles.profileImg}
-                    />
-                    <Text style={styles.cardTitle}>Juanito el mas capito</Text>
-                    <Text style={styles.badgeGreen}>pro en frifayer</Text>
-                    <Text style={styles.gamerTag}>ejemplo@gmail.com</Text>
-                    <View style={styles.socialIcons}>
-                      <FontAwesome
-                        name="edit"
-                        size={24}
-                        color="#069809"
-                        style={styles.socialIcon}
-                      />
-                      <FontAwesome
-                        name="sign-out"
-                        size={24}
-                        color="#069809"
-                        style={styles.socialIcon}
-                      />
-                    </View>
-                  </View>
-                  <View style={styles.divider} />
-                  {/* Game Stats */}
-                  <View style={styles.gameStats}>
-                    <View style={styles.gameItem}>
-                      <View style={styles.gameIcon}>
-                        <FontAwesome name="flag" size={24} color="#069809" />
+              <View
+                style={{
+                  width: "100%",
+                  alignItems: "center",
+                  position: "relative",
+                  zIndex: 1,
+                }}
+              >
+                <View
+                  style={[dynamicStyles.card, { marginTop: 0, paddingTop: 32 }]}
+                >
+                  {/* Card Content */}
+                  {activeCard === "profile" && (
+                    <View style={dynamicStyles.card}>
+                      {/* Profile Card */}
+                      <View style={styles.profileSection}>
+                        <Image
+                          source={{
+                            uri: "https://i.pinimg.com/236x/36/b9/9d/36b99dd44debc8614db0c7445ac57b3b.jpg",
+                          }}
+                          style={styles.profileImg}
+                        />
+                        <Text style={styles.badgeGreen}>pro en frifayer</Text>
+                        <Text style={styles.gamerTag}>ejemplo@gmail.com</Text>
+                        <View style={styles.socialIcons}>
+                          <FontAwesome
+                            name="edit"
+                            size={24}
+                            color="#069809"
+                            style={styles.socialIcon}
+                          />
+                          <FontAwesome
+                            name="sign-out"
+                            size={24}
+                            color="#069809"
+                            style={styles.socialIcon}
+                          />
+                        </View>
                       </View>
-                      <View style={styles.gameInfo}>
-                        <Text style={styles.gameName}>Hole in one</Text>
-                        <Text style={styles.gameDetail}>
-                          Range: challenguer lol
+                      <View style={styles.divider} />
+                      {/* Game Stats */}
+                      <View style={styles.gameStats}>
+                        <View style={styles.gameItem}>
+                          <View style={styles.gameIcon}>
+                            <FontAwesome
+                              name="flag"
+                              size={24}
+                              color="#069809"
+                            />
+                          </View>
+                          <View style={styles.gameInfo}>
+                            <Text style={styles.gameName}>Hole in one</Text>
+                            <Text style={styles.gameDetail}>
+                              Range: challenguer lol
+                            </Text>
+                          </View>
+                        </View>
+                        <View style={styles.gameItem}>
+                          <View style={styles.gameIcon}>
+                            <FontAwesome
+                              name="clock-o"
+                              size={24}
+                              color="#069809"
+                            />
+                          </View>
+                          <View style={styles.gameInfo}>
+                            <Text style={styles.gameName}>Scoring time</Text>
+                            <Text style={styles.gameDetail}>Range: PLATA</Text>
+                          </View>
+                        </View>
+                        <View style={styles.gameItem}>
+                          <View style={styles.gameIcon}>
+                            <FontAwesome
+                              name="heartbeat"
+                              size={24}
+                              color="#069809"
+                            />
+                          </View>
+                          <View style={styles.gameInfo}>
+                            <Text style={styles.gameName}>
+                              Hole interrupted
+                            </Text>
+                            <Text style={styles.gameDetail}>
+                              Range: PLATINITO
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                    </View>
+                  )}
+                  {activeCard === "history" && (
+                    <View style={dynamicStyles.card}>
+                      {/* History Card */}
+                      <Text style={styles.cardTitle}>History</Text>
+                      {/* Last Game Played Section */}
+                      <View style={styles.lastGameSection}>
+                        <Text style={styles.lastGameTitle}>
+                          Last Game Played
+                        </Text>
+                        <Text style={styles.lastGameDetail}>
+                          "Golf Masters 2025"
+                        </Text>
+                        <Text style={styles.lastGameSubDetail}>
+                          Date: 2025-06-01
+                        </Text>
+                        <Text style={styles.lastGameSubDetail}>
+                          Score: 72 (-1)
+                        </Text>
+                        <Text style={styles.lastGameSubDetail}>
+                          Traps Activated: 3
+                        </Text>
+                        <Text style={styles.lastGameSubDetail}>
+                          Birdies: 5 | Pars: 10 | Bogeys: 3
                         </Text>
                       </View>
-                    </View>
-                    <View style={styles.gameItem}>
-                      <View style={styles.gameIcon}>
-                        <FontAwesome name="clock-o" size={24} color="#069809" />
+                      <Image
+                        source={{
+                          uri: "https://media.tacdn.com/media/attractions-splice-spp-674x446/07/b3/5b/3a.jpg",
+                        }}
+                        style={styles.imgTemporada}
+                      />
+                      {/* Example progress bar (static) */}
+                      <View style={styles.progressContainer}>
+                        <Text style={styles.progressLabel}>
+                          <FontAwesome name="crosshairs" size={16} /> Total
+                          hoyos anotados: 87%
+                        </Text>
+                        <View style={styles.progressBarBg}>
+                          <View
+                            style={[styles.progressBar, { width: "87%" }]}
+                          />
+                        </View>
                       </View>
-                      <View style={styles.gameInfo}>
-                        <Text style={styles.gameName}>Scoring time</Text>
-                        <Text style={styles.gameDetail}>Range: PLATA</Text>
-                      </View>
-                    </View>
-                    <View style={styles.gameItem}>
-                      <View style={styles.gameIcon}>
-                        <FontAwesome
-                          name="heartbeat"
-                          size={24}
-                          color="#069809"
-                        />
-                      </View>
-                      <View style={styles.gameInfo}>
-                        <Text style={styles.gameName}>Hole interrupted</Text>
-                        <Text style={styles.gameDetail}>Range: PLATINITO</Text>
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              )}
-              {activeCard === "history" && (
-                <View style={dynamicStyles.card}>
-                  {/* History Card */}
-                  <Text style={styles.cardTitle}>History</Text>
-                  {/* Last Game Played Section */}
-                  <View style={styles.lastGameSection}>
-                    <Text style={styles.lastGameTitle}>Last Game Played</Text>
-                    <Text style={styles.lastGameDetail}>
-                      "Golf Masters 2025"
-                    </Text>
-                    <Text style={styles.lastGameSubDetail}>
-                      Date: 2025-06-01
-                    </Text>
-                    <Text style={styles.lastGameSubDetail}>Score: 72 (-1)</Text>
-                    <Text style={styles.lastGameSubDetail}>
-                      Traps Activated: 3
-                    </Text>
-                    <Text style={styles.lastGameSubDetail}>
-                      Birdies: 5 | Pars: 10 | Bogeys: 3
-                    </Text>
-                  </View>
-                  <Image
-                    source={{
-                      uri: "https://media.tacdn.com/media/attractions-splice-spp-674x446/07/b3/5b/3a.jpg",
-                    }}
-                    style={styles.imgTemporada}
-                  />
-                  {/* Example progress bar (static) */}
-                  <View style={styles.progressContainer}>
-                    <Text style={styles.progressLabel}>
-                      <FontAwesome name="crosshairs" size={16} /> Total hoyos
-                      anotados: 87%
-                    </Text>
-                    <View style={styles.progressBarBg}>
-                      <View style={[styles.progressBar, { width: "87%" }]} />
-                    </View>
-                  </View>
-                  <View style={styles.progressContainer}>
-                    <Text style={styles.progressLabel}>
-                      <FontAwesome name="tachometer" size={16} /> Rendimiento:
-                      320%
-                    </Text>
-                    <View style={styles.progressBarBg}>
-                      <View style={[styles.progressBar, { width: "80%" }]} />
-                    </View>
-                  </View>
-                  <View style={styles.progressContainer}>
-                    <Text style={styles.progressLabel}>
-                      <FontAwesome name="users" size={16} /> Tiros por partida:
-                      95%
-                    </Text>
-                    <View style={styles.progressBarBg}>
-                      <View style={[styles.progressBar, { width: "95%" }]} />
-                    </View>
-                  </View>
-                  <View style={styles.progressContainer}>
+
+                      {/* <View style={styles.progressContainer}>
                     <Text style={styles.progressLabel}>
                       <FontAwesome name="user" size={16} /> Friends: 89%
                     </Text>
                     <View style={styles.progressBarBg}>
                       <View style={[styles.progressBar, { width: "89%" }]} />
                     </View>
-                  </View>
-                  <View style={styles.divider} />
-                  <Text style={styles.sectionTitle}>Golf Achievements</Text>
-                  <View style={styles.achievementItem}>
-                    <FontAwesome
-                      name="trophy"
-                      size={24}
-                      color="#FFD700"
-                      style={styles.achievementIcon}
-                    />
-                    <View style={styles.achievementText}>
-                      <Text style={styles.achievementTitle}>El mas mejor</Text>
-                      <Text>
-                        Primer puesto - Torneo internacional de BEYBLADE
-                      </Text>
+                  </View> */}
+                      <View style={styles.divider} />
+                      <Text style={styles.sectionTitle}>Golf Achievements</Text>
+                      <View style={styles.achievementItem}>
+                        <FontAwesome
+                          name="trophy"
+                          size={24}
+                          color="#FFD700"
+                          style={styles.achievementIcon}
+                        />
+                        <View style={styles.achievementText}>
+                          <Text style={styles.achievementTitle}>
+                            El mas mejor
+                          </Text>
+                          <Text>
+                            Primer puesto - Torneo internacional de BEYBLADE
+                          </Text>
+                        </View>
+                      </View>
+                      <View style={styles.achievementItem}>
+                        <FontAwesome
+                          name="star"
+                          size={24}
+                          color="#C0C0C0"
+                          style={styles.achievementIcon}
+                        />
+                        <View style={styles.achievementText}>
+                          <Text style={styles.achievementTitle}>
+                            MOLESTADOR DE PERSONAS
+                          </Text>
+                          <Text>ME LA PARTIEROn</Text>
+                        </View>
+                      </View>
+                      <View style={styles.achievementItem}>
+                        <FontAwesome
+                          name="trophy"
+                          size={24}
+                          color="#CD7F32"
+                          style={styles.achievementIcon}
+                        />
+                        <View style={styles.achievementText}>
+                          <Text style={styles.achievementTitle}>
+                            Holes record
+                          </Text>
+                          <Text>45 hoyos seguidos</Text>
+                        </View>
+                      </View>
                     </View>
-                  </View>
-                  <View style={styles.achievementItem}>
-                    <FontAwesome
-                      name="star"
-                      size={24}
-                      color="#C0C0C0"
-                      style={styles.achievementIcon}
-                    />
-                    <View style={styles.achievementText}>
-                      <Text style={styles.achievementTitle}>
-                        MOLESTADOR DE PERSONAS
-                      </Text>
-                      <Text>ME LA PARTIEROn</Text>
+                  )}
+                  {activeCard === "friends" && (
+                    <View style={dynamicStyles.card}>
+                      {/* Friends Card (simplified) */}
+                      <Text style={styles.cardTitle}>TABLE DE AMIGOS</Text>
+                      <View style={styles.achievementItem}>
+                        <FontAwesome
+                          name="envelope"
+                          size={24}
+                          color="#069809"
+                          style={styles.achievementIcon}
+                        />
+                        <View style={styles.achievementText}>
+                          <Text style={styles.achievementTitle}>AMIGO</Text>
+                          <Text>AMIGO</Text>
+                        </View>
+                      </View>
+                      <View style={styles.achievementItem}>
+                        <FontAwesome
+                          name="phone"
+                          size={24}
+                          color="#069809"
+                          style={styles.achievementIcon}
+                        />
+                        <View style={styles.achievementText}>
+                          <Text style={styles.achievementTitle}>AMIGO</Text>
+                          <Text>AMIGO</Text>
+                        </View>
+                      </View>
+                      <View style={styles.achievementItem}>
+                        <FontAwesome
+                          name="calendar"
+                          size={24}
+                          color="#069809"
+                          style={styles.achievementIcon}
+                        />
+                        <View style={styles.achievementText}>
+                          <Text style={styles.achievementTitle}>AMIGO</Text>
+                          <Text>AMIGO</Text>
+                        </View>
+                      </View>
                     </View>
-                  </View>
-                  <View style={styles.achievementItem}>
-                    <FontAwesome
-                      name="trophy"
-                      size={24}
-                      color="#CD7F32"
-                      style={styles.achievementIcon}
-                    />
-                    <View style={styles.achievementText}>
-                      <Text style={styles.achievementTitle}>Holes record</Text>
-                      <Text>45 hoyos seguidos</Text>
-                    </View>
-                  </View>
+                  )}
                 </View>
-              )}
-              {activeCard === "friends" && (
-                <View style={dynamicStyles.card}>
-                  {/* Friends Card (simplified) */}
-                  <Text style={styles.cardTitle}>TABLE DE AMIGOS</Text>
-                  <View style={styles.achievementItem}>
-                    <FontAwesome
-                      name="envelope"
-                      size={24}
-                      color="#069809"
-                      style={styles.achievementIcon}
-                    />
-                    <View style={styles.achievementText}>
-                      <Text style={styles.achievementTitle}>AMIGO</Text>
-                      <Text>AMIGO</Text>
-                    </View>
-                  </View>
-                  <View style={styles.achievementItem}>
-                    <FontAwesome
-                      name="phone"
-                      size={24}
-                      color="#069809"
-                      style={styles.achievementIcon}
-                    />
-                    <View style={styles.achievementText}>
-                      <Text style={styles.achievementTitle}>AMIGO</Text>
-                      <Text>AMIGO</Text>
-                    </View>
-                  </View>
-                  <View style={styles.achievementItem}>
-                    <FontAwesome
-                      name="calendar"
-                      size={24}
-                      color="#069809"
-                      style={styles.achievementIcon}
-                    />
-                    <View style={styles.achievementText}>
-                      <Text style={styles.achievementTitle}>AMIGO</Text>
-                      <Text>AMIGO</Text>
-                    </View>
-                  </View>
-                </View>
-              )}
+              </View>
             </ScrollView>
           ) : (
             <ScrollView
@@ -496,23 +587,7 @@ const App: React.FC = () => {
                       <View style={[styles.progressBar, { width: "80%" }]} />
                     </View>
                   </View>
-                  <View style={styles.progressContainer}>
-                    <Text style={styles.progressLabel}>
-                      <FontAwesome name="users" size={16} /> Tiros por partida:
-                      95%
-                    </Text>
-                    <View style={styles.progressBarBg}>
-                      <View style={[styles.progressBar, { width: "95%" }]} />
-                    </View>
-                  </View>
-                  <View style={styles.progressContainer}>
-                    <Text style={styles.progressLabel}>
-                      <FontAwesome name="user" size={16} /> Friends: 89%
-                    </Text>
-                    <View style={styles.progressBarBg}>
-                      <View style={[styles.progressBar, { width: "89%" }]} />
-                    </View>
-                  </View>
+
                   <View style={styles.divider} />
                   <Text style={styles.sectionTitle}>Golf Achievements</Text>
                   <View style={styles.achievementItem}>
@@ -621,14 +696,30 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     zIndex: 0,
+    marginLeft: 25, //This right here is the key to have the maincontent not clip into the sidebar
+  },
+  sidebarAbsolute: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    zIndex: 10,
   },
   mainContentWrapper: {
     flex: 1,
     flexDirection: "column",
     zIndex: 0,
+    marginLeft: 55,
+    marginRight: 10,
   },
   hamburgerButton: {
-    margin: 15,
+    // margin: 15,
+    position: "absolute",
+    top: 30,
+    zIndex: 20,
+    borderRadius: 20,
+    padding: 6,
+    elevation: 5,
   },
   ejemplo: {
     backgroundColor: "#FFF",
