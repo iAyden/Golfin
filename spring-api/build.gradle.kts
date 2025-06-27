@@ -25,7 +25,9 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	add("developmentOnly", "org.springframework.boot:spring-boot-devtools")
 	implementation("org.springframework.security:spring-security-crypto")
-
+	implementation("jakarta.validation:jakarta.validation-api:3.0.2")
+	implementation ("org.hibernate.validator:hibernate-validator:8.0.1.Final")
+	implementation ("org.glassfish:jakarta.el:4.0.2")
 
 }
 
