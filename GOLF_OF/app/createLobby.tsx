@@ -9,8 +9,14 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useFonts } from "expo-font";
 
 export default function CreateLobbyScreen() {
+  const [fontsLoaded] = useFonts({
+    gharison: require("../assets/fonts/gharison.ttf"),
+  });
+  if (!fontsLoaded) return null;
+
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const isSmallScreen = width < 700;
@@ -36,7 +42,7 @@ export default function CreateLobbyScreen() {
       style={[styles.bg, { paddingTop: isSmallScreen ? insets.top || 24 : 0 }]}
     >
       <ImageBackground
-        source={require("../assets/images/Enhanced_BG_Video.gif")}
+        source={require("../assets/images/BG IMG GLF.png")}
         style={styles.imageBg}
         resizeMode="cover"
       >

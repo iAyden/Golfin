@@ -15,6 +15,7 @@ import {
   Alert,
   Animated,
   Easing,
+  ImageBackground,
 } from "react-native";
 
 //Importar Zod Schema para login
@@ -111,27 +112,32 @@ const GolfLogin = () => {
   const backAnimatedStyle = { transform: [{ rotateY: backInterpolate }] };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <Text style={styles.title}>🏌️ Golf Pro Login 🏌️‍♂️</Text>
+    <ImageBackground
+      source={require("@/assets/images/BG IMG GLF.png")}
+      style={styles.bg}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+          <Text style={styles.title}>🏌️ Golf Pro Login 🏌️‍♂️</Text>
 
-        <View style={styles.cardContainer}>
-          {/* PARTE DEL FRENTE DE LA CARTA LOGIN*/}
-          <Animated.View
-            style={[
-              styles.cardFace,
-              styles.cardFront,
-              frontAnimatedStyle,
-              { display: showFront ? "flex" : "none" }, //  NO LE MUEVAN POR FAVOR
-            ]}
-          >
-            <Image
-              source={require("@/assets/images/golf.png")}
-              style={styles.logo}
-            />
-            <Text style={styles.cardTitle}>Hi again</Text>
+          <View style={styles.cardContainer}>
+            {/* PARTE DEL FRENTE DE LA CARTA LOGIN*/}
+            <Animated.View
+              style={[
+                styles.cardFace,
+                styles.cardFront,
+                frontAnimatedStyle,
+                { display: showFront ? "flex" : "none" }, //  NO LE MUEVAN POR FAVOR
+              ]}
+            >
+              <Image
+                source={require("@/assets/images/golf.png")}
+                style={styles.logo}
+              />
+              <Text style={styles.cardTitle}>Hi again</Text>
 
-            {/* { <TextInput
+              {/* { <TextInput
               style={styles.input}
               placeholder="Email"
               value={email}
@@ -158,122 +164,128 @@ const GolfLogin = () => {
               </TouchableOpacity>
             </View>
              } */}
-            <Controller
-              control={control}
-              name="email"
-              render={() => (
+              <Controller
+                control={control}
+                name="email"
+                render={() => (
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Email"
+                    value={email}
+                    onChangeText={setEmail}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    placeholderTextColor="#666"
+                  ></TextInput>
+                )}
+              />
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={handleSubmit(handleLogin)}
+              >
+                <Text style={styles.buttonText}>Log in</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={flipCard} style={styles.flipButton}>
+                <Text style={styles.flipText}>Are you new? Sign up</Text>
+              </TouchableOpacity>
+            </Animated.View>
+
+            {/* PARTE DE ATRAS DE LA CARTA REGISTER */}
+            <Animated.View
+              style={[
+                styles.cardFace,
+                styles.backFace,
+                backAnimatedStyle,
+                { display: showFront ? "none" : "flex" }, // NO LE MUEVAN POR FAVOR
+              ]}
+            >
+              <Image
+                source={require("@/assets/images/register.png")}
+                style={styles.logo}
+              />
+              <Text style={styles.cardTitle}>New player</Text>
+
+              <TextInput
+                style={styles.input}
+                placeholder="Complete name"
+                value={name}
+                onChangeText={setName}
+                placeholderTextColor="#666"
+              />
+
+              <TextInput
+                style={styles.input}
+                placeholder="Email address"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                placeholderTextColor="#666"
+              />
+
+              <View style={styles.passwordContainer}>
                 <TextInput
-                  style={styles.input}
-                  placeholder="Email"
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
+                  style={[styles.input, styles.passwordInput]}
+                  placeholder="Pasword"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showConfirmPassword}
                   placeholderTextColor="#666"
-                ></TextInput>
-              )}
-            />
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={handleSubmit(handleLogin)}
-            >
-              <Text style={styles.buttonText}>Log in</Text>
-            </TouchableOpacity>
+                />
+                <TouchableOpacity
+                  style={styles.eyeIcon}
+                  onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  <Text>{showConfirmPassword ? "👁️" : "👁️‍🗨️"}</Text>
+                </TouchableOpacity>
+              </View>
 
-            <TouchableOpacity onPress={flipCard} style={styles.flipButton}>
-              <Text style={styles.flipText}>Are you new? Sign up</Text>
-            </TouchableOpacity>
-          </Animated.View>
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={[styles.input, styles.passwordInput]}
+                  placeholder="Confirm Pasword"
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  secureTextEntry={!showConfirmPassword}
+                  placeholderTextColor="#666"
+                />
+                <TouchableOpacity
+                  style={styles.eyeIcon}
+                  onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  <Text>{showConfirmPassword ? "👁️" : "👁️‍🗨️"}</Text>
+                </TouchableOpacity>
+              </View>
 
-          {/* PARTE DE ATRAS DE LA CARTA REGISTER */}
-          <Animated.View
-            style={[
-              styles.cardFace,
-              styles.backFace,
-              backAnimatedStyle,
-              { display: showFront ? "none" : "flex" }, // NO LE MUEVAN POR FAVOR
-            ]}
-          >
-            <Image
-              source={require("@/assets/images/register.png")}
-              style={styles.logo}
-            />
-            <Text style={styles.cardTitle}>New player</Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="Complete name"
-              value={name}
-              onChangeText={setName}
-              placeholderTextColor="#666"
-            />
-
-            <TextInput
-              style={styles.input}
-              placeholder="Email address"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              placeholderTextColor="#666"
-            />
-
-            <View style={styles.passwordContainer}>
-              <TextInput
-                style={[styles.input, styles.passwordInput]}
-                placeholder="Pasword"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={!showConfirmPassword}
-                placeholderTextColor="#666"
-              />
               <TouchableOpacity
-                style={styles.eyeIcon}
-                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={styles.actionButton}
+                onPress={handleRegister}
               >
-                <Text>{showConfirmPassword ? "👁️" : "👁️‍🗨️"}</Text>
+                <Text style={styles.buttonText}>Sign up</Text>
               </TouchableOpacity>
-            </View>
 
-            <View style={styles.passwordContainer}>
-              <TextInput
-                style={[styles.input, styles.passwordInput]}
-                placeholder="Confirm Pasword"
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                secureTextEntry={!showConfirmPassword}
-                placeholderTextColor="#666"
-              />
-              <TouchableOpacity
-                style={styles.eyeIcon}
-                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-              >
-                <Text>{showConfirmPassword ? "👁️" : "👁️‍🗨️"}</Text>
+              <TouchableOpacity onPress={flipCard} style={styles.flipButton}>
+                <Text style={styles.flipText}>Already registered? Sign in</Text>
               </TouchableOpacity>
-            </View>
+            </Animated.View>
+          </View>
 
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={handleRegister}
-            >
-              <Text style={styles.buttonText}>Sign up</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={flipCard} style={styles.flipButton}>
-              <Text style={styles.flipText}>Already registered? Sign in</Text>
-            </TouchableOpacity>
-          </Animated.View>
+          <Text style={styles.footer}>MICRO RATONES</Text>
         </View>
-
-        <Text style={styles.footer}>MICRO RATONES</Text>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  bg: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
   safeArea: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "transparent",
   },
   container: {
     flex: 1,

@@ -1,29 +1,23 @@
 import React from "react";
-import { View, StyleSheet, ImageBackground } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { useFonts } from "expo-font";
 import GolfLogin from "@/components/UserComponents/GolfLogin";
 
 export default function login() {
+  const [fontsLoaded] = useFonts({
+    gharison: require("../assets/fonts/gharison.ttf"),
+  });
+  if (!fontsLoaded) return null;
+
   return (
-    <ImageBackground
-      source={require("../assets/images/BG IMG GLF.png")}
-      style={styles.imageBg}
-      resizeMode="cover"
-    >
-      <View style={styles.container}>
-        <GolfLogin />
-      </View>
-    </ImageBackground>
+    <View style={styles.container}>
+      <GolfLogin />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: "#f5f5f5",
-  },
-  imageBg: {
-    flex: 1,
-    // width: "100%",
-    // height: "100%",
   },
 });

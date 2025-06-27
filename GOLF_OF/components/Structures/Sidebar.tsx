@@ -31,6 +31,7 @@ const MENU_ITEMS: MenuItem[] = [
   { id: "createLobby", title: "New Game", icon: "gamepad" },
   { id: "profileStats", title: "Profile", icon: "newspaper-o" },
   { id: "LogUser", title: "Sign Up", icon: "user" },
+  { id: "gameplay", title: "inGmaeExp", icon: "gamepad" },
 ];
 
 const Sidebar: React.FC<SidebarProps & { style?: any }> = ({
@@ -52,7 +53,7 @@ const Sidebar: React.FC<SidebarProps & { style?: any }> = ({
               style={styles.sidebarLogo}
               accessibilityLabel="Logo Eco Noticias"
             />
-            <Text style={styles.sidebarTitle}>Golfin'</Text>
+            <Text style={styles.sidebarTitle}>golfin'</Text>
           </View>
 
           {/* AQUI ESTAN LOS ITEMS DE LOS MENUS*/}
@@ -112,6 +113,7 @@ const styles = StyleSheet.create({
     color: "#c6f6d5",
     fontSize: 22,
     fontWeight: "bold",
+    fontFamily: "gharison",
   },
   sidebarButton: {
     flexDirection: "row",
