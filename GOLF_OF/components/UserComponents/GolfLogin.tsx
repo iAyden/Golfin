@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import * as AuthSession from 'expo-auth-session';
 
+import * as WebBrowser from 'expo-web-browser';
 //Importar función para autentificar token
 import { checkAuthToken } from '@/utils/auth';
 
@@ -74,26 +75,41 @@ const GolfLogin = () => {
     clientId: "467124897071-etfu4to0fh6i2rcpgvol7f15m5cdnthj.apps.googleusercontent.com",
     scopes: ['openid','email','profile'],
     responseType: 'id_token',
-    redirectUri: AuthSession.makeRedirectUri(),
+    redirectUri: "http://127.0.0.1:8080/auth-redirect.html",
   });
   
+  useEffect(() => {
+    const listener = async (event: MessageEvent) => {
+      const { id_token } = event.data || {};
+      console.log("id_token"+id_token)
+      if (id_token) {
+        console.log("Token recibido:", id_token);
+        try {
+          const response = await fetch("http://127.0.0.1:8080/auth/google", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id_token }),
+          });
+  
+          const data = await response.json();
+          if (data.token) {
+            saveToken(data.token); // Guarda tu JWT
+            window.location.href = "/profileStats"; // O como se llame tu página de perfil
+          } else {
+            console.error("No se recibió token del backend.");
+          }
+        } catch (err) {
+          console.error("Error al autenticar con el backend:", err);
+        }
+      }
+    };
+  
+    window.addEventListener("message", listener);
+    return () => window.removeEventListener("message", listener);
+  }, []);
   const handleGoogleLogin = async () => {
-    const result = await promptAsync();
-    console.log(result)
-    if(result?.type === 'success'){
-      const idToken = result.authentication?.idToken;
-    try{
-      const backendresponse = await fetch("http://127.0.0.1:8080/auth/google", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({ id_token: idToken}),
-    });
-    
+    await promptAsync();
   }
-  catch(error){
-    console.log(error);
-  }
-}}
 
   const handleLogin = async (formData: loginSchemaType) => {
     setErrorMsg("");

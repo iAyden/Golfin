@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Route, useRouter } from "expo-router";
-
+import { clearToken } from "@/utils/jwtStorage";
 // DEFINIMOS LOS TIPOS PARA LAS PROPS DEL COMPONENTE
 type SidebarProps = {
   isVisible: boolean;
@@ -33,7 +33,7 @@ const MENU_ITEMS: MenuItem[] = [
   { id: "LeaderBoard", title: "Ranking", icon: "trophy" },
   { id: "LogUser", title: "Sign Up", icon: "user" },
   {id: "gameplay", title: "Party", icon: "sign-out"},
-  {id: "", title: "Log Out", icon: "sign-out"},
+  {id: "__logout", title: "Log Out", icon: "sign-out"},
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -65,7 +65,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                 styles.sidebarButton,
                 activeMenuItem === item.id && styles.activeButton,
               ]}
-              onPress={() => {
+              onPress={async () => {
+                if(item.id === '__logout'){
+                  await clearToken();
+                  router.replace("/");
+                  return;
+                }
                 onMenuItemPress(item.id);
                 router.push(item.id as Route);
               }}
