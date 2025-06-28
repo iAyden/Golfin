@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.golfin.backend.dto.LoginRequest;
 import com.golfin.backend.dto.LoginResponse;
 import com.golfin.backend.dto.SignupDTO;
+import com.golfin.backend.dto.TokenRequest;
 import com.golfin.backend.model.User;
 import com.golfin.backend.repository.UserRepository;
 import com.golfin.backend.security.JwtUtil;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+
+
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/auth")
@@ -42,6 +45,7 @@ public class AuthController {
                 System.out.println("Falló el jwt");
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error","No se pudo generar el jwt"));
             }
+            System.out.println("JWT: "+jwt);
             LoginResponse loginResponse = new LoginResponse(userData.getUsername(), userData.getEmail(), jwt);
             return ResponseEntity.ok(loginResponse);
             }
@@ -71,10 +75,25 @@ public class AuthController {
 
     @PostMapping("/google")
     public ResponseEntity<?> googleLogin(@RequestBody Map<String, String> body){
-        String idTokeString = body.get("id:token");
-        if(idTokeString == null || idTokeString.isEmpty()){
+        String idTokenString = body.get("id:token");
+        if(idTokenString == null || idTokenString.isEmpty()){
             return ResponseEntity.badRequest().body(Map.of("error","id_token es requerido"));
         }
         return ResponseEntity.ok(null);
+    }
+
+    @PostMapping("/validate")
+    public ResponseEntity<?> jwtValidate(@RequestBody TokenRequest tokenRequest){
+        String token = tokenRequest.getToken();
+            try{
+            boolean isValid = jwtUtil.validateToken(token);
+            if(isValid){
+                return ResponseEntity.ok("token valido");
+            }else{
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error","token invalido"));
+            }
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "error bad request desde jwtValidate"));
+        }
     }
 }
