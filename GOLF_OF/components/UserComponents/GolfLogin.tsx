@@ -75,38 +75,30 @@ const GolfLogin = () => {
     clientId: "467124897071-etfu4to0fh6i2rcpgvol7f15m5cdnthj.apps.googleusercontent.com",
     scopes: ['openid','email','profile'],
     responseType: 'id_token',
-    redirectUri: "http://127.0.0.1:8080/auth-redirect.html",
+    redirectUri: "http://localhost:8080/google-popup.html",
   });
   
   useEffect(() => {
-    const listener = async (event: MessageEvent) => {
-      const { id_token } = event.data || {};
-      console.log("id_token"+id_token)
+    if (response?.type === "success") {
+      const id_token = response.params?.id_token;
       if (id_token) {
         console.log("Token recibido:", id_token);
-        try {
-          const response = await fetch("http://127.0.0.1:8080/auth/google", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id_token }),
-          });
-  
-          const data = await response.json();
-          if (data.token) {
-            saveToken(data.token); // Guarda tu JWT
-            window.location.href = "/profileStats"; // O como se llame tu página de perfil
-          } else {
-            console.error("No se recibió token del backend.");
-          }
-        } catch (err) {
-          console.error("Error al autenticar con el backend:", err);
-        }
+        fetch("http://127.0.0.1:8080/auth/google", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id_token }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.token) {
+              saveToken(data.token);
+              window.location.href = "/profileStats";
+            }
+          })
+          .catch((err) => console.error("Error backend:", err));
       }
-    };
-  
-    window.addEventListener("message", listener);
-    return () => window.removeEventListener("message", listener);
-  }, []);
+    }
+  }, [response]);
   const handleGoogleLogin = async () => {
     await promptAsync();
   }
@@ -119,8 +111,8 @@ const GolfLogin = () => {
       console.log("error email y password no encontrados")
       return;
     }
-    Alert.alert("Bienvenido amigo {$email}")
     try{
+    Alert.alert("Bienvenido amigo {$email}")
       const response = await fetch("http://127.0.0.1:8080/auth/login",{
       method: 'POST',
       headers: {'Content-Type': 'application/json'},

@@ -76,6 +76,7 @@ public class AuthController {
     @PostMapping("/google")
     public ResponseEntity<?> googleLogin(@RequestBody Map<String, String> body){
         String idTokenString = body.get("id:token");
+        System.out.println(idTokenString);
         if(idTokenString == null || idTokenString.isEmpty()){
             return ResponseEntity.badRequest().body(Map.of("error","id_token es requerido"));
         }

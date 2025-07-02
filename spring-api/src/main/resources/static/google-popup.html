@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Autenticando...</title>
+  </head>
+  <body>
+    <p>Autenticando con Google...</p>
+<script>
+  const params = new URLSearchParams(window.location.hash.substring(1));
+  const id_token = params.get("id_token");
+  if (id_token && window.opener) {
+    window.opener.postMessage({ id_token }, "*");
+    window.close();
+  }
+</script>
+
+  </body>
+</html>
