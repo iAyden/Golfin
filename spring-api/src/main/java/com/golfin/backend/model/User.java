@@ -11,7 +11,12 @@ public class User {
     private String username;
     private String email;
     private String password;
+    private String photoUrl;       // de Google
 
+    private String googleSub;      // ID único de Google (sub)
+    private String authProvider;   // "LOCAL" o "GOOGLE"
+
+    private String role = "USER";
     public User() {}
 
     public User(String username, String email, String password) {
@@ -41,9 +46,14 @@ public class User {
     public void setPassword(String password) {
        System.out.println("Hola desde set pswd en modelo de usuario");
         this.password = password;
-        
-        
-        
-      
     } 
+
+    public String getphotoURL() {return photoUrl;}
+    public void setphotoURL(String photoURL) {this.photoUrl =photoURL;}
+
+    public String getgoogleSub() {return googleSub;}
+    public void setgoogleSub(String googleSub) {this.googleSub = googleSub;}
+
+    public String getauthProvider() {return authProvider;}
+    public void setauthProvider(String authProvider) {this.authProvider = authProvider;}
 }
