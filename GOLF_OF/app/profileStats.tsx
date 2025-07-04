@@ -16,8 +16,9 @@ import { FontAwesome } from "@expo/vector-icons";
 import Sidebar from "@/components/Structures/Sidebar";
 // import { Text } from '@/components/Themed';
 import ImagenSinFondo from "@/components/VisualComponents/ImagenSinFondo";
-
+import { checkAuthToken } from '@/utils/auth';
 const App: React.FC = () => {
+  const [isCheckingAuth, setisCheckingAuth] = useState(true);
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [activeMenu, setActiveMenu] = useState("home");
   const sidebarWidth = useRef(new Animated.Value(250)).current;
@@ -26,6 +27,22 @@ const App: React.FC = () => {
   const [activeCard, setActiveCard] = useState<
     "profile" | "history" | "friends"
   >("profile");
+
+    useEffect(()=>{
+    console.log("use efect")
+    const verifyToken = async () => {
+      const isLoggedIn = await checkAuthToken();
+      console.log("isloggedin "+isLoggedIn);
+      if(!isLoggedIn){
+        console.log("usuario no logeado")
+        window.location.href = "/LogUser";     
+      }
+      else{
+        setisCheckingAuth(false);
+      }
+    };
+    verifyToken();
+  }, []);
 
   useEffect(() => {
     Animated.timing(sidebarWidth, {
@@ -83,7 +100,9 @@ const App: React.FC = () => {
       fontSize: width < 400 ? 13 : 16,
     },
   });
-
+  if(isCheckingAuth){
+    return null;
+  }
   return (
     <ImageBackground
       source={require("../assets/images/BG IMG GLF.png")}

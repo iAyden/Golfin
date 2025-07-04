@@ -35,6 +35,7 @@ import { loginSchema, loginSchemaType } from '../../schemas/AuthSchemas';
 import { signupSchema, signupSchemaType } from '../../schemas/AuthSchemas';
 
 const GolfLogin = () => {
+  const [isCheckingAuth, setisCheckingAuth] = useState(true);
   const [showFront, setShowFront] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -50,11 +51,14 @@ const GolfLogin = () => {
       if(isLoggedIn){
         console.log("usuario logeado")
         window.location.href = "/profileStats";     
+      }else{
+        setisCheckingAuth(false);
       }
     };
     verifyToken();
   }, []);
-  
+
+ 
   const {
     control: loginControl,
     handleSubmit: handleLoginSubmit,
@@ -80,6 +84,7 @@ const GolfLogin = () => {
   
   useEffect(() => {
     if (response?.type === "success") {
+      console.log("succes")
       const id_token = response.params?.id_token;
       if (id_token) {
         console.log("Token recibido:", id_token);
@@ -201,6 +206,10 @@ const GolfLogin = () => {
   const frontAnimatedStyle = { transform: [{ rotateY: frontInterpolate }] };
   const backAnimatedStyle = { transform: [{ rotateY: backInterpolate }] };
 
+  if(isCheckingAuth){
+    return null
+  }
+  
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>

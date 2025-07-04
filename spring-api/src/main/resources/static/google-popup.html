@@ -8,6 +8,7 @@
 <script>
   const params = new URLSearchParams(window.location.hash.substring(1));
   const id_token = params.get("id_token");
+  console.log("llegue al google-popup");
   if (id_token && window.opener) {
     window.opener.postMessage({ id_token }, "*");
     window.close();

@@ -12,13 +12,16 @@ import { FontAwesome } from "@expo/vector-icons";
 import Sidebar from "@/components/Structures/Sidebar";
 // import { Text } from '@/components/Themed';
 import ImagenSinFondo from "@/components/VisualComponents/ImagenSinFondo";
+import { checkAuthToken } from "@/utils/auth";
 
 const App: React.FC = () => {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [activeMenu, setActiveMenu] = useState("home");
   const sidebarWidth = useRef(new Animated.Value(250)).current;
-
+ 
   useEffect(() => {
+
+
     Animated.timing(sidebarWidth, {
       toValue: sidebarVisible ? 250 : 0,
       duration: 300,
@@ -30,7 +33,6 @@ const App: React.FC = () => {
   const handleMenuPress = (menuItem: string) => {
     setActiveMenu(menuItem);
   };
-
   return (
     <ImageBackground
       source={require("../assets/images/BG IMG GLF.png")}

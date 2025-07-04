@@ -75,17 +75,17 @@ public class AuthController {
     }
 
     @PostMapping("/google")
-public ResponseEntity<?> googleLogin(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> googleLogin(@RequestBody Map<String, String> body) {
     String idTokenString = body.get("id_token"); // usa el nombre correcto
-    if (idTokenString == null || idTokenString.isEmpty()) {
-        return ResponseEntity.badRequest().body(Map.of("error", "id_token es requerido"));
-    }
+        if (idTokenString == null || idTokenString.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "id_token es requerido"));
+        }
 
-    try {
-        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
-                GoogleNetHttpTransport.newTrustedTransport(),
-                JacksonFactory.getDefaultInstance()
-        )
+        try {
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+                    GoogleNetHttpTransport.newTrustedTransport(),
+                    JacksonFactory.getDefaultInstance()
+            )
         .setAudience(Collections.singletonList("467124897071-etfu4to0fh6i2rcpgvol7f15m5cdnthj.apps.googleusercontent.com"))
         .build();
 
@@ -102,7 +102,6 @@ public ResponseEntity<?> googleLogin(@RequestBody Map<String, String> body) {
 
         User user = userRepository.findByGoogleSub(googleSub);
         if (user == null) {
-            // intenta buscar por email para evitar duplicados
             user = userRepository.findByEmail(email);
             if (user == null) {
                 user = new User();

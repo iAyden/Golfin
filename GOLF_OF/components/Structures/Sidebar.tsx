@@ -1,4 +1,5 @@
 import React from "react";
+import { useEffect, useState } from "react";
 import {
   Animated,
   StyleSheet,
@@ -10,6 +11,7 @@ import {
 import { FontAwesome } from "@expo/vector-icons";
 import { Route, useRouter } from "expo-router";
 import { clearToken } from "@/utils/jwtStorage";
+import { checkAuthToken } from "@/utils/auth";
 // DEFINIMOS LOS TIPOS PARA LAS PROPS DEL COMPONENTE
 type SidebarProps = {
   isVisible: boolean;
@@ -25,16 +27,8 @@ type MenuItem = {
   icon: React.ComponentProps<typeof FontAwesome>["name"];
 };
 
+
 // DATOS DEL MENU CORTO AQUI MODIFICAMOS LOS REDIRECCIONAMIENTOS
-const MENU_ITEMS: MenuItem[] = [
-  { id: "/", title: "Home", icon: "home" },
-  { id: "createLobby", title: "New Game", icon: "gamepad" },
-  { id: "profileStats", title: "Profile", icon: "newspaper-o" },
-  { id: "LeaderBoard", title: "Ranking", icon: "trophy" },
-  { id: "LogUser", title: "Sign Up", icon: "user" },
-  {id: "gameplay", title: "Party", icon: "sign-out"},
-  {id: "__logout", title: "Log Out", icon: "sign-out"},
-];
 
 const Sidebar: React.FC<SidebarProps> = ({
   isVisible,
@@ -42,7 +36,39 @@ const Sidebar: React.FC<SidebarProps> = ({
   onMenuItemPress,
   activeMenuItem,
 }) => {
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [isLoggedIn, setisLoggedIn] = useState<boolean>(false);
   const router = useRouter(); // EL MALDITO COMPONENTE NUNCA ELIMINAR
+  useEffect(()=>{
+    console.log("use efect")
+    const verifyToken = async () => {
+      const isLogged = await checkAuthToken();
+      if(isLogged){
+        setisLoggedIn(true)
+      }
+    };
+    verifyToken();
+    
+    
+   
+  }, []);
+  useEffect(()=>{
+    const MENU_ITEMS: MenuItem[] = [
+
+      { id: "/", title: "Home", icon: "home" },
+      { id: "LeaderBoard", title: "Ranking", icon: "trophy" },
+
+      { id: "createLobby", title: "New Game", icon: "gamepad" },
+      {id: "gameplay", title: "Party", icon: "sign-out"},];
+      if(isLoggedIn){
+      MENU_ITEMS.push({ id: "profileStats", title: "Profile", icon: "newspaper-o" },
+    
+      {id: "__logout", title: "Log Out", icon: "sign-out"},)
+      }else{
+      MENU_ITEMS.push({ id: "LogUser", title: "Sign Up", icon: "user" })
+      }
+      setMenuItems(MENU_ITEMS);
+  },[isLoggedIn]);  
   return (
     <Animated.View style={[styles.sidebar, { width }]}>
       {isVisible && (
@@ -58,7 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           </View>
 
           {/* AQUI ESTAN LOS ITEMS DE LOS MENUS*/}
-          {MENU_ITEMS.map((item) => (
+          {menuItems.map((item) => (
             <TouchableOpacity
               key={item.id}
               style={[
