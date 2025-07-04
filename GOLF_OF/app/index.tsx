@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   },
   hamburgerButton: {
     position: "absolute",
-    top: 30,
+    top: 30,  
     zIndex: 20,
     borderRadius: 20,
     padding: 6,
