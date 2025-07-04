@@ -53,21 +53,18 @@ const cardData: CardType[] = [
 ];
 
 const App: React.FC = () => {
-  // Load gharison font globally
+
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [activeMenu, setActiveMenu] = useState("home");
+  const [layoutMode, setLayoutMode] = useState< "grid" | "linear" | "horizontal">("linear"); // Default to linear
+  const sidebarWidth = useRef(new Animated.Value(250)).current;
+  const { width: screenWidth } = useWindowDimensions();
+  const navigation = useNavigation();
+
   const [fontsLoaded] = useFonts({
     gharison: require("../assets/fonts/gharison.ttf"),
     // Add other fonts if needed
   });
-  if (!fontsLoaded) return null;
-
-  const [sidebarVisible, setSidebarVisible] = useState(true);
-  const [activeMenu, setActiveMenu] = useState("home");
-  const [layoutMode, setLayoutMode] = useState<
-    "grid" | "linear" | "horizontal"
-  >("linear"); // Default to linear
-  const sidebarWidth = useRef(new Animated.Value(250)).current;
-  const { width: screenWidth } = useWindowDimensions();
-  const navigation = useNavigation();
 
   useEffect(() => {
     Animated.timing(sidebarWidth, {
@@ -81,6 +78,8 @@ const App: React.FC = () => {
   const handleMenuPress = (menuItem: string) => {
     setActiveMenu(menuItem);
   };
+
+    if (!fontsLoaded) return null;  
 
   // Layout logic
   const isTablet = screenWidth >= 800;

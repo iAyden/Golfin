@@ -1,58 +1,177 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState} from "react";
 import {
   StyleSheet,
   View,
   Text,
   TextInput,
-  TouchableOpacity,
+  Pressable,
+  Animated,
   ImageBackground,
   useWindowDimensions,
+  Alert
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 
 export default function CreateLobbyScreen() {
-  const [fontsLoaded] = useFonts({
-    gharison: require("../assets/fonts/gharison.ttf"),
-  });
-  if (!fontsLoaded) return null;
-
+  const [fontsLoaded] = useFonts({ gharison: require("../assets/fonts/gharison.ttf"), });
+  
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const isSmallScreen = width < 700;
   const hasAccount = true;
   const [lobbyCode, setLobbyCode] = useState("");
   const [error, setError] = useState("");
+  const [messages, setMessages] = useState<string[]>([]);
+  const [userName, setUserName] = useState("");
+  const [isReady, setIsReady] = useState(false);
+
+
+  const joinScale = useRef(new Animated.Value(1)).current;
+  const createScale = useRef(new Animated.Value(1)).current;
+
+  console.log("isReady =", isReady);  
+  const onJoinPressIn = () => {
+    Animated.spring(joinScale, {
+      toValue: 0.95,
+      useNativeDriver: true,
+    }).start();
+  };
+  const onJoinPressOut = () => {
+    Animated.spring(joinScale, {
+      toValue: 1,
+      friction: 3,
+      tension: 40,
+      useNativeDriver: true,
+    }).start();
+  };
+
+
+  const onCreatePressIn = () => {
+    Animated.spring(createScale, {
+      toValue: 0.95,
+      useNativeDriver: true,
+    }).start();
+  };
+  const onCreatePressOut = () => {
+    Animated.spring(createScale, {
+      toValue: 1,
+      friction: 3,
+      tension: 40,
+      useNativeDriver: true,
+    }).start();
+  };
+
+    
+  const ws = useRef<WebSocket | null>(null);
+
+  useEffect(() => {
+    ws.current = new WebSocket("ws://192.168.0.15:8080/game");
+
+    ws.current.onopen = () => {
+      console.log("EL WEBSOCKET ESTA CONECTADO");
+      setIsReady(true);
+    };
+
+    ws.current.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log("Received:", data);
+        if (data.payload) {
+          setMessages((prev) => [...prev, JSON.stringify(data.payload)]);
+        }
+      } catch (err) {
+        console.error("Error parseando mensaje:", err);
+      }
+    };
+
+    ws.current.onerror = (err) => {
+      console.error("Error WebSocket:", err);
+      setIsReady(false);
+    };
+
+    ws.current.onclose = () => {
+      console.log("WebSocket cerrado");
+      setIsReady(false);
+    };
+
+    return () => {
+      ws.current?.close();
+      setIsReady(false);
+    };
+  }, []);
+
+  const sendMessage = (data: object) => {
+    if (ws.current?.readyState === WebSocket.OPEN) {
+      ws.current.send(JSON.stringify(data));
+    } else {
+      Alert.alert("Error", "WebSocket no estabierto");
+    }
+  };
 
   const handleJoin = () => {
     if (!lobbyCode.trim()) {
-      setError("Please enter a lobby code.");
+      setError("POR FAVOR INGREESE EL CODIGO");
+      return;
+    }
+    if (!userName.trim()) {
+      setError("POR FAVOR INGREESE SU NOMBRE");
       return;
     }
     setError("");
-    alert(`Entering lobby: ${lobbyCode}`);
+
+    const data = {
+      type: "joinParty",
+      payload: { userName, code: lobbyCode.toUpperCase() },
+    };
+
+    sendMessage(data);
+    Alert.alert("Éxito", `me uni con el codigo:  ${lobbyCode.toUpperCase()}`);
   };
 
   const handleCreate = () => {
-    alert("Creating party...");
+    if (!userName.trim()) {
+      setError("POR FAVOR INGREESE SU NOMBRE");
+      return;
+    }
+    setError("");
+
+    const data = {
+      type: "createParty",
+      payload: { userName },
+    };
+
+    sendMessage(data);
+    Alert.alert("Éxito", "partida hehca");
   };
 
-  return (
-    <View
-      style={[styles.bg, { paddingTop: isSmallScreen ? insets.top || 24 : 0 }]}
-    >
+
+   return (
+    <View style={[styles.bg, { paddingTop: isSmallScreen ? insets.top || 24 : 0 }]}>
       <ImageBackground
         source={require("../assets/images/BG IMG GLF.png")}
         style={styles.imageBg}
         resizeMode="cover"
       >
-        <View style={styles.overlay} pointerEvents="none" />
-        <View style={styles.cardContainer} pointerEvents="box-none">
+        <View style={styles.overlay} />
+        <View style={styles.cardContainer}>
           <View style={styles.card}>
             <Text style={styles.title}>Golfin' Lobby</Text>
             <Text style={styles.subtitle}>Join or create a party!</Text>
+
+            {/* Inputs y botón Join */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Join Party!</Text>
+
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your name"
+                placeholderTextColor="#888"
+                value={userName}
+                onChangeText={setUserName}
+                maxLength={20}
+                autoCapitalize="words"
+              />
               <TextInput
                 style={styles.input}
                 placeholder="Enter code"
@@ -62,25 +181,35 @@ export default function CreateLobbyScreen() {
                 maxLength={8}
                 autoCapitalize="characters"
               />
+
               {error ? <Text style={styles.error}>{error}</Text> : null}
-              <TouchableOpacity style={styles.joinBtn} onPress={handleJoin}>
-                <Text style={styles.btnText}>Join</Text>
-              </TouchableOpacity>
+
+              <Pressable
+                onPress={handleJoin}
+                onPressIn={() => Animated.spring(joinScale, { toValue: 0.95, useNativeDriver: true }).start()}
+                onPressOut={() => Animated.spring(joinScale, { toValue: 1, friction: 3, tension: 40, useNativeDriver: true }).start()}
+                disabled={!true}
+              >
+                <Animated.View style={[styles.joinBtn, { transform: [{ scale: joinScale }] }, !isReady && { opacity: 0.5 }]}>
+                  <Text style={styles.btnText}>Join</Text>
+                </Animated.View>
+              </Pressable>
             </View>
-            {hasAccount && (
-              <>
-                <View style={styles.sectionDivider} />
-                <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>Don't have a code?</Text>
-                  <TouchableOpacity
-                    style={styles.createBtn}
-                    onPress={handleCreate}
-                  >
-                    <Text style={styles.btnText}>Create party</Text>
-                  </TouchableOpacity>
-                </View>
-              </>
-            )}
+
+            {/* Sección Create */}
+            <View style={styles.sectionDivider} />
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Don't have a code?</Text>
+              <Pressable
+                onPress={handleCreate}
+                onPressIn={() => Animated.spring(createScale, { toValue: 0.95, useNativeDriver: true }).start()}
+                onPressOut={() => Animated.spring(createScale, { toValue: 1, friction: 3, tension: 40, useNativeDriver: true }).start()}
+              >
+                <Animated.View style={[styles.createBtn, { transform: [{ scale: createScale }] }]}>
+                  <Text style={styles.btnText}>Create party</Text>
+                </Animated.View>
+              </Pressable>
+            </View>
           </View>
         </View>
       </ImageBackground>
@@ -203,7 +332,6 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    // backgroundColor: "rgba(0, 0, 0, 0.16)",x
     zIndex: 1,
   },
 });

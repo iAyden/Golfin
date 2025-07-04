@@ -238,10 +238,11 @@ body {
 >>>>>>> b9998c4 (More updates in Frontend)
 =======
     width: 60vh;
->>>>>>> f70239c (Frontend updates)
+    max-width: 100%;
     height: auto;
     object-fit: cover;
     border-radius: 12px;
+    transition: width 0.3s, max-width 0.3s, height 0.3s;
 }
 
 .textRight {
@@ -317,6 +318,41 @@ body {
     }
 
     .textRight {
+        margin: 0;
+        text-align: center;
+        align-items: center;
+    }
+
+    .golf-images img {
+        width: 110px;
+        height: 70px;
+        max-width: 90vw;
+    }
+
+    .golf-images img.shrink {
+        width: 60px !important;
+        height: 40px !important;
+        max-width: 60vw !important;
+    }
+
+    .contentPhase3 .grid_wrapper {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+    }
+
+    .contentPhase3 .golf-images {
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 5rem;
+    }
+
+    .contentPhase3 .golf-images img {
+        width: 110px;
+        height: 70px;
+        max-width: 90vw;
+    }
+
+    .contentPhase3 .textLeft {
         margin: 0;
         text-align: center;
         align-items: center;
@@ -882,22 +918,37 @@ a:hover {
     .golf-images img {
         width: 110px;
         height: 70px;
+        max-width: 90vw;
     }
 
     .textRight {
         margin-left: 0;
         text-align: center;
     }
+
+    .contentPhase3 .grid_wrapper {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+    }
+
+    .contentPhase3 .golf-images {
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 5rem;
+    }
+
+    .contentPhase3 .golf-images img {
+        width: 110px;
+        height: 70px;
+        max-width: 90vw;
+    }
+
+    .contentPhase3 .textLeft {
+        margin: 0;
+        text-align: center;
+        align-items: center;
+    }
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-/* FIN DE LA SECCION DE ESTILOS DEL LOG IN Y SIGN IN*/
-=======
-/* FIN DE LA SECCION DE ESTILOS DEL LOG IN Y SIGN IN*/
-
-/* --------Content 2nd phase------------------------------------------------ */
->>>>>>> b9998c4 (More updates in Frontend)
-=======
 /* FIN DE LA SECCION DE ESTILOS DEL LOG IN Y SIGN IN*/
 >>>>>>> f70239c (Frontend updates)

@@ -77,7 +77,11 @@ func main() {
 	http.HandleFunc("/playerScored", playerScored)
 	http.Handle("/", http.FileServer(http.Dir("static")))
 
-	http.ListenAndServe(":8080", nil)
+	fmt.Println("Starting server on :8080")
+	errorPrueba := http.ListenAndServe(":8080", nil)
+	if errorPrueba != nil {
+		fmt.Println("Error starting server:", errorPrueba)
+	}
 }
 
 func playerScored(w http.ResponseWriter, r *http.Request) {
