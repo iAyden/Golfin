@@ -29,12 +29,24 @@ type MenuItem = {
 
 
 // DATOS DEL MENU CORTO AQUI MODIFICAMOS LOS REDIRECCIONAMIENTOS
+<<<<<<< HEAD
+=======
+const MENU_ITEMS: MenuItem[] = [
+  { id: "/", title: "Home", icon: "home" },
+  { id: "createLobby", title: "New Game", icon: "gamepad" },
+  { id: "profileStats", title: "Profile", icon: "newspaper-o" },
+  { id: "LeaderBoard", title: "Ranking", icon: "trophy" },
+  { id: "LogUser", title: "Sign Up", icon: "user" },
+  { id: "gameplay", title: "Log Out", icon: "sign-out" },
+];
+>>>>>>> origin/main
 
-const Sidebar: React.FC<SidebarProps> = ({
+const Sidebar: React.FC<SidebarProps & { style?: any }> = ({
   isVisible,
   width,
   onMenuItemPress,
   activeMenuItem,
+  style,
 }) => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [isLoggedIn, setisLoggedIn] = useState<boolean>(false);
@@ -70,7 +82,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       setMenuItems(MENU_ITEMS);
   },[isLoggedIn]);  
   return (
-    <Animated.View style={[styles.sidebar, { width }]}>
+    <Animated.View style={[styles.sidebar, style, { width }]}>
       {isVisible && (
         <>
           {/* AQUI ESTA EL ENCABEZADO DE LA SIDE BAR, HAY QUE VER EL LOGO PARA VER COMO SE PUEDE HACER */}
@@ -80,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               style={styles.sidebarLogo}
               accessibilityLabel="Logo Eco Noticias"
             />
-            <Text style={styles.sidebarTitle}>Golfin</Text>
+            <Text style={styles.sidebarTitle}>golfin'</Text>
           </View>
 
           {/* AQUI ESTAN LOS ITEMS DE LOS MENUS*/}
@@ -145,6 +157,7 @@ const styles = StyleSheet.create({
     color: "#c6f6d5",
     fontSize: 22,
     fontWeight: "bold",
+    fontFamily: "gharison",
   },
   sidebarButton: {
     flexDirection: "row",
