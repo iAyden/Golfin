@@ -1,59 +1,40 @@
 package com.golfin.backend.controller;
-
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-
-import com.golfin.backend.dto.LoginRequest;
-import com.golfin.backend.dto.LoginResponse;
-import com.golfin.backend.dto.SignupDTO;
-import com.golfin.backend.model.User;
-
-import com.golfin.backend.repository.UserRepository;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException.Unauthorized;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.golfin.backend.repository.UserRepository;
+import com.golfin.backend.security.JwtUtil;
 
-import com.golfin.backend.util.PasswordUtil;
-
-import jakarta.validation.Valid;
+import com.golfin.backend.model.User;
 
 @RestController
-
 @CrossOrigin(origins = "*")
 @RequestMapping("/users")
 public class UserController {
-
+    
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, JwtUtil jwtUtil){
         this.userRepository = userRepository;
+        this.jwtUtil = jwtUtil;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
-        System.out.println("entrando al endpoint de login con email " + loginRequest.getEmail());
-        User userData = userRepository.findByEmail(loginRequest.getEmail());
-        
-        if(userData != null && PasswordUtil.matches(loginRequest.getPassword(),userData.getPswd())){ 
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("correo o contraseñas invalidos"); }
-        LoginResponse loginResponse = new LoginResponse(userData.getName(), userData.getEmail(), "fake-jwt-token");
-        return ResponseEntity.ok(loginResponse);
-    } 
-    
-
-    @PostMapping("/signup")
-    public ResponseEntity<?> createUser(@Valid @RequestBody SignupDTO signupDTO) {
-
-        if (userRepository.existsByEmail(signupDTO.getEmail())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email ya en uso.");
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile(@RequestHeader("Authorization") String authHeader){
+        if(authHeader == null || authHeader.startsWith("Bearer") ){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Falta-token");
         }
-        User newUser = new User();
-        newUser.setEmail(signupDTO.getEmail());
-        newUser.setName(signupDTO.getUsername());
-        newUser.setPswd(PasswordUtil.hash(signupDTO.getPassword()))  ;
-        userRepository.save(newUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado con exito.");
-}
+
+        String token = authHeader.substring(7);
+        if(!jwtUtil.validateToken(token)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token invalido");
+        }
+        String email = jwtUtil.extractEmail(token);
+        User user = userRepository.findByEmail(email);
+        return ResponseEntity.ok(user);
+    }   
+
 }

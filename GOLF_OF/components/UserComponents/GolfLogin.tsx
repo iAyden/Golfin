@@ -1,7 +1,8 @@
 import { Try } from "expo-router/build/views/Try";
 import { FontAwesome } from "@expo/vector-icons";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
+import { useNavigation } from '@react-navigation/native';
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   View,
@@ -11,34 +12,62 @@ import {
   StyleSheet,
   Image,
   SafeAreaView,
-  Alert,
   Animated,
-  Easing,
-  ImageBackground,
-} from "react-native";
+  Alert,
+  Easing
+} from 'react-native';
+import * as AuthSession from 'expo-auth-session';
+
+import * as WebBrowser from 'expo-web-browser';
+//Importar función para autentificar token
+import { checkAuthToken } from '@/utils/auth';
+
+//Importar metodos para majear JWTs
+import {saveToken, getToken, clearToken } from '../../utils/jwtStorage'
+
+//Importar componente del boton de Google Singin
+import GoogleButton from '../VisualComponents/GoogleButton';
+//Google Signup
+import * as Google from 'expo-auth-session/providers/google';
 
 //Importar Zod Schema para login
 import { loginSchema, loginSchemaType } from "../../schemas/AuthSchemas";
 //Importar Zod Schema para SignUp
-import { signupSchema, signupSchemaType } from "../../schemas/AuthSchemas";
+import { signupSchema, signupSchemaType } from '../../schemas/AuthSchemas';
 
 const GolfLogin = () => {
-  // const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
-  // const [confirmPassword, setConfirmPassword] = useState('');
-  // const [name, setName] = useState('');
+  const [isCheckingAuth, setisCheckingAuth] = useState(true);
   const [showFront, setShowFront] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const flipAnimation = useRef(new Animated.Value(0)).current;
+  const [errorMsg, setErrorMsg] = useState("");
+  const navigation = useNavigation();
+
+  useEffect(()=>{
+    console.log("use efect")
+    const verifyToken = async () => {
+      const isLoggedIn = await checkAuthToken();
+      console.log("isloggedin "+isLoggedIn);
+      if(isLoggedIn){
+        console.log("usuario logeado")
+        window.location.href = "/profileStats";     
+      }else{
+        setisCheckingAuth(false);
+      }
+    };
+    verifyToken();
+  }, []);
+
+ 
   const {
     control: loginControl,
     handleSubmit: handleLoginSubmit,
     formState: { errors: loginErrors },
   } = useForm<loginSchemaType>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(loginSchema)
+    
   });
-
   const {
     control: signupControl,
     handleSubmit: handleRegisterSubmit,
@@ -47,56 +76,113 @@ const GolfLogin = () => {
     resolver: zodResolver(signupSchema),
   });
 
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    clientId: "467124897071-etfu4to0fh6i2rcpgvol7f15m5cdnthj.apps.googleusercontent.com",
+    scopes: ['openid','email','profile'],
+    responseType: 'id_token',
+    redirectUri: "http://localhost:8080/google-popup.html",
+  });
+  
+  useEffect(() => {
+    if (response?.type === "success") {
+      console.log("succes")
+      const id_token = response.params?.id_token;
+      if (id_token) {
+        console.log("Token recibido:", id_token);
+        fetch("http://127.0.0.1:8080/auth/google", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id_token }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.token) {
+              saveToken(data.token);
+              window.location.href = "/profileStats";
+            }
+          })
+          .catch((err) => console.error("Error backend:", err));
+      }
+    }
+  }, [response]);
+  const handleGoogleLogin = async () => {
+    await promptAsync();
+  }
+
   const handleLogin = async (formData: loginSchemaType) => {
-    console.log(formData.email);
-    console.log(formData.password);
-    if (!formData.email || !formData.password) {
-      console.log("error email y password no encontrados");
+    setErrorMsg("");
+    console.log(formData.email)
+    console.log(formData.password)
+    if (!formData.email || !formData.password){
+      console.log("error email y password no encontrados")
       return;
     }
-    Alert.alert("Bienvenido amigo {$email}");
-    try {
-      const response = await fetch("http://127.0.0.1:8080/users/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: formData.email,
-          pswd: formData.password,
-        }),
-      });
-    } catch (error) {
+    try{
+    Alert.alert("Bienvenido amigo {$email}")
+      const response = await fetch("http://127.0.0.1:8080/auth/login",{
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        email: formData.email,
+        password: formData.password
+      }),
+    });
+    if(!response.ok){
+      const errorBody = await response.json();
+      setErrorMsg(errorBody.error || "Error desconocido")
+      console.log(errorMsg)
+    }else{
+      //REDIRIGIR AL perfil
+      console.log("perfil")
+      const data = await response.json();
+      const token = data.token;
+      console.log("token guardado del login"+token)
+      saveToken(token);
+      if (typeof window !== "undefined" && window.location) {
+        window.location.href = "/profileStats";
+      }
+    }
+    }catch(error){
       console.log(error);
-      Alert.alert("error,", "no se pudo conectar con el servidor");
+      setErrorMsg("No se pudo conectar con el servidor")
+      Alert.alert("error,","no se pudo conectar con el servidor")
     }
   };
 
   const handleRegister = async (formData: signupSchemaType) => {
-    console.log("username" + formData.username);
-    console.log("email" + formData.email);
-    console.log("password" + formData.password);
-    console.log("confirm_password" + formData.confirm_password);
-    if (
-      !formData.username ||
-      !formData.email ||
-      !formData.password ||
-      !formData.confirm_password
-    ) {
-      console.log("error faltan datos del signup");
+    setErrorMsg("");
+    console.log("username"+formData.username)
+    console.log("email"+formData.email)     
+    console.log("password"+formData.password)
+    console.log("confirm_password"+formData.confirm_password)
+    if(! formData.username || !formData.email || !formData.password || !formData.confirm_password){
+      console.log("error faltan datos del signup")
       return;
     }
-    try {
-      const response = await fetch("http://127.0.0.1:8080/users/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+    try{
+      const response = await fetch ("http://127.0.0.1:8080/auth/signup",{
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           username: formData.username,
           email: formData.email,
           password: formData.confirm_password,
         }),
       });
-    } catch (error) {
-      console.log(error);
-      Alert.alert("error fallo signup");
+      if(!response.ok){
+      const errorBody = await response.json();
+      setErrorMsg(errorBody.error || "Error desconocido")
+      console.log(errorMsg)
+    }else{
+      //REDIRIGIR AL perfil
+      console.log("perfil")
+      const data = await response.json();
+      const token = data.token;
+      saveToken(token);
+    }
+    }catch(error){
+      console.log(error)
+      Alert.alert("error fallo signup")
     }
   };
 
@@ -110,6 +196,7 @@ const GolfLogin = () => {
     }).start(() => {
       setShowFront(!showFront);
     });
+    setErrorMsg("");
   };
 
   // DEFINIMOS EL TIPO PARA LOS ITEMS DEL MENU
@@ -135,6 +222,10 @@ const GolfLogin = () => {
   const frontAnimatedStyle = { transform: [{ rotateY: frontInterpolate }] };
   const backAnimatedStyle = { transform: [{ rotateY: backInterpolate }] };
 
+  if(isCheckingAuth){
+    return null
+  }
+  
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -155,7 +246,21 @@ const GolfLogin = () => {
               style={styles.logo}
             />
             <Text style={styles.cardTitle}>Hi again</Text>
-            <Controller
+            <Controller 
+              control = {loginControl}
+              name= "email"
+              render={({field} ) => 
+                <TextInput style={styles.input}
+                placeholder="Email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                placeholderTextColor="#666" 
+                {...field}
+                />}
+              />
+              {loginErrors.email && <Text style={{color: 'red'}}>{loginErrors.email.message}</Text>}
+              
+              <Controller
               control={loginControl}
               name="email"
               render={({ field }) => (
@@ -188,20 +293,16 @@ const GolfLogin = () => {
                     style={styles.eyeIcon}
                     onPress={() => setShowPassword(!showPassword)}
                   >
-                    <Text>{showPassword ? "👁️" : "👁️‍🗨️"}</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            />
-            {loginErrors.password && (
-              <Text style={{ color: "red" }}>
-                {loginErrors.password.message}
-              </Text>
-            )}
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={handleLoginSubmit(handleLogin)}
-            >
+                  <Text>{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
+                </TouchableOpacity>
+                </View> 
+          )} />
+            {loginErrors.password && <Text style={{color: 'red'}}>{loginErrors.password.message}</Text>}
+            {errorMsg && <Text style={{color: 'red'}}>{errorMsg}</Text>}
+           
+            <GoogleButton onPress={handleGoogleLogin} />  
+
+            <TouchableOpacity style={styles.actionButton} onPress={handleLoginSubmit(handleLogin)}> 
               <Text style={styles.buttonText}>Log in</Text>
             </TouchableOpacity>
 
@@ -281,43 +382,11 @@ const GolfLogin = () => {
                 </View>
               )}
             />
-            {signupErrors.password && (
-              <Text style={{ color: "red" }}>
-                {signupErrors.password.message}
-              </Text>
-            )}
+            {signupErrors.confirm_password && <Text style={{color:'red'}}>{signupErrors.confirm_password.message}</Text>}
+            {errorMsg && <Text style={{color: 'red'}}>{errorMsg}</Text>}
 
-            <Controller
-              control={signupControl}
-              name="confirm_password"
-              render={({ field }) => (
-                <View style={styles.passwordContainer}>
-                  <TextInput
-                    style={[styles.input, styles.passwordInput]}
-                    placeholder="Confirm Pasword"
-                    //  onChangeText={setConfirmPassword}
-                    secureTextEntry={!showConfirmPassword}
-                    placeholderTextColor="#666"
-                    {...field}
-                  />
-                  <TouchableOpacity
-                    style={styles.eyeIcon}
-                    onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    <Text>{showConfirmPassword ? "👁️" : "👁️‍🗨️"}</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            />
-            {signupErrors.confirm_password && (
-              <Text style={{ color: "red" }}>
-                {signupErrors.confirm_password.message}
-              </Text>
-            )}
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={handleRegisterSubmit(handleRegister)}
-            >
+             <GoogleButton onPress={handleGoogleLogin} text="Sign up with Google"/>  
+            <TouchableOpacity style={styles.actionButton} onPress={handleRegisterSubmit(handleRegister)}>
               <Text style={styles.buttonText}>Sign up</Text>
             </TouchableOpacity>
 
