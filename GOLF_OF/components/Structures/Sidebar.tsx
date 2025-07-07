@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
   sidebarTitle: {
     color: "#c6f6d5",
-    fontSize: 22,
+    fontSize: 52,
     fontWeight: "bold",
     fontFamily: "gharison",
   },
