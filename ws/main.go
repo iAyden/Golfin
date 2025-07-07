@@ -78,7 +78,7 @@ func main() {
 	http.HandleFunc("/playerScored", playerScored)
 	http.Handle("/", http.FileServer(http.Dir("static")))
 
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":1337", nil)
 }
 
 func playerScored(w http.ResponseWriter, r *http.Request) {
