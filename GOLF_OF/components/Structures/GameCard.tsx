@@ -276,162 +276,180 @@ const UserCard: React.FC = () => {
   const backAnimatedStyle = { transform: [{ rotateY: backInterpolate }] };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        {/* FRENTE DE LA CARTA */}
-        <Animated.View
-          style={[
-            styles.cardFace,
-            styles.cardFront,
-            frontAnimatedStyle,
-            { display: showFront ? "flex" : "none" },
-          ]}
-        >
-          <ScrollView
-            contentContainerStyle={styles.frontContent}
-            showsVerticalScrollIndicator={false}
+    <ImageBackground
+      source={require("@/assets/images/BG IMG GLF.png")}
+      style={styles.bg}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+          {/* FRENTE DE LA CARTA */}
+          <Animated.View
+            style={[
+              styles.cardFace,
+              styles.cardFront,
+              frontAnimatedStyle,
+              { display: showFront ? "flex" : "none" },
+            ]}
           >
-            <View style={styles.frontHeader}>
-              <Text style={styles.mainTitle}>Party</Text>
-              {gameStarted && (
-                <View style={styles.timeDisplayFront}>
-                  <Image source={icons.clock} style={styles.iconImageSmall} />
-                  <Text style={styles.timeTextFront}>
-                    {formatTime(seconds)}
-                  </Text>
-                </View>
-              )}
-            </View>
+            <ScrollView
+              contentContainerStyle={styles.frontContent}
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={styles.frontHeader}>
+                <Text style={styles.mainTitle}>Party</Text>
+                {gameStarted && (
+                  <View style={styles.timeDisplayFront}>
+                    <Image source={icons.clock} style={styles.iconImageSmall} />
+                    <Text style={styles.timeTextFront}>
+                      {formatTime(seconds)}
+                    </Text>
+                  </View>
+                )}
+              </View>
 
-            <View style={styles.userCardsContainer}>
-              {userCards.map((user) => (
-                <View key={user.id} style={styles.userCard}>
-                  <View style={styles.userInfoContainer}>
-                    <Image source={user.image} style={styles.userImage} />
-                    <View style={styles.userTextContainer}>
-                      <Text style={styles.userName}>{user.name}</Text>
-                      <Text style={styles.userRole}>{user.role}</Text>
+              <View style={styles.userCardsContainer}>
+                {userCards.map((user) => (
+                  <View key={user.id} style={styles.userCard}>
+                    <View style={styles.userInfoContainer}>
+                      <Image source={user.image} style={styles.userImage} />
+                      <View style={styles.userTextContainer}>
+                        <Text style={styles.userName}>{user.name}</Text>
+                        <Text style={styles.userRole}>{user.role}</Text>
+                      </View>
+                    </View>
+                    <View style={styles.pointsContainerRight}>
+                      <View style={styles.pointsRow}>
+                        <Image
+                          source={icons.scoreIcon}
+                          style={styles.iconImage}
+                        />
+                        <Text style={styles.pointsText}>{user.score}</Text>
+                      </View>
+                      <View style={styles.pointsRow}>
+                        <Image
+                          source={icons.karmaIcon}
+                          style={styles.iconImage}
+                        />
+                        <Text style={styles.pointsText}>{user.karma}</Text>
+                      </View>
                     </View>
                   </View>
-                  <View style={styles.pointsContainerRight}>
-                    <View style={styles.pointsRow}>
+                ))}
+              </View>
+              {!gameStarted ? (
+                <TouchableOpacity
+                  disabled={isDisabled}
+                  style={{
+                    backgroundColor: isDisabled ? "#95a5a6" : "#2ecc71",
+                    padding: 15,
+                    borderRadius: 25,
+                    opacity: isDisabled ? 0.6 : 1,
+                    alignSelf: "center",
+                  }}
+                  onPress={startGame}
+                >
+                  <Text style={{ color: "white", fontWeight: "bold" }}>
+                    {owner}
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity style={styles.flipButton} onPress={flipCard}>
+                  <Text style={styles.flipButtonText}>Ir a la Tienda</Text>
+                </TouchableOpacity>
+              )}
+            </ScrollView>
+          </Animated.View>
+
+          {/* TRASERO DE LA CARTA */}
+          <Animated.View
+            style={[
+              styles.cardFace,
+              styles.cardBack,
+              backAnimatedStyle,
+              { display: showFront ? "none" : "flex" },
+            ]}
+          >
+            <ScrollView
+              contentContainerStyle={styles.backContent}
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={styles.titleContainer}>
+                <Text style={styles.mainTitle}>Traps</Text>
+                <Text style={styles.subtitle}>
+                  Use an hability to get karma
+                </Text>
+              </View>
+
+              <View style={styles.showStatsContainer}>
+                <View style={styles.pointsKarmaContainer}>
+                  <View style={styles.pointsContainer}>
+                    <Text style={styles.pointsText}>
+                      <Image source={icons.clock} style={styles.iconImage} />:{" "}
+                      {formatTime(seconds)}
+                    </Text>
+                  </View>
+                  <View style={styles.badPointsContainer}>
+                    <Text style={styles.pointsText}>Round : {karma}</Text>
+                  </View>
+                </View>
+                <View style={styles.timeContainer}>
+                  <View style={styles.pointsContainer}>
+                    <Text style={styles.pointsText}>
                       <Image
                         source={icons.scoreIcon}
                         style={styles.iconImage}
                       />
-                      <Text style={styles.pointsText}>{user.score}</Text>
-                    </View>
-                    <View style={styles.pointsRow}>
+                      : {points}
+                    </Text>
+                  </View>
+                  <View style={styles.badPointsContainer}>
+                    <Text style={styles.pointsText}>
                       <Image
                         source={icons.karmaIcon}
                         style={styles.iconImage}
                       />
-                      <Text style={styles.pointsText}>{user.karma}</Text>
-                    </View>
+                      : {karma}
+                    </Text>
                   </View>
                 </View>
-              ))}
-            </View>
-            {!gameStarted ? (
+              </View>
+
+              <View style={styles.shopGrid}>
+                {shopItems.map((item) => (
+                  <TouchableOpacity
+                    key={item.id}
+                    style={[
+                      styles.shopItem,
+                      { backgroundColor: item.backgroundColor },
+                      (points < item.cost || !gameStarted) &&
+                        styles.disabledItem,
+                    ]}
+                    onPress={() => buyItem(item.id)}
+                    disabled={points < item.cost || !gameStarted}
+                  >
+                    <Image source={item.icon} style={styles.itemImage} />
+                    <Text style={styles.itemName}>{item.name}</Text>
+                    <Text style={styles.itemPrice}>{item.cost} pts</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
               <TouchableOpacity
-                disabled={isDisabled}
-                style={{
-                  backgroundColor: isDisabled ? "#95a5a6" : "#2ecc71",
-                  padding: 15,
-                  borderRadius: 25,
-                  opacity: isDisabled ? 0.6 : 1,
-                  alignSelf: "center",
-                }}
-                onPress={startGame}
+                style={[
+                  styles.flipButton,
+                  !gameStarted && styles.disabledButton,
+                ]}
+                onPress={flipCard}
+                disabled={!gameStarted}
               >
-                <Text style={{ color: "white", fontWeight: "bold" }}>
-                  {owner}
-                </Text>
+                <Text style={styles.flipButtonText}>Back to lobby</Text>
               </TouchableOpacity>
-            ) : (
-              <TouchableOpacity style={styles.flipButton} onPress={flipCard}>
-                <Text style={styles.flipButtonText}>Ir a la Tienda</Text>
-              </TouchableOpacity>
-            )}
-          </ScrollView>
-        </Animated.View>
-
-        {/* TRASERO DE LA CARTA */}
-        <Animated.View
-          style={[
-            styles.cardFace,
-            styles.cardBack,
-            backAnimatedStyle,
-            { display: showFront ? "none" : "flex" },
-          ]}
-        >
-          <ScrollView
-            contentContainerStyle={styles.backContent}
-            showsVerticalScrollIndicator={false}
-          >
-            <View style={styles.titleContainer}>
-              <Text style={styles.mainTitle}>Traps</Text>
-              <Text style={styles.subtitle}>Use an hability to get karma</Text>
-            </View>
-
-            <View style={styles.showStatsContainer}>
-              <View style={styles.pointsKarmaContainer}>
-                <View style={styles.pointsContainer}>
-                  <Text style={styles.pointsText}>
-                    <Image source={icons.clock} style={styles.iconImage} />:{" "}
-                    {formatTime(seconds)}
-                  </Text>
-                </View>
-                <View style={styles.badPointsContainer}>
-                  <Text style={styles.pointsText}>Round : {karma}</Text>
-                </View>
-              </View>
-              <View style={styles.timeContainer}>
-                <View style={styles.pointsContainer}>
-                  <Text style={styles.pointsText}>
-                    <Image source={icons.scoreIcon} style={styles.iconImage} />:{" "}
-                    {points}
-                  </Text>
-                </View>
-                <View style={styles.badPointsContainer}>
-                  <Text style={styles.pointsText}>
-                    <Image source={icons.karmaIcon} style={styles.iconImage} />:{" "}
-                    {karma}
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.shopGrid}>
-              {shopItems.map((item) => (
-                <TouchableOpacity
-                  key={item.id}
-                  style={[
-                    styles.shopItem,
-                    { backgroundColor: item.backgroundColor },
-                    (points < item.cost || !gameStarted) && styles.disabledItem,
-                  ]}
-                  onPress={() => buyItem(item.id)}
-                  disabled={points < item.cost || !gameStarted}
-                >
-                  <Image source={item.icon} style={styles.itemImage} />
-                  <Text style={styles.itemName}>{item.name}</Text>
-                  <Text style={styles.itemPrice}>{item.cost} pts</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <TouchableOpacity
-              style={[styles.flipButton, !gameStarted && styles.disabledButton]}
-              onPress={flipCard}
-              disabled={!gameStarted}
-            >
-              <Text style={styles.flipButtonText}>Back to lobby</Text>
-            </TouchableOpacity>
-          </ScrollView>
-        </Animated.View>
-      </View>
-    </SafeAreaView>
+            </ScrollView>
+          </Animated.View>
+        </View>
+      </SafeAreaView>
+    </ImageBackground>
   );
 };
 

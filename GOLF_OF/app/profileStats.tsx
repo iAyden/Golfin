@@ -15,12 +15,7 @@ import {
 import { FontAwesome } from "@expo/vector-icons";
 import Sidebar from "@/components/Structures/Sidebar";
 // import { Text } from '@/components/Themed';
-import ImagenSinFondo from "@/components/VisualComponents/ImagenSinFondo";
-<<<<<<< HEAD
-import { checkAuthToken } from '@/utils/auth';
-const App: React.FC = () => {
-  const [isCheckingAuth, setisCheckingAuth] = useState(true);
-=======
+// import ImagenSinFondo from "@/components/VisualComponents/ImagenSinFondo";
 import { useFonts } from "expo-font";
 
 const App: React.FC = () => {
@@ -30,7 +25,6 @@ const App: React.FC = () => {
   });
   if (!fontsLoaded) return null;
 
->>>>>>> origin/main
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [activeMenu, setActiveMenu] = useState("home");
   const sidebarWidth = useRef(new Animated.Value(250)).current;
@@ -40,21 +34,20 @@ const App: React.FC = () => {
     "profile" | "history" | "friends"
   >("profile");
 
-    useEffect(()=>{
-    console.log("use efect")
-    const verifyToken = async () => {
-      const isLoggedIn = await checkAuthToken();
-      console.log("isloggedin "+isLoggedIn);
-      if(!isLoggedIn){
-        console.log("usuario no logeado")
-        window.location.href = "/LogUser";     
-      }
-      else{
-        setisCheckingAuth(false);
-      }
-    };
-    verifyToken();
-  }, []);
+  // useEffect(() => {
+  //   console.log("use efect");
+  //   const verifyToken = async () => {
+  //     const isLoggedIn = await checkAuthToken();
+  //     console.log("isloggedin " + isLoggedIn);
+  //     if (!isLoggedIn) {
+  //       console.log("usuario no logeado");
+  //       window.location.href = "/LogUser";
+  //     } else {
+  //       setisCheckingAuth(false);
+  //     }
+  //   };
+  //   verifyToken();
+  // }, []);
 
   useEffect(() => {
     Animated.timing(sidebarWidth, {
@@ -113,11 +106,6 @@ const App: React.FC = () => {
       fontSize: width < 400 ? 13 : 16,
     },
   });
-<<<<<<< HEAD
-  if(isCheckingAuth){
-    return null;
-  }
-=======
 
   // Here are the freakin' "tabs" for when the screen is small
   const folderTabStyles = StyleSheet.create({
@@ -168,7 +156,6 @@ const App: React.FC = () => {
     },
   });
 
->>>>>>> origin/main
   return (
     <ImageBackground
       source={require("../assets/images/BG IMG GLF.png")}
