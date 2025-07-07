@@ -25,7 +25,7 @@ var mutex = &sync.Mutex{}
 
 type Message struct {
 	Type    string          `json:"type"`
-	Payload json.RawMessage `json:"payload"` // can decode later based on Type
+	Payload json.RawMessage `json:"payload"`
 }
 
 type UStats struct {
@@ -78,11 +78,7 @@ func main() {
 	http.HandleFunc("/playerScored", playerScored)
 	http.Handle("/", http.FileServer(http.Dir("static")))
 
-	fmt.Println("Starting server on :8080")
-	errorPrueba := http.ListenAndServe(":8080", nil)
-	if errorPrueba != nil {
-		fmt.Println("Error starting server:", errorPrueba)
-	}
+	http.ListenAndServe(":8080", nil)
 }
 
 func playerScored(w http.ResponseWriter, r *http.Request) {
@@ -133,7 +129,6 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 }
 
 func (user *User) readMessages() {
-
 	for {
 		_, rawMsg, err := user.UserConn.ReadMessage()
 		if err != nil {
@@ -153,11 +148,9 @@ func (user *User) readMessages() {
 			joinParty(user, msg)
 		case "startGame":
 			startGame(user, msg)
-
 			//nukeamos esta funcion de lectura
 			return
 		}
-
 	}
 }
 
