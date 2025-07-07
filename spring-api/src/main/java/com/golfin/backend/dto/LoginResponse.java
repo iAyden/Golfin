@@ -14,5 +14,6 @@ public class LoginResponse {
 
     public String getEmail() {return email; }
     public String getName() {return name; }
+    public String getTOKEN() {return token;}
 }
 

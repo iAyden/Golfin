@@ -15,6 +15,11 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import Sidebar from "@/components/Structures/Sidebar";
+<<<<<<< HEAD
+// import { Text } from '@/components/Themed';
+import ImagenSinFondo from "@/components/VisualComponents/ImagenSinFondo";
+import { checkAuthToken } from "@/utils/auth";
+=======
 import { useNavigation } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 
@@ -51,25 +56,29 @@ const cardData: CardType[] = [
     route: "/createLobby",
   },
 ];
+>>>>>>> origin/main
 
 const App: React.FC = () => {
-  // Load gharison font globally
+
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [activeMenu, setActiveMenu] = useState("home");
+  const [layoutMode, setLayoutMode] = useState< "grid" | "linear" | "horizontal">("linear"); // Default to linear
+  const sidebarWidth = useRef(new Animated.Value(250)).current;
+<<<<<<< HEAD
+ 
+=======
+  const { width: screenWidth } = useWindowDimensions();
+  const navigation = useNavigation();
+
   const [fontsLoaded] = useFonts({
     gharison: require("../assets/fonts/gharison.ttf"),
     // Add other fonts if needed
   });
-  if (!fontsLoaded) return null;
 
-  const [sidebarVisible, setSidebarVisible] = useState(true);
-  const [activeMenu, setActiveMenu] = useState("home");
-  const [layoutMode, setLayoutMode] = useState<
-    "grid" | "linear" | "horizontal"
-  >("linear"); // Default to linear
-  const sidebarWidth = useRef(new Animated.Value(250)).current;
-  const { width: screenWidth } = useWindowDimensions();
-  const navigation = useNavigation();
-
+>>>>>>> origin/main
   useEffect(() => {
+
+
     Animated.timing(sidebarWidth, {
       toValue: sidebarVisible ? 250 : 0,
       duration: 300,
@@ -81,6 +90,10 @@ const App: React.FC = () => {
   const handleMenuPress = (menuItem: string) => {
     setActiveMenu(menuItem);
   };
+<<<<<<< HEAD
+=======
+
+    if (!fontsLoaded) return null;  
 
   // Layout logic
   const isTablet = screenWidth >= 800;
@@ -147,6 +160,7 @@ const App: React.FC = () => {
     </Pressable>
   );
 
+>>>>>>> origin/main
   return (
     <ImageBackground
       source={require("../assets/images/BG IMG GLF.png")}

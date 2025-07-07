@@ -1,4 +1,5 @@
 import React from "react";
+import { useEffect, useState } from "react";
 import {
   Animated,
   StyleSheet,
@@ -9,7 +10,8 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Route, useRouter } from "expo-router";
-
+import { clearToken } from "@/utils/jwtStorage";
+import { checkAuthToken } from "@/utils/auth";
 // DEFINIMOS LOS TIPOS PARA LAS PROPS DEL COMPONENTE
 type SidebarProps = {
   isVisible: boolean;
@@ -42,7 +44,38 @@ const Sidebar: React.FC<SidebarProps & { style?: any }> = ({
   activeMenuItem,
   style,
 }) => {
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [isLoggedIn, setisLoggedIn] = useState<boolean>(false);
   const router = useRouter(); // EL MALDITO COMPONENTE NUNCA ELIMINAR
+  useEffect(() => {
+    console.log("use efect");
+    const verifyToken = async () => {
+      const isLogged = await checkAuthToken();
+      if (isLogged) {
+        setisLoggedIn(true);
+      }
+    };
+    verifyToken();
+  }, []);
+  useEffect(() => {
+    const MENU_ITEMS: MenuItem[] = [
+      { id: "/", title: "Home", icon: "home" },
+      { id: "LeaderBoard", title: "Ranking", icon: "trophy" },
+
+      { id: "createLobby", title: "New Game", icon: "gamepad" },
+      { id: "gameplay", title: "Party", icon: "sign-out" },
+    ];
+    if (isLoggedIn) {
+      MENU_ITEMS.push(
+        { id: "profileStats", title: "Profile", icon: "newspaper-o" },
+
+        { id: "__logout", title: "Log Out", icon: "sign-out" }
+      );
+    } else {
+      MENU_ITEMS.push({ id: "LogUser", title: "Sign Up", icon: "user" });
+    }
+    setMenuItems(MENU_ITEMS);
+  }, [isLoggedIn]);
   return (
     <Animated.View style={[styles.sidebar, style, { width }]}>
       {isVisible && (
@@ -58,14 +91,19 @@ const Sidebar: React.FC<SidebarProps & { style?: any }> = ({
           </View>
 
           {/* AQUI ESTAN LOS ITEMS DE LOS MENUS*/}
-          {MENU_ITEMS.map((item) => (
+          {menuItems.map((item) => (
             <TouchableOpacity
               key={item.id}
               style={[
                 styles.sidebarButton,
                 activeMenuItem === item.id && styles.activeButton,
               ]}
-              onPress={() => {
+              onPress={async () => {
+                if (item.id === "__logout") {
+                  await clearToken();
+                  router.replace("/");
+                  return;
+                }
                 onMenuItemPress(item.id);
                 router.push(item.id as Route);
               }}

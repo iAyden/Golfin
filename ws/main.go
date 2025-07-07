@@ -25,7 +25,7 @@ var mutex = &sync.Mutex{}
 
 type Message struct {
 	Type    string          `json:"type"`
-	Payload json.RawMessage `json:"payload"` // can decode later based on Type
+	Payload json.RawMessage `json:"payload"`
 }
 
 type UStats struct {
@@ -44,7 +44,8 @@ type User struct {
 	JoinCode string `json:"code"`
 	Finished bool   `json:"-"`
 
-	Stats UStats `json:"stats"`
+	BoughtTraps []string
+	Stats       UStats `json:"stats"`
 
 	Msg chan Message `json:"-"`
 }
@@ -77,7 +78,7 @@ func main() {
 	http.HandleFunc("/playerScored", playerScored)
 	http.Handle("/", http.FileServer(http.Dir("static")))
 
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":1337", nil)
 }
 
 func playerScored(w http.ResponseWriter, r *http.Request) {
@@ -105,7 +106,6 @@ func playerScored(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
-
 func handleConnections(w http.ResponseWriter, r *http.Request) {
 
 	ws, err := upgrader.Upgrade(w, r, nil)
@@ -113,7 +113,8 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("WebSocket upgrade failed:", err)
 		return
 	}
-
+	//necesitamos handlear de alguna manera la reconexión
+	//alguna clase de id
 	user := &User{
 		UserConn: ws,
 		Msg:      make(chan Message),
@@ -128,10 +129,12 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 }
 
 func (user *User) readMessages() {
-
 	for {
-		_, rawMsg, _ := user.UserConn.ReadMessage()
-
+		_, rawMsg, err := user.UserConn.ReadMessage()
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
 		var msg Message
 
 		json.Unmarshal(rawMsg, &msg)
@@ -145,14 +148,9 @@ func (user *User) readMessages() {
 			joinParty(user, msg)
 		case "startGame":
 			startGame(user, msg)
-			//iniciamos otra rutina de lectura de mensajes
-			//, pero ahora exclusiva para los mensajes referentes al juego
-			//creo qué no tiene mucha utilidad pero para tener más orden
-			go user.readGameMessages()
-
+			//nukeamos esta funcion de lectura
 			return
 		}
-
 	}
 }
 
@@ -235,10 +233,15 @@ func sendMessage(tp string, data map[string]interface{}, player *User) {
 
 	player.Msg <- msg
 }
-func (user *User) readGameMessages() {
+func (user *User) readGameMessages(game *Game) {
 	for {
 
-		_, rawMsg, _ := user.UserConn.ReadMessage()
+		_, rawMsg, err := user.UserConn.ReadMessage()
+
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
 
 		var msg Message
 		json.Unmarshal(rawMsg, &msg)
@@ -249,31 +252,70 @@ func (user *User) readGameMessages() {
 		json.Unmarshal(msg.Payload, &payload)
 
 		switch msg.Type {
-		case "buy":
-			trap := payload["trap"].(string)
-			karma := payload["trap"].(int)
-
-			if hasEnoughKarma(trap, karma) {
-				user.Msg <- msg
-			} else {
-				response := Message{
-					Type: "buy",
-				}
-				user.Msg <- response
-			}
-
+		case "buyTrap":
+			buyTrap(user, msg)
+		case "activateTrap":
+			activateTrap(user, msg, game)
 		}
+	}
+}
+
+func activateTrap(user *User, msg Message, game *Game) {
+	//si un jugador activó una trampa que otro tiene disponible
+	// se le desactiva al otro jugador hasta que acaba la duración de la trampa
+
+	var payload map[string]interface{}
+	json.Unmarshal(msg.Payload, &payload)
+
+	trap := payload["trap"].(string)
+	url := fmt.Sprintf("http://httpbin.org/trampa?trampa='%s'", trap)
+
+	http.Get(url)
+
+	var data = map[string]interface{}{
+		"Trap": trap,
+	}
+	var gameMembers = game.Party.Members
+
+	for i := 0; i < len(gameMembers); i++ {
+		traps := gameMembers[i].BoughtTraps
+		for j := 0; i < len(traps); i++ {
+			if traps[j] == trap {
+				sendMessage("deactivateTrap", data, user)
+			}
+		}
+	}
+}
+func buyTrap(user *User, msg Message) {
+
+	var payload map[string]interface{}
+	json.Unmarshal(msg.Payload, &payload)
+
+	trap := payload["trap"].(string)
+	if hasEnoughKarma(trap, user) {
+		user.Karma -= trapPrice[trap]
+
+		data := map[string]interface{}{
+			"Karma": user.Karma,
+		}
+
+		user.BoughtTraps = append(user.BoughtTraps, trap)
+
+		sendMessage("buyTrap", data, user)
+	} else {
+
+		data := map[string]interface{}{
+			"Karma": user.Karma,
+		}
+		sendMessage("buyTrap", data, user)
 
 	}
 }
 
 var trapPrice = make(map[string]int)
 
-func hasEnoughKarma(trap string, karma int) bool {
-	if karma >= trapPrice[trap] {
-		return true
-	}
-	return false
+func hasEnoughKarma(trap string, player *User) bool {
+	return player.Karma >= trapPrice[trap]
 }
 
 func createParty(user *User, msg Message) {
@@ -403,8 +445,12 @@ func startGame(user *User, msg Message) {
 
 	stringNum := strconv.Itoa(intnum)
 	os.WriteFile("gameSeed.txt", []byte(stringNum), 0644)
-	game.gameLoop()
 
+	go game.gameLoop()
+
+	for i := 0; i < len(party.Members); i++ {
+		party.Members[i].readGameMessages(game)
+	}
 }
 
 var done = make(chan string)
