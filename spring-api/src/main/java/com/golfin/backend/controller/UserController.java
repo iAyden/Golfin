@@ -1,39 +1,40 @@
 package com.golfin.backend.controller;
-
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.golfin.backend.repository.UserRepository;
+import com.golfin.backend.security.JwtUtil;
 
 import com.golfin.backend.model.User;
 
-import com.golfin.backend.repository.UserRepository;
-import org.springframework.web.bind.annotation.*;
-import com.golfin.backend.util.PasswordUtil;
-
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/users")
 public class UserController {
-
-    private final UserRepository userRepository;
-
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    @PostMapping("/login")
-    public User loginUser(@RequestBody User user) {
-        
-        User userData = userRepository.findByEmail(user.getEmail());
-
-        if(userData != null && PasswordUtil.matches(user.getPswd(),userData.getPswd())){ return userData; }
-        User failedUser = new User();
-        return failedUser;
-    } 
     
+    private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
-    @PostMapping("/signup")
-    public User createUser(@RequestBody User user) {
-
-        user.setPswd(PasswordUtil.hash(user.getPswd()))  ;
-
-        user.setPswd(PasswordUtil.hash(user.getPswd()))  ;
-        return userRepository.save(user);
+    public UserController(UserRepository userRepository, JwtUtil jwtUtil){
+        this.userRepository = userRepository;
+        this.jwtUtil = jwtUtil;
     }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile(@RequestHeader("Authorization") String authHeader){
+        if(authHeader == null || authHeader.startsWith("Bearer") ){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Falta-token");
+        }
+
+        String token = authHeader.substring(7);
+        if(!jwtUtil.validateToken(token)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token invalido");
+        }
+        String email = jwtUtil.extractEmail(token);
+        User user = userRepository.findByEmail(email);
+        return ResponseEntity.ok(user);
+    }   
+
 }

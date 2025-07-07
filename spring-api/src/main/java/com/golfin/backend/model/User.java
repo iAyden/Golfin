@@ -8,19 +8,22 @@ public class User {
 
     @Id
     private String id;
-    private String name;
-    private String email;
     private String username;
-    private String pswd;
+    private String email;
+    private String password;
+    private String photoUrl;       // de Google
 
+    private String googleSub;      // ID único de Google (sub)
+    private String authProvider;   // "LOCAL" o "GOOGLE"
+
+    private String role = "USER";
     public User() {}
 
-    public User(String name, String email, String username, String pswd) {
+    public User(String username, String email, String password) {
         // Agregar hasheo de la pswd 
-        this.name = name;
-        this.email = email;
         this.username = username;
-        this.pswd = pswd;
+        this.email = email;
+        this.password = password;
 
     }
 
@@ -30,8 +33,6 @@ public class User {
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
@@ -40,16 +41,19 @@ public class User {
     public String getUsername() { return this.username; }
     public void setUsername(String username ) { this.username = username; }
 
-    public String getPswd() { return this.pswd; }
+    public String getPswd() { return this.password; }
 
-    public void setPswd(String pswd) {
+    public void setPassword(String password) {
        System.out.println("Hola desde set pswd en modelo de usuario");
-        this.pswd = pswd;
-        
-        
-        
-        
+        this.password = password;
     } 
-    
 
+    public String getphotoURL() {return photoUrl;}
+    public void setphotoURL(String photoURL) {this.photoUrl =photoURL;}
+
+    public String getgoogleSub() {return googleSub;}
+    public void setgoogleSub(String googleSub) {this.googleSub = googleSub;}
+
+    public String getauthProvider() {return authProvider;}
+    public void setauthProvider(String authProvider) {this.authProvider = authProvider;}
 }
