@@ -15,11 +15,9 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import Sidebar from "@/components/Structures/Sidebar";
-<<<<<<< HEAD
 // import { Text } from '@/components/Themed';
 import ImagenSinFondo from "@/components/VisualComponents/ImagenSinFondo";
 import { checkAuthToken } from "@/utils/auth";
-=======
 import { useNavigation } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 
@@ -56,7 +54,6 @@ const cardData: CardType[] = [
     route: "/createLobby",
   },
 ];
->>>>>>> origin/main
 
 const App: React.FC = () => {
 
@@ -64,9 +61,6 @@ const App: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState("home");
   const [layoutMode, setLayoutMode] = useState< "grid" | "linear" | "horizontal">("linear"); // Default to linear
   const sidebarWidth = useRef(new Animated.Value(250)).current;
-<<<<<<< HEAD
- 
-=======
   const { width: screenWidth } = useWindowDimensions();
   const navigation = useNavigation();
 
@@ -75,7 +69,6 @@ const App: React.FC = () => {
     // Add other fonts if needed
   });
 
->>>>>>> origin/main
   useEffect(() => {
 
 
@@ -90,8 +83,6 @@ const App: React.FC = () => {
   const handleMenuPress = (menuItem: string) => {
     setActiveMenu(menuItem);
   };
-<<<<<<< HEAD
-=======
 
     if (!fontsLoaded) return null;  
 
@@ -160,7 +151,6 @@ const App: React.FC = () => {
     </Pressable>
   );
 
->>>>>>> origin/main
   return (
     <ImageBackground
       source={require("../assets/images/BG IMG GLF.png")}

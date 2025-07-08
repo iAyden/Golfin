@@ -13,14 +13,14 @@ export const checkAuthToken = async (): Promise<boolean> => {
         if(!token) return false;
         
         const res = await fetch ("http://127.0.0.1:8080/auth/validate",{
-            method: "GET",
-            headers: {Authorization: `Bearer ${token}`, 
+            method: "POST",
+            headers: {"Content-Type": "application/json",
         },
-        
+        body: JSON.stringify({ token }),
     });
     console.log("todo mandado");
-    return true;
-    
+    if(res.ok) return true;
+    return false;
     }catch(err){
         console.error("Error al verificar el token:", err);
         return false;

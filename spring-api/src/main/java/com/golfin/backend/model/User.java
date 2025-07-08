@@ -1,8 +1,11 @@
 package com.golfin.backend.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
+import com.golfin.backend.model.embedded.*;
 @Document(collection = "users")
 public class User {
 
@@ -18,6 +21,11 @@ public class User {
 
     private String role = "USER";
     public User() {}
+
+    private List<GameHistory> gameHistory = new ArrayList<>();
+    private List<Achievement> achievements = new ArrayList<>();
+    private List<String> friends = new ArrayList<>();
+    private Stats stats;
 
     public User(String username, String email, String password) {
         // Agregar hasheo de la pswd 
@@ -56,4 +64,16 @@ public class User {
 
     public String getauthProvider() {return authProvider;}
     public void setauthProvider(String authProvider) {this.authProvider = authProvider;}
+
+    public List<GameHistory> getGameHistory() { return gameHistory; }
+    public void setGameHistory(List<GameHistory> gameHistory) { this.gameHistory = gameHistory; }
+
+    public List<Achievement> getAchievements() { return achievements; }
+    public void setAchievements(List<Achievement> achievements) { this.achievements = achievements; }
+
+    public List<String> getFriends() { return friends; }
+    public void setFriends(List<String> friends) { this.friends = friends; }
+
+    public Stats getStats() { return stats; }
+    public void setStats(Stats stats) { this.stats = stats; }
 }
