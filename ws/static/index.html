@@ -16,14 +16,14 @@
 	<ul id="messages"></ul>
 
 	<script>
-		const ws = new WebSocket("ws://localhost:8080/game");
+		const ws = new WebSocket("ws://localhost:1337/game");
 
 		ws.onmessage = function(event) {
 			const messages = document.getElementById("messages");
 			const li = document.createElement("li");
 			let data = JSON.parse(event.data)
 
-			console.log(data.payload)
+			console.log(data)
 			li.textContent = JSON.stringify(data.payload) 
 			messages.appendChild(li);
 		};
