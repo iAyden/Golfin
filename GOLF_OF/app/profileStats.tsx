@@ -18,6 +18,7 @@ import Sidebar from "@/components/Structures/Sidebar";
 import { useFonts } from "expo-font";
 import { checkAuthToken } from "@/utils/auth";
 import { getProfile } from "@/utils/api";
+import FriendCard  from "../components/UserComponents/Friends/FriendCard"
 interface UserProfileDTO {
   id: string;
   username: string;
@@ -694,8 +695,13 @@ if (!fontsLoaded || isCheckingAuth){
                       style={styles.achievementIcon}
                     />
                     <View style={styles.achievementText}>
-                      <Text style={styles.achievementTitle}>AMIGO</Text>
-                      <Text>AMIGO</Text>
+                    {profileData?.friends.map((friendId) => (
+                    <FriendCard
+                      key={friendId}
+                      username={`Usuario-${friendId}`}
+                      isOnline={Math.random() < 0.5}
+                    />
+                  ))}
                     </View>
                   </View>
                   <View style={styles.achievementItem}>
