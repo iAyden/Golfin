@@ -15,17 +15,28 @@ import {
 import { FontAwesome } from "@expo/vector-icons";
 import Sidebar from "@/components/Structures/Sidebar";
 // import { Text } from '@/components/Themed';
-// import ImagenSinFondo from "@/components/VisualComponents/ImagenSinFondo";
 import { useFonts } from "expo-font";
+import { checkAuthToken } from "@/utils/auth";
+import { getProfile } from "@/utils/api";
+interface UserProfileDTO {
+  id: string;
+  username: string;
+  email: string;
+  photoUrl: string;
+  role: string;
+  gameHistory: any[];
+  achievements: any[];
+  friends: string[];
+}
 
 const App: React.FC = () => {
   // Load gharison font globally
   const [fontsLoaded] = useFonts({
     gharison: require("../assets/fonts/gharison.ttf"),
   });
-  if (!fontsLoaded) return null;
-
   const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [isCheckingAuth, setisCheckingAuth] = useState(true);
+  const [profileData, setProfileData] = useState<UserProfileDTO | null>(null);
   const [activeMenu, setActiveMenu] = useState("home");
   const sidebarWidth = useRef(new Animated.Value(250)).current;
   const { width } = useWindowDimensions();
@@ -34,20 +45,27 @@ const App: React.FC = () => {
     "profile" | "history" | "friends"
   >("profile");
 
-  // useEffect(() => {
-  //   console.log("use efect");
-  //   const verifyToken = async () => {
-  //     const isLoggedIn = await checkAuthToken();
-  //     console.log("isloggedin " + isLoggedIn);
-  //     if (!isLoggedIn) {
-  //       console.log("usuario no logeado");
-  //       window.location.href = "/LogUser";
-  //     } else {
-  //       setisCheckingAuth(false);
-  //     }
-  //   };
-  //   verifyToken();
-  // }, []);
+  useEffect(() => {
+    console.log("use efect");
+    const verifyToken = async () => {
+      const isLoggedIn = await checkAuthToken();
+      console.log("isloggedin " + isLoggedIn);
+      if (!isLoggedIn) {
+        console.log("usuario no logeado");
+        window.location.href = "/LogUser";
+      } else {
+        try {
+          const data = await getProfile();
+          console.log("data", data);
+          setProfileData(data);
+          setisCheckingAuth(false);
+        } catch (error) {
+          console.error("Error al obtener los datos del perfil", error);
+        }
+      }
+    };
+    verifyToken();
+  }, []);
 
   useEffect(() => {
     Animated.timing(sidebarWidth, {
@@ -155,6 +173,20 @@ const App: React.FC = () => {
       color: "white",
     },
   });
+  if (!fontsLoaded || isCheckingAuth) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#fff",
+        }}
+      >
+        <Text>Cargando...</Text>
+      </View>
+    );
+  }
 
   return (
     <ImageBackground
@@ -266,13 +298,20 @@ const App: React.FC = () => {
                       {/* Profile Card */}
                       <View style={styles.profileSection}>
                         <Image
-                          source={{
-                            uri: "https://i.pinimg.com/236x/36/b9/9d/36b99dd44debc8614db0c7445ac57b3b.jpg",
-                          }}
+                          source={
+                            profileData?.photoUrl?.startsWith("http")
+                              ? { uri: profileData.photoUrl }
+                              : require("../assets/images/no_pfp.jpg")
+                          }
                           style={styles.profileImg}
                         />
-                        <Text style={styles.badgeGreen}>pro en frifayer</Text>
-                        <Text style={styles.gamerTag}>ejemplo@gmail.com</Text>
+
+                        <Text style={styles.cardTitle}>
+                          {profileData?.username}
+                        </Text>
+                        <Text style={styles.gamerTag}>
+                          {profileData?.email}
+                        </Text>
                         <View style={styles.socialIcons}>
                           <FontAwesome
                             name="edit"
@@ -497,13 +536,15 @@ const App: React.FC = () => {
                   <View style={styles.profileSection}>
                     <Image
                       source={{
-                        uri: "https://i.pinimg.com/236x/36/b9/9d/36b99dd44debc8614db0c7445ac57b3b.jpg",
+                        uri: profileData?.photoUrl,
                       }}
                       style={styles.profileImg}
                     />
-                    <Text style={styles.cardTitle}>Juanito el mas capito</Text>
-                    <Text style={styles.badgeGreen}>pro en frifayer</Text>
-                    <Text style={styles.gamerTag}>ejemplo@gmail.com</Text>
+                    <Text style={styles.cardTitle}>
+                      {profileData?.username}
+                    </Text>
+                    <Text style={styles.badgeGreen}>{profileData?.role}</Text>
+                    <Text style={styles.gamerTag}>{profileData?.email}</Text>
                     <View style={styles.socialIcons}>
                       <FontAwesome
                         name="edit"

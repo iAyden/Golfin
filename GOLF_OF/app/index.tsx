@@ -15,6 +15,9 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import Sidebar from "@/components/Structures/Sidebar";
+// import { Text } from '@/components/Themed';
+import ImagenSinFondo from "@/components/VisualComponents/ImagenSinFondo";
+import { checkAuthToken } from "@/utils/auth";
 import { useNavigation } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 

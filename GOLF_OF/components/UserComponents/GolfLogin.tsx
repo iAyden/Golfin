@@ -84,11 +84,11 @@ const GolfLogin = () => {
   });
 
   useEffect(() => {
-    if (response?.type === "success") {
-      console.log("succes");
-      const id_token = response.params?.id_token;
-      if (id_token) {
-        console.log("Token recibido:", id_token);
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.id_token) {
+        const id_token = event.data.id_token;
+        console.log("Token recibido del popup:", id_token);
+
         fetch("http://127.0.0.1:8080/auth/google", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -96,15 +96,22 @@ const GolfLogin = () => {
         })
           .then((res) => res.json())
           .then((data) => {
+            console.log("Respuesta del backend:", data);
             if (data.token) {
               saveToken(data.token);
               window.location.href = "/profileStats";
+            } else {
+              console.error("No se recibió token del backend", data);
             }
           })
-          .catch((err) => console.error("Error backend:", err));
+          .catch((err) => console.error("Error en el fetch:", err));
       }
-    }
-  }, [response]);
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
+
   const handleGoogleLogin = async () => {
     await promptAsync();
   };
@@ -183,7 +190,11 @@ const GolfLogin = () => {
         console.log("perfil");
         const data = await response.json();
         const token = data.token;
+        console.log("token guardado del signup" + token);
         saveToken(token);
+        if (typeof window !== "undefined" && window.location) {
+          window.location.href = "/profileStats";
+        }
       }
     } catch (error) {
       console.log(error);
@@ -278,25 +289,6 @@ const GolfLogin = () => {
 
               <Controller
                 control={loginControl}
-                name="email"
-                render={({ field }) => (
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Email"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    placeholderTextColor="#666"
-                    {...field}
-                  />
-                )}
-              />
-              {loginErrors.email && (
-                <Text style={{ color: "red" }}>
-                  {loginErrors.email.message}
-                </Text>
-              )}
-              <Controller
-                control={loginControl}
                 name="password"
                 render={({ field }) => (
                   <View style={styles.passwordContainer}>
@@ -388,7 +380,6 @@ const GolfLogin = () => {
                   {signupErrors.email.message}
                 </Text>
               )}
-
               <Controller
                 control={signupControl}
                 name="password"
@@ -397,6 +388,33 @@ const GolfLogin = () => {
                     <TextInput
                       style={[styles.input, styles.passwordInput]}
                       placeholder="Password"
+                      secureTextEntry={!showPassword}
+                      placeholderTextColor="#666"
+                      {...field}
+                    />
+                    <TouchableOpacity
+                      style={styles.eyeIcon}
+                      onPress={() => setShowPassword(!showPassword)}
+                    >
+                      <Text>{showPassword ? "👁️" : "👁️‍🗨️"}</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              />
+              {signupErrors.password && (
+                <Text style={{ color: "red" }}>
+                  {signupErrors.password.message}
+                </Text>
+              )}
+
+              <Controller
+                control={signupControl}
+                name="confirm_password"
+                render={({ field }) => (
+                  <View style={styles.passwordContainer}>
+                    <TextInput
+                      style={[styles.input, styles.passwordInput]}
+                      placeholder="Confirm Password"
                       secureTextEntry={!showConfirmPassword}
                       placeholderTextColor="#666"
                       {...field}
@@ -418,7 +436,6 @@ const GolfLogin = () => {
                 </Text>
               )}
               {errorMsg && <Text style={{ color: "red" }}>{errorMsg}</Text>}
-
               <GoogleButton
                 onPress={handleGoogleLogin}
                 text="Sign up with Google"
