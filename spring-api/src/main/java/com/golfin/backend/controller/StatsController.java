@@ -32,27 +32,5 @@ public class StatsController {
         return ResponseEntity.ok("Stats added");
     }
 
-    @PostMapping("/add-gstats")
-    public ResponseEntity<String> addGameStats(@RequestBody GameStatsDTO dto) {
-        try {
-            GameStats gameStats = dto.getData();
-            List<String> usernames = dto.getPlayerUsernames();
-
-            for (String username : usernames) {
-                Optional<User> optionalUser = Optional.ofNullable(userRepository.findByUsername(username));
-
-                if (optionalUser.isPresent()) {
-                    User user = optionalUser.get();
-                    user.getGameStats().add(gameStats);
-                    userRepository.save(user);
-                } else {
-                    System.out.println("User not found: " + username);
-                }
-            }
-
-            return ResponseEntity.ok("Game stats added to users");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
-        }
-    }
+    
 }
