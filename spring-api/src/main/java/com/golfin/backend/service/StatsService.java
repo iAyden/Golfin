@@ -13,10 +13,8 @@ public class StatsService {
     private UserRepository userRepository;
 
     public boolean addStats(UserStatsDTO statsDTO) {
-        User user = userRepository.findByUsername(statsDTO.getUsername());
-        if (user == null) {
-            return false;
-        }
+   User user = userRepository.findByUsername(statsDTO.getUsername()).orElse(null);
+    if (user == null) return false;
 
         user.getStats().add(statsDTO.getData());
         userRepository.save(user);

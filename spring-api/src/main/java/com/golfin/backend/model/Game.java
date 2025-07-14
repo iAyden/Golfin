@@ -1,5 +1,6 @@
 package com.golfin.backend.model;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
@@ -13,18 +14,20 @@ public class Game {
     private String course;
     private String winner;
     private int totalSpringedTraps;
-    private int totalTime; // segundos
-    private List<String> playerUsernames;
+    private int totalTime;
+    // Reemplazamos los usernames con los ObjectIds
+    private List<String> playerIds;
 
     public Game() {}
-
-    public Game(String course, String winner, int totalSpringedTraps, int totalTime, List<String> playerUsernames) {
+    public Game(String course, String winner, int totalSpringedTraps, int totalTime, List<String> playerIds) {
         this.course = course;
         this.winner = winner;
         this.totalSpringedTraps = totalSpringedTraps;
         this.totalTime = totalTime;
-        this.playerUsernames = playerUsernames;
+        this.playerIds = playerIds;
     }
+
+    // Getters y Setters
     public String getId() {
         return id;
     }
@@ -61,11 +64,12 @@ public class Game {
         this.totalTime = totalTime;
     }
 
-    public List<String> getPlayerUsernames() {
-        return playerUsernames;
+    public List<String> getPlayerIds() {
+        return playerIds;
     }
 
-    public void setPlayerUsernames(List<String> playerUsernames) {
-        this.playerUsernames = playerUsernames;
+    public void setPlayerIds(List<String> playerIds) {
+        this.playerIds = playerIds;
     }
 }
+

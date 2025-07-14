@@ -8,7 +8,8 @@ public class GameDTO {
     private String winner;
     private int totalSpringedTraps;
     private int totalTime;
-    private List<String> playerUsernames;
+    private List<String> playerIds; // IDs en lugar de usernames
+    private List<String> playerUsernames; // sigue viniendo como usernames
 
     public GameDTO() {}
 
@@ -44,11 +45,19 @@ public class GameDTO {
         this.totalTime = totalTime;
     }
 
-    public List<String> getPlayerUsernames() {
-        return playerUsernames;
+    public List<String> getPlayerIds() {
+        return playerIds;
     }
 
-    public void setPlayerUsernames(List<String> playerUsernames) {
-        this.playerUsernames = playerUsernames;
+    public void setPlayerIds(List<String> playerIds) {
+        this.playerIds = playerIds;
     }
+    public List<String> getPlayerUsernames() {
+    return playerUsernames;
+}
+
+    public void setPlayerUsernames(List<String> playerUsernames) {
+    this.playerUsernames = playerUsernames;
+    }
+
 }
