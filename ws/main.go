@@ -173,9 +173,13 @@ func (game *Game) gameLoop() {
 	party := game.Party
 	game.Round = 1
 
+	var globalTimer int
+
 	fmt.Println("el id del juego es")
 	fmt.Println(game.Id)
 	start := time.Now()
+
+	var mensaje Message
 
 	fmt.Println("El juego es ", games[game.Id])
 	for !finished {
@@ -203,14 +207,24 @@ func (game *Game) gameLoop() {
 				data["time"] = j
 				sendMessage("startTimer", data, party.Members[i])
 
+				data["time"] = globalTimer
+				mensaje.Type = "globalTimer"
+				mensaje.Payload, _ = json.Marshal(data)
+				game.Party.Broadcast <- mensaje
+				<-done
 				time.Sleep(1 * time.Second)
-
+				globalTimer++
 			}
 
 			for j := 10; j >= 0; j-- {
 				data["time"] = j
 				sendMessage("turnTimer", data, party.Members[i])
 
+				data["time"] = globalTimer
+				mensaje.Type = "globalTimer"
+				mensaje.Payload, _ = json.Marshal(data)
+				game.Party.Broadcast <- mensaje
+				<-done
 				if party.Members[i].Finished {
 					timeOfGoal := time.Since(start)
 					score := getScoreName(4, game.Round)
@@ -246,6 +260,7 @@ func (game *Game) gameLoop() {
 				}
 
 				time.Sleep(1 * time.Second)
+				globalTimer++
 			}
 
 		}
@@ -595,6 +610,10 @@ func startGame(user *User, msg Message) {
 	intnum, _ := strconv.Atoi(string(data))
 	games[intnum] = game
 	game.Id = intnum
+
+	endpoint := fmt.Sprintf("/gameId?id=%d", intnum)
+	http.Get(raspUrl + endpoint)
+
 	intnum++
 
 	stringNum := strconv.Itoa(intnum)
@@ -605,6 +624,7 @@ func startGame(user *User, msg Message) {
 	for i := 0; i < len(party.Members); i++ {
 		party.Members[i].readGameMessages(game)
 	}
+
 }
 
 var done = make(chan string)
