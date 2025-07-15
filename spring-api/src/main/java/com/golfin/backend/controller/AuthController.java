@@ -66,12 +66,20 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body
             (Map.of("error","Username ya en uso"));
         }
+        
         User newUser = new User();
         newUser.setEmail(signupDTO.getEmail());
         newUser.setUsername(signupDTO.getUsername());
         newUser.setPassword(PasswordUtil.hash(signupDTO.getPassword()))  ;
         userRepository.save(newUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado con exito.");
+        String jwt = jwtUtil.generateToken(newUser.getEmail());
+            if(jwt==null || jwt.isEmpty()){
+                System.out.println("Falló el jwt");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error","No se pudo generar el jwt"));
+            }
+            System.out.println("JWT: "+jwt);
+         LoginResponse loginResponse = new LoginResponse(newUser.getUsername(), newUser.getEmail(), jwt);
+         return ResponseEntity.status(HttpStatus.CREATED).body(loginResponse);
     }
 
     @PostMapping("/google")
