@@ -8,6 +8,9 @@ import com.golfin.backend.repository.UserRepository;
 import com.golfin.backend.security.JwtUtil;
 
 import com.golfin.backend.model.User;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -36,5 +39,13 @@ public class UserController {
         User user = userRepository.findByEmail(email);
         return ResponseEntity.ok(user);
     }   
+
+    @PostMapping("/saveStats")
+    public String saveStats(@RequestBody String entity) {
+        //TODO: process POST request
+        
+        return entity;
+    }
+    
 
 }
