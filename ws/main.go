@@ -263,6 +263,8 @@ func (game *Game) gameLoop() {
 				globalTimer++
 			}
 
+			sendMessage("endUserTurn", msg, party.Members[i])
+
 		}
 
 		game.Round++
