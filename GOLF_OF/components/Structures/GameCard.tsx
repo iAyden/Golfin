@@ -1,31 +1,34 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-  SafeAreaView,
-  Animated,
-  Easing,
-  ScrollView,
-  Alert,
-  ImageSourcePropType,
-  Dimensions,
-  Platform,
-  ImageBackground,
-} from "react-native";
+import {View,Text,TouchableOpacity,StyleSheet,Image,SafeAreaView,Animated,Easing,ScrollView,Alert,ImageSourcePropType,Dimensions,Platform,ImageBackground,} from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import { useLocalSearchParams } from "expo-router"; //// function to acces to the router information sended by create lobby
+
 
 ////////////////// DECLARACIONES DE LOS TIPOS ///////////////////////
 type UserCardType = {
   id: string;
   name: string;
-  role: string;
+  role: string;     // OWNER  or VISITOR SOLO ESOS
   score: number;
   karma: number;
   image: ImageSourcePropType;
 };
+type MemberFromServer = {
+  username: string;
+  points: number;
+  karma: number;
+  code: string;
+  BoughtTraps: any;
+  stats: {
+    position: number;
+    shots: number;
+    points: number;
+    springedTraps: number;
+  };
+};
+
+
+const DEFAULT_AVATAR = require("@/assets/images/golf.png");
 
 type ShopItemType = {
   id: string;
@@ -50,26 +53,21 @@ type icons = {
   movingHole: ImageSourcePropType;
 };
 
-////////////////////////////////////////////////////////
+type Params = {
+  userName: string;
+  mode: "owner" | "visitor";
+  code?: string;
+};
 
+
+////////////////////////////////////////////////////////
 const { width, height } = Dimensions.get("window");
 const isSmallDevice = width < 375;
 const isTablet = width >= 768;
+////////////////////////////////////////////////////////
+const icons: icons = { karmaIcon: require("@/assets/images/fireC.png"), scoreIcon: require("@/assets/images/starC.png"), clock: require("@/assets/images/clock.png"), ramp: require("@/assets/images/fireC.png"), slap: require("@/assets/images/fireC.png"), obstacle: require("@/assets/images/fireC.png"), fan: require("@/assets/images/fireC.png"), vipRamp: require("@/assets/images/fireC.png"), cart: require("@/assets/images/fireC.png"), earthquake: require("@/assets/images/fireC.png"), vipSlap: require("@/assets/images/fireC.png"), movingHole: require("@/assets/images/fireC.png"), };
+//////////////////////////////////////////////////
 
-const icons: icons = {
-  karmaIcon: require("@/assets/images/fireC.png"),
-  scoreIcon: require("@/assets/images/starC.png"),
-  clock: require("@/assets/images/clock.png"),
-  ramp: require("@/assets/images/fireC.png"),
-  slap: require("@/assets/images/fireC.png"),
-  obstacle: require("@/assets/images/fireC.png"),
-  fan: require("@/assets/images/fireC.png"),
-  vipRamp: require("@/assets/images/fireC.png"),
-  cart: require("@/assets/images/fireC.png"),
-  earthquake: require("@/assets/images/fireC.png"),
-  vipSlap: require("@/assets/images/fireC.png"),
-  movingHole: require("@/assets/images/fireC.png"),
-};
 
 const UserCard: React.FC = () => {
   // Variable para la carta
@@ -89,74 +87,63 @@ const UserCard: React.FC = () => {
 
   const flipAnimation = useRef(new Animated.Value(0)).current; // Esta es para la animacion del volteo.
 
-  // ESTA ES LA FCKING PARTE DEL TIMER NO LE MUEVAN SUFRI MUCHO POR UNAS DEPENDENCIAS DE NODE
-  useEffect(() => {
-    let interval: number;
+///////////////////// PUT DATA IN THE FRONT BY NAVIGATION MEMORY ///////////////////////////////
+  const { userName, mode, code } = useLocalSearchParams<Params>();
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
-    if (gameStarted) {
-      interval = setInterval(() => {
-        setSeconds((prevSeconds) => prevSeconds + 1);
-      }, 1000);
-    }
+  const ws = useRef<WebSocket | null>(null); // WebSocket reference to manage the connection
+  const [isCreating, setIsCreating] = useState(false);
 
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [gameStarted]);
 
-  // NO LE MUEVAN POR FAVOR, ES POR UNA MADRE DE NODE
-  const formatTime = (totalSeconds: number): string => {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
+//////////////////// WEB SOCKETS ////////////////////////////// 
+useEffect(() => {
+  ws.current = new WebSocket("ws://localhost:8080/game");
 
-    return [hours, minutes, seconds]
-      .map((v) => (v < 10 ? "0" + v : v))
-      .filter((v, i) => v !== "00" || i > 0)
-      .join(":");
+  ws.current.onopen = () => {
+    console.log("ws conectado");
   };
 
-  // esto es de ejemplo
-  const userCards: UserCardType[] = [
-    {
-      id: "1",
-      name: "KEVIN",
-      role: "FRONTEND PAPULIENCE",
-      score: 5,
-      karma: 7,
-      image: require("@/assets/images/golf.png"),
-    },
-    {
-      id: "2",
-      name: "LIAM",
-      role: "PAPU PERFIL",
-      score: 6,
-      karma: 7,
-      image: require("@/assets/images/golf.png"),
-    },
-    {
-      id: "3",
-      name: "Diego",
-      role: "LE GUSTA PROGRAMAR EN PHP",
-      score: 9,
-      karma: 7,
-      image: require("@/assets/images/golf.png"),
-    },
-    {
-      id: "4",
-      name: "almanza",
-      role: "Es cisco",
-      score: 6,
-      karma: 7,
-      image: require("@/assets/images/golf.png"),
-    },
-  ];
+  ws.current.onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      console.log("Datos del servidor:", data);
 
-  // Variables del OWNER
-  const owner: string = true ? "Empezar" : "En espera";
-  const isDisabled = owner === "En espera";
+      if (data.type === "joinParty" ||data.type === "createParty" || data.type === "startGame") {
+        const payload = data.payload;
+
+        const formattedUsers: UserCardType[] = payload.members.map(
+          (member: any, index: number) => ({
+            id: index.toString(),
+            name: member.username,
+            role: index === 0 ? "OWNER" : "VISITOR",
+            score: member.points,
+            karma: member.karma,
+            image: require("@/assets/images/golf.png"),
+          })
+        );
+
+        setUserCards(formattedUsers);
+
+        if (data.type === "startGame") {
+          setGameStarted(true);
+          setSeconds(0);
+        }
+      }
+
+    } catch (err) {
+      console.error("Error parsing mensaje WebSocket:", err);
+    }
+  };
+
+  return () => {
+    ws.current?.close();
+  };
+}, []);
+
+
+///////////////////////////////////////////////////////////////
+
+
 
   const shopItems: ShopItemType[] = [
     {
@@ -221,59 +208,81 @@ const UserCard: React.FC = () => {
       icon: icons.movingHole,
       cost: 500,
       backgroundColor: "#2ecc71",
-    },
-  ];
+    },];
+
+  // esto es de ejemplo
+  const [userCards, setUserCards] = useState<UserCardType[]>([]);
+
+  // Variables del OWNER
+  const owner: string = true ? "Empezar" : "En espera";
+  const isDisabled = owner === "En espera";
+
+
 
   const buyItem = (itemId: string): void => {
-    if (!gameStarted) {
-      Alert.alert("Espera", "INICIA EL GAME PIRIMERO");
-      return;
-    }
+    if (!gameStarted) { Alert.alert("Espera", "INICIA EL GAME PIRIMERO"); return; }
 
     const item = shopItems.find((i) => i.id === itemId);
     if (!item) return;
 
     ////////////////////   AQUI SE SUMAN LOS PUNTOS ///////////////////////////////
-    if (points >= item.cost) {
-      setPoints((prevPoints) => prevPoints + item.cost);
-    } else {
-      Alert.alert("Error", "NO TIENES PUNTOS");
-    }
+    if (points >= item.cost) { setPoints((prevPoints) => prevPoints + item.cost); } 
+    else {  Alert.alert("Error", "NO TIENES PUNTOS");  }
   };
 
-  const flipCard = () => {
-    if (!gameStarted) {
-      Alert.alert("Espera", "INICIA PRIMERO EL JUEGO");
+  const handleStartGame = () => {
+    if(!ws.current || ws.current?.readyState !== WebSocket.OPEN){
+      Alert.alert("Error","WebSocket no conectado");
       return;
     }
+
+  ws.current.send(
+      JSON.stringify({
+        type: "startGame",
+        payload: { code },
+      })
+    );
+  }
+
+
+  const flipCard = () => {
+    if (!gameStarted) { Alert.alert("Espera", "INICIA PRIMERO EL JUEGO"); return; }
 
     Animated.timing(flipAnimation, {
       toValue: showFront ? 180 : 0,
       duration: 500,
       easing: Easing.linear,
       useNativeDriver: true,
-    }).start(() => {
-      setShowFront(!showFront);
-    });
+    }).start(() => { setShowFront(!showFront); });
   };
 
-  const startGame = () => {
-    setGameStarted(true);
-    setSeconds(0);
-  };
+  const startGame = () => { setGameStarted(true); setSeconds(0); };
 
-  const frontInterpolate = flipAnimation.interpolate({
-    inputRange: [0, 180],
-    outputRange: ["0deg", "160deg"],
-  });
+  const frontInterpolate = flipAnimation.interpolate({ inputRange: [0, 180], outputRange: ["0deg", "160deg"], });
 
-  const backInterpolate = flipAnimation.interpolate({
-    inputRange: [0, 180],
-    outputRange: ["180deg", "360deg"],
-  });
+  const backInterpolate = flipAnimation.interpolate({ inputRange: [0, 180], outputRange: ["180deg", "360deg"], });
 
   const frontAnimatedStyle = { transform: [{ rotateY: frontInterpolate }] };
   const backAnimatedStyle = { transform: [{ rotateY: backInterpolate }] };
+
+
+  ///////////////////// ESTA ES LA FCKING PARTE DEL TIMER NO LE MUEVAN SUFRI MUCHO POR UNAS DEPENDENCIAS DE NODE ///////////////
+  useEffect(() => {
+    let interval: number;
+
+    if (gameStarted) { interval = setInterval(() => {setSeconds((prevSeconds) => prevSeconds + 1);}, 1000);}
+
+    return () => { if (interval) { clearInterval(interval);}}; }, [gameStarted]);
+
+  // NO LE MUEVAN POR FAVOR, ES POR UNA MADRE DE NODE
+  const formatTime = (totalSeconds: number): string => {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return [hours, minutes, seconds].map((v) => (v < 10 ? "0" + v : v)).filter((v, i) => v !== "00" || i > 0).join(":");
+  };
+  ///////////////////////////////////////////////////////// 
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -291,17 +300,19 @@ const UserCard: React.FC = () => {
             contentContainerStyle={styles.frontContent}
             showsVerticalScrollIndicator={false}
           >
-            <View style={styles.frontHeader}>
+        <View style={styles.frontHeader}>
+            <View style={styles.titleContainer}>
               <Text style={styles.mainTitle}>Party</Text>
-              {gameStarted && (
-                <View style={styles.timeDisplayFront}>
-                  <Image source={icons.clock} style={styles.iconImageSmall} />
-                  <Text style={styles.timeTextFront}>
-                    {formatTime(seconds)}
-                  </Text>
-                </View>
-              )}
+              <Text style={styles.subtitle}>Party's code: {code}</Text>
             </View>
+
+            {gameStarted && (
+              <View style={styles.timeDisplayFront}>
+                <Image source={icons.clock} style={styles.iconImageSmall} />
+                <Text style={styles.timeTextFront}>{formatTime(seconds)}</Text>
+              </View>
+            )}
+        </View>
 
             <View style={styles.userCardsContainer}>
               {userCards.map((user) => (
@@ -315,23 +326,23 @@ const UserCard: React.FC = () => {
                   </View>
                   <View style={styles.pointsContainerRight}>
                     <View style={styles.pointsRow}>
-                      <Image
-                        source={icons.scoreIcon}
-                        style={styles.iconImage}
-                      />
+                      <Image source={icons.scoreIcon} style={styles.iconImage} />
                       <Text style={styles.pointsText}>{user.score}</Text>
                     </View>
                     <View style={styles.pointsRow}>
-                      <Image
-                        source={icons.karmaIcon}
-                        style={styles.iconImage}
-                      />
+                      <Image source={icons.karmaIcon} style={styles.iconImage} />
                       <Text style={styles.pointsText}>{user.karma}</Text>
                     </View>
                   </View>
                 </View>
               ))}
             </View>
+            {userCards.length === 0 && (
+              <Text style={{ color: "red", textAlign: "center", marginTop: 20 }}>
+                No hay usuarios conectados.
+              </Text>
+              )}
+
             {!gameStarted ? (
               <TouchableOpacity
                 disabled={isDisabled}
@@ -342,7 +353,7 @@ const UserCard: React.FC = () => {
                   opacity: isDisabled ? 0.6 : 1,
                   alignSelf: "center",
                 }}
-                onPress={startGame}
+                onPress={handleStartGame}
               >
                 <Text style={{ color: "white", fontWeight: "bold" }}>
                   {owner}
@@ -484,7 +495,7 @@ const styles = StyleSheet.create({
     paddingBottom: isSmallDevice ? 20 : 40,
   },
   frontHeader: {
-    flexDirection: "row",
+    flexDirection: "row",      
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
@@ -511,8 +522,8 @@ const styles = StyleSheet.create({
     marginBottom: isSmallDevice ? 20 : 40,
   },
   titleContainer: {
-    flex: 1,
-    marginTop: isSmallDevice ? 5 : 10,
+    flexDirection: "column",   
+    alignItems: "flex-start",  
   },
   pointsKarmaContainer: {
     alignItems: isSmallDevice ? "center" : "flex-end",
@@ -520,14 +531,14 @@ const styles = StyleSheet.create({
     marginBottom: isSmallDevice ? 10 : 0,
   },
   mainTitle: {
-    fontSize: isSmallDevice ? 40 : isTablet ? 70 : 60,
+    fontSize: isSmallDevice ? 40 : isTablet ? 50 : 50,
     fontWeight: "bold",
     color: "#2c3e50",
     marginBottom: isSmallDevice ? 4 : 8,
   },
   subtitle: {
     fontSize: isSmallDevice ? 16 : isTablet ? 25 : 23,
-    color: "#7f8c8d",
+    color: "#000",
   },
   pointsContainer: {
     backgroundColor: "#f8f9fa",
@@ -696,6 +707,7 @@ const styles = StyleSheet.create({
     fontSize: isSmallDevice ? 16 : 20,
     fontWeight: "bold",
   },
+  
 });
 
 export default UserCard;

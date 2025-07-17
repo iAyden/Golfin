@@ -1,1 +1,9 @@
+<<<<<<< HEAD
 80
+=======
+<<<<<<< HEAD
+38
+=======
+47
+>>>>>>> 9475e14 (WebSockets primer avance)
+>>>>>>> main
