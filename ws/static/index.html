@@ -15,6 +15,7 @@
 	<button onclick="joinParty()">Join Party </button>
 	<button onclick="startGame()">Start Game</button>
 
+	<button onclick="score()">Score</button>
 	  <button 
     onclick="toggleModal()" 
     class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
@@ -25,10 +26,12 @@
   <div 
     id="modal" 
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    
+   	<div id="modalData"> 
     <div class="bg-white p-6 rounded shadow-lg w-96 relative">
       <h2 class="text-xl font-bold mb-4">This is a modal</h2>
-      <p class="mb-4">You can add whatever content you want here.</p>
+      <p id="name"class="mb-4">Est tu turno</p>
+	  <p id="timer"></p>
+	  <p id="score"></p>
       <button 
         onclick="toggleModal()" 
         class="absolute top-2 right-2 text-gray-500 hover:text-black text-xl font-bold">&times;</button>
@@ -38,13 +41,22 @@
         Close
       </button>
     </div>
+</div>
   </div>
 
   <script>
-    function toggleModal() {
+   async function toggleModal(type) {
       const modal = document.getElementById('modal');
-      modal.classList.toggle('hidden');
+	  modal.classList.toggle("hidden")
     }
+
+
+
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
   </script>
 
 	<p>Username</p>
@@ -108,12 +120,49 @@
 				case "endUserTurn":
 					toggleModal()
 					break
-				default:
+				case "startTimer":
+					insertTimer(data)
+					break
+
+				case "turnTimer":
+					insertTimer(data)
+					break	
+				case "playerFinished":
+						console.log(document.getElementById("modal").classList.contains("hidden"))
+						toggleModal()
+					break
+				  default: 
 					break;
 			}
-			li.textContent = JSON.stringify(data.payload) 
-			messages.appendChild(li);
+			// li.textContent = JSON.stringify(data.payload) 
+			// messages.appendChild(li);
 		};
+
+		function getManyById(...ids) {
+  return ids.map(id => document.getElementById(id));
+}
+
+function score(){
+	
+}
+
+		function insertWinner(data){
+			let [name, points, score] = getManyById("winner", "points", "score");
+
+			console.log(name)
+			console.log(data.payload.name)
+
+			name.innerText = data.payload.name
+			points.innerText = data.payload.points
+			score.innerText = data.payload.score
+
+		}
+
+		function insertTimer(data){
+			let timer = data.payload.time
+			document.getElementById("timer").innerText = timer	
+
+		}	
 		
 		function createParty(){
 			let name = document.getElementById("username").value

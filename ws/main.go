@@ -241,6 +241,8 @@ func (game *Game) gameLoop() {
 
 					payload, _ := json.Marshal(data)
 
+					sendMessage("endUserTurn", msg, party.Members[i])
+
 					msg := Message{
 						Type:    "playerFinished",
 						Payload: payload,
