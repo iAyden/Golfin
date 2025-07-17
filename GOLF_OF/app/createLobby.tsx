@@ -12,14 +12,14 @@ type UserCardType = {
   name: string;
   role: string; // OWNER or VISITOR
   score: number;
-  karma: number;
+  karma: number;    
   image: ImageSourcePropType;
 };
 
 type IconsType = {
   karmaIcon: ImageSourcePropType;
   scoreIcon: ImageSourcePropType;
-  clock: ImageSourcePropType;
+  clock: ImageSourcePropType; 
   ramp: ImageSourcePropType;
   slap: ImageSourcePropType;
   obstacle: ImageSourcePropType;
@@ -90,14 +90,8 @@ export default function CreateLobbyScreen() {
 
   // Animación de volteo de carta
   const flipAnimation = useRef(new Animated.Value(0)).current;
-  const frontInterpolate = flipAnimation.interpolate({ 
-    inputRange: [0, 180], 
-    outputRange: ["0deg", "160deg"] 
-  });
-  const backInterpolate = flipAnimation.interpolate({ 
-    inputRange: [0, 180], 
-    outputRange: ["180deg", "360deg"] 
-  });
+  const frontInterpolate = flipAnimation.interpolate({  inputRange: [0, 180],  outputRange: ["0deg", "160deg"] });
+  const backInterpolate = flipAnimation.interpolate({  inputRange: [0, 180],   outputRange: ["180deg", "360deg"] });
   const frontAnimatedStyle = { transform: [{ rotateY: frontInterpolate }] };
   const backAnimatedStyle = { transform: [{ rotateY: backInterpolate }] };
   const [showFront, setShowFront] = useState(true);
@@ -126,10 +120,11 @@ export default function CreateLobbyScreen() {
   const isDisabled = !isOwner;
 
   // Puntos y karma
-  const initialPoints = [100, 200, 300];
-  const indexpoints = Math.floor(Math.random() * initialPoints.length);
-  const [points, setPoints] = useState(initialPoints[indexpoints]);
+  const [points, setPoints] = useState(0);
   const [karma, setKarma] = useState(0);
+  const [currentTurnPlayer, setCurrentTurnPlayer] = useState<string | null>(null);
+  const [turnIndex, setTurnIndex] = useState(0);
+  
 
   // TIENDA
   const shopItems: ShopItemType[] = [
@@ -145,89 +140,180 @@ export default function CreateLobbyScreen() {
   ];
 
   const router = useRouter();
+////////////////////// WEBSOCKETS ///////////////////////////////////
+useEffect(() => {
+  socketService.connect("ws://localhost:1337/game");
 
-  // Efectos y handlers
-  useEffect(() => {
-    const initializeSocket = () => {
-      socketService.connect("ws://localhost:8080/game");
+  const handleCreateParty = (payload: PartyData) => {
+    if (payload?.code) {
+      setPartyData(payload);
+      setIsOwner(true);
+      setCurrentView("lobby");
 
-      const handleCreateParty = (payload: PartyData) => {
-        if (payload?.code) {
-          setPartyData(payload);
-          setIsOwner(true);
-          setCurrentView("lobby");
-          // Actualizar the cards 
-          setUserCards(payload.members.map(member => ({
-            id: member.username,
-            name: member.username,
-            role: member.username === payload.owner ? "OWNER" : "VISITOR",
-            score: member.points,
-            karma: member.karma,
-            image: require("../assets/images/golf.png")
-          })));
-        } else { setError("No se pudo crear la partida"); }
-      };
+      const currentPlayer = payload.members.find(m => m.username === userName);
+      if (currentPlayer) {
+        setPoints(currentPlayer.points);
+        setKarma(currentPlayer.karma);
+      }
 
-      const handleJoinParty = (payload: PartyData) => {
-        if (payload?.code) {
-          setPartyData(payload);
-          setIsOwner(true);
-          setCurrentView("lobby");
-          // Actualizar userCards con los miembros reales
-          setUserCards(payload.members.map(member => ({
-            id: member.username,
-            name: member.username,
-            role: member.username === payload.owner ? "OWNER" : "VISITOR",
-            score: member.points,
-            karma: member.karma,
-            image: require("../assets/images/golf.png")
-          })));
-        } else { setError("Error al unirse al juego"); }
-      };
+      setUserCards(payload.members.map(member => ({
+        id: member.username,
+        name: member.username,
+        role: member.username === payload.owner ? "OWNER" : "VISITOR",
+        score: member.points,
+        karma: member.karma,
+        image: require("../assets/images/golf.png")
+      })));
+    } else {
+      setError("No se pudo crear la partida");
+    }
+  };
 
-      socketService.on("createParty", handleCreateParty);
-      socketService.on("joinParty", handleJoinParty);
-      socketService.on("playerJoined", (updatedParty: PartyData) => {
-        setPartyData(updatedParty);
-        const currentPlayer = updatedParty.members.find(m => m.username === userName);
+  const handleJoinParty = (payload: PartyData) => {
+    if (payload?.code) {
+      setPartyData(payload);
+      setIsOwner(true);
+      setCurrentView("lobby");
 
-        if(currentPlayer){ setPoints(currentPlayer.points); setKarma(currentPlayer.karma); }
+      const currentPlayer = payload.members.find(m => m.username === userName);
+      if (currentPlayer) {
+        setPoints(currentPlayer.points);
+        setKarma(currentPlayer.karma);
+      }
 
-        
-        setUserCards(updatedParty.members.map(member => ({
-          id: member.username,
-          name: member.username,
-          role: member.username === updatedParty.owner ? "OWNER" : "VISITOR",
-          score: member.points,
-          karma: member.karma,
-          image: require("../assets/images/golf.png")
-        })));
-      });
+      setUserCards(payload.members.map(member => ({
+        id: member.username,
+        name: member.username,
+        role: member.username === payload.owner ? "OWNER" : "VISITOR",
+        score: member.points,
+        karma: member.karma,
+        image: require("../assets/images/golf.png")
+      })));
+    } else {
+      setError("Error al unirse al juego");
+    }
+  };
 
-      setTimeout(() => setIsReady(true), 500);
+  const handlePlayerJoined = (updatedParty: PartyData) => {
+    setPartyData(updatedParty);
+    const currentPlayer = updatedParty.members.find(m => m.username === userName);
+    if (currentPlayer) {
+      setPoints(currentPlayer.points);
+      setKarma(currentPlayer.karma);
+    }
+    setUserCards(updatedParty.members.map(member => ({
+      id: member.username,
+      name: member.username,
+      role: member.username === updatedParty.owner ? "OWNER" : "VISITOR",
+      score: member.points,
+      karma: member.karma,
+      image: require("../assets/images/golf.png")
+    })));
+  };
 
-      return () => { socketService.close(); };
-    };
 
-    initializeSocket();
-  }, []);
+const handleKarmaTrigger = (payload: { username: string; karma: number }) => {
+  // Actualiza el karma en la lista de jugadores  del array de objetos
+  setUserCards(prevCards =>
+    prevCards.map(card =>
+      card.name === payload.username ? { ...card, karma: payload.karma } : card
+    )
+  );
 
-  
-
-  // Temporizador del juego
- useEffect(() => {
-  let interval: number;
-
-  if (gameStarted) {
-    interval = setInterval(() => {
-      setSeconds(prev => prev + 1);
-    }, 1000);
+  if (payload.username === userName) {
+    setKarma(payload.karma);
   }
+};
 
-  return () => clearInterval(interval);
-}, [gameStarted]);
 
-  // PARTE DEL TIEMPO
+
+  const handleBuyTrap = (payload: { Karma: number }) => {
+    if (payload.Karma !== undefined) setKarma(payload.Karma);
+  };
+
+  const handlePlayerFinished = (payload: { name: string; score: string; points: number }) => {
+    console.log("playerFinished payload:", payload);
+    if (payload.name === userName) setPoints(payload.points);
+  };
+
+  const handleStartUserTurn = (payload: { username: string } | null) => {
+    console.log("startUserTurn payload:", payload);
+    if (!payload || !payload.username) return;
+    setCurrentTurnPlayer(payload.username);
+  };
+
+
+  /////////////////// REAL TIME updater ////////////////////
+  const handleGlobalTimer = (payload: { time: number }) => { setSeconds(payload.time); };
+  const handleStartTimer = (payload: { time: number }) => {
+    setSeconds(payload.time);
+  };
+
+  // Here there is the handler that updates the seconds in the frontend 
+  const handleTurnTimer = (payload: { time: number }) => {
+    setSeconds(payload.time);
+    if (payload.time === 0 && userCards.length > 0) {
+      setTurnIndex(prevIndex => {
+        const nextIndex = (prevIndex + 1) % userCards.length;
+        setCurrentTurnPlayer(userCards[nextIndex].name);
+        return nextIndex;
+      });
+    }
+  };
+  //////////////////////////////////////////////////
+
+
+  ///////////////// START GAME HANDLER /////////////////////
+  const handleStartGame = (payload: PartyData) => {
+  setGameStarted(true);
+  setSeconds(0);
+  
+  setPartyData(payload); // The updater of all party
+  
+  // THis looks the current player in the menbers of the party
+  const currentPlayer = payload.members.find(m => m.username === userName);
+  if (currentPlayer) {
+    setKarma(currentPlayer.karma);
+    setPoints(currentPlayer.stats?.points ?? 0);
+  }
+};
+////////////////////////////////////////////////////////////
+
+  socketService.on("createParty", handleCreateParty);
+  socketService.on("joinParty", handleJoinParty);
+  socketService.on("playerJoined", handlePlayerJoined);
+  socketService.on("globalTimer", handleGlobalTimer);
+  socketService.on("karmaTrigger", handleKarmaTrigger);
+  socketService.on("buyTrap", handleBuyTrap);
+  socketService.on("playerFinished", handlePlayerFinished);
+  socketService.on("startTimer", handleStartTimer);
+  socketService.on("startUserTurn", handleStartUserTurn);
+  socketService.on("turnTimer", handleTurnTimer);
+  socketService.on("startGame", handleStartGame);
+
+  setTimeout(() => setIsReady(true), 500);
+
+  return () => {
+    socketService.off("createParty", handleCreateParty);
+    socketService.off("joinParty", handleJoinParty);
+    socketService.off("playerJoined", handlePlayerJoined);
+    socketService.off("globalTimer", handleGlobalTimer);
+    socketService.off("karmaTrigger", handleKarmaTrigger);
+    socketService.off("buyTrap", handleBuyTrap);
+    socketService.off("playerFinished", handlePlayerFinished);
+    socketService.off("startTimer", handleStartTimer);
+    socketService.off("startUserTurn", handleStartUserTurn);
+    socketService.off("turnTimer", handleTurnTimer);
+    socketService.off("startGame", handleStartGame);
+    socketService.close();
+  };
+}, [userName]);
+
+
+
+
+
+  // PARTE DEL TIEMPO NO LE MUEVAN
   const formatTime = (totalSeconds: number): string => {
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -240,13 +326,13 @@ export default function CreateLobbyScreen() {
 
   // Handlers
   const handleJoin = () => {
-    if (!lobbyCode.trim()) { ("POR FAVOR INGRESE EL CÓDIGO"); return; }
+    if (!lobbyCode.trim()) { ("POR FAVOR INGRESE EL CODIGO"); return; }
     if (!userName.trim()) { setError("POR FAVOR INGRESE SU NOMBRE"); return; }
     socketService.joinLobby(userName, lobbyCode);
   };
 
   const handleCreate = () => {
-    if (!userName.trim()) { setError("POR FAVOR INGRESE SU NOMBRE"); return; }
+    if (!userName.trim()) { setError("POR FAVOR INGRESA SU NOMBRE"); return; }
     socketService.createLobby(userName);
   };
 
@@ -269,15 +355,37 @@ export default function CreateLobbyScreen() {
   };
 
   const buyItem = (itemId: string) => {
-    if (!gameStarted) { Alert.alert("Espera", "INICIA EL GAME PRIMERO"); return; }
+    if (!gameStarted) {
+      Alert.alert("Espera", "INICIA EL JUEGO PRIMERO");
+      return;
+    }
     const item = shopItems.find(i => i.id === itemId);
     if (!item) return;
-    
-    if (points >= item.cost) {
-      setPoints(prev => prev + item.cost); 
-      setKarma(prev => prev + 1); 
-    } else { Alert.alert("Error", "NO TIENES PUNTOS SUFICIENTES"); }
+
+    if (karma >= item.cost) {
+     
+      socketService.buyTrap(item.name);
+     
+    } else {
+      Alert.alert("Error", "NO TIENES KARMA SUFICIENTE");
+    }
   };
+
+
+  useEffect(() => {
+  const handleStartGame = (payload: any) => {
+    const current = payload.members.find((m: any) => m.username === name);
+    if (current) {
+      console.log("Karma recibido:", current.karma);
+      console.log("Puntos recibidos:", current.stats?.points);
+      setKarma(current.karma);
+      setPoints(current.stats?.points ?? 0);
+    }
+  };
+
+  socketService.on("startGame", handleStartGame);
+  return () => socketService.off("startGame", handleStartGame);
+}, []);
 
   
 
@@ -311,7 +419,7 @@ export default function CreateLobbyScreen() {
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
       </View>
-      <Text style={styles.sectionTitle}>Don't have a code?</Text>
+      <Text style={styles.sectionTitle}>Don't have a code PERRO?</Text>
       <View style={styles.sectionDivider} />
       <View style={styles.section}>
          <Pressable
@@ -366,30 +474,30 @@ export default function CreateLobbyScreen() {
                 </View>
               )}
             </View>
-
-            <View style={styles.userCardsContainer}>
-              {userCards.map((user) => (
-                <View key={user.id} style={styles.userCard}>
-                  <View style={styles.userInfoContainer}>
-                    <Image source={user.image} style={styles.userImage} />
-                    <View style={styles.userTextContainer}>
-                      <Text style={styles.userName}>{user.name}</Text>
-                      <Text style={styles.userRole}>{user.role}</Text>
-                    </View>
-                  </View>
-                  <View style={styles.pointsContainerRight}>
-                    <View style={styles.pointsRow}>
-                      <Image source={icons.scoreIcon} style={styles.iconImage} />
-                      <Text style={styles.pointsText}>{user.score}</Text>
-                    </View>
-                    <View style={styles.pointsRow}>
-                      <Image source={icons.karmaIcon} style={styles.iconImage} />
-                      <Text style={styles.pointsText}>{user.karma}</Text>
-                    </View>
+<View style={styles.userCardsContainer}>
+  {userCards.map((user) => (
+      <View key={user.id} style={[ styles.userCard,  user.name === currentTurnPlayer && { backgroundColor: "#ffd700" } ]}>
+            <View style={styles.userInfoContainer}>
+                  <Image source={user.image} style={styles.userImage} />
+                  <View style={styles.userTextContainer}>
+                    <Text style={styles.userName}>{user.name}</Text>
+                    <Text style={styles.userRole}>{user.role}</Text>
                   </View>
                 </View>
-              ))}
-            </View>
+                <View style={styles.pointsContainerRight}>
+                  <View style={styles.pointsRow}>
+                    <Image source={icons.scoreIcon} style={styles.iconImage} />
+                    <Text style={styles.pointsText}>{user.score}</Text>
+                  </View>
+                  <View style={styles.pointsRow}>
+                    <Image source={icons.karmaIcon} style={styles.iconImage} />
+                    <Text style={styles.pointsText}>Karma: {karma}</Text>
+                  </View>
+                </View>
+              </View>
+            ))}
+          </View>
+
             {userCards.length === 0 && (
               <Text style={styles.noUsersText}>No hay usuarios conectados.</Text>
             )}

@@ -88,6 +88,7 @@ type Game struct {
 var games = make(map[int]*Game)
 
 func main() {
+	fmt.Println("Servidor corriendo en el puerto 1337")
 	http.HandleFunc("/game", handleConnections)
 	http.HandleFunc("/playerScored", playerScored)
 	http.Handle("/", http.FileServer(http.Dir("static")))
