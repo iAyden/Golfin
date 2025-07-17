@@ -241,6 +241,8 @@ func (game *Game) gameLoop() {
 
 					payload, _ := json.Marshal(data)
 
+					sendMessage("endUserTurn", msg, party.Members[i])
+
 					msg := Message{
 						Type:    "playerFinished",
 						Payload: payload,
@@ -262,6 +264,8 @@ func (game *Game) gameLoop() {
 				time.Sleep(1 * time.Second)
 				globalTimer++
 			}
+
+			sendMessage("endUserTurn", msg, party.Members[i])
 
 		}
 

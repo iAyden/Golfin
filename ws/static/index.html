@@ -4,6 +4,7 @@
 <head>
 	<meta charset="UTF-8" />
 	<title>Go WebSocket Test</title>
+	<script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
 	<h3>WebSocket Message Sender</h3>
@@ -13,8 +14,77 @@
 
 	<button onclick="joinParty()">Join Party </button>
 	<button onclick="startGame()">Start Game</button>
+
+	<button onclick="score()">Score</button>
+	  <button 
+    onclick="toggleModal()" 
+    class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+    Open Modal
+  </button>
+
+  <!-- Modal -->
+  <div 
+    id="modal" 
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+   	<div id="modalData"> 
+    <div class="bg-white p-6 rounded shadow-lg w-96 relative">
+      <h2 class="text-xl font-bold mb-4">This is a modal</h2>
+      <p id="name"class="mb-4">Est tu turno</p>
+	  <p id="timer"></p>
+	  <p id="score"></p>
+      <button 
+        onclick="toggleModal()" 
+        class="absolute top-2 right-2 text-gray-500 hover:text-black text-xl font-bold">&times;</button>
+      <button 
+        onclick="toggleModal()" 
+        class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+        Close
+      </button>
+    </div>
+</div>
+  </div>
+
+  <script>
+   async function toggleModal(type) {
+      const modal = document.getElementById('modal');
+	  modal.classList.toggle("hidden")
+    }
+
+
+
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+  </script>
+
+	<p>Username</p>
+	<p id="username"></p>
+
+	<br>
+
+	<p>Karma</p>
+	<p id="karma"></p>
+
+	<br>
+	<table class="min-w-full divide-y divide-gray-200 text-sm text-left">
+  <thead class="bg-gray-100 text-gray-700 uppercase tracking-wider">
+    <tr>
+      <th class="px-6 py-3">#</th>
+      <th class="px-6 py-3">Player</th>
+      <th class="px-6 py-3">Position</th>
+      <th class="px-6 py-3">Team</th>
+      <th class="px-6 py-3">Score</th>
+    </tr>
+  </thead>
+  <tbody id= "tableContents" ="divide-y divide-gray-200">
+  </tbody>
+</table>
+
 	<ul id="messages"></ul>
 
+	
 	<script>
 		const ws = new WebSocket("ws://localhost:1337/game");
 
@@ -23,10 +93,76 @@
 			const li = document.createElement("li");
 			let data = JSON.parse(event.data)
 
-			console.log(data)
-			li.textContent = JSON.stringify(data.payload) 
-			messages.appendChild(li);
+			console.log("el mensaje que recibimos del server esl")
+			console.log(data.type)
+			console.log(data.payload)
+
+			switch (data.type) {
+				case "createParty":
+					console.log("createParty lógica!")	
+
+					addUserToTable(data)
+
+					break;
+				case "joinParty":
+					console.log("joinparty logic")		
+					addUserToTable(data)			
+					break
+				case "startGame": 
+					console.log("startgame logic")
+					messages.innerText =""
+					addUserToTable(data)
+
+					break	
+				case "startUserTurn":
+					toggleModal()
+					break
+				case "endUserTurn":
+					toggleModal()
+					break
+				case "startTimer":
+					insertTimer(data)
+					break
+
+				case "turnTimer":
+					insertTimer(data)
+					break	
+				case "playerFinished":
+						console.log(document.getElementById("modal").classList.contains("hidden"))
+						toggleModal()
+					break
+				  default: 
+					break;
+			}
+			// li.textContent = JSON.stringify(data.payload) 
+			// messages.appendChild(li);
 		};
+
+		function getManyById(...ids) {
+  return ids.map(id => document.getElementById(id));
+}
+
+function score(){
+	
+}
+
+		function insertWinner(data){
+			let [name, points, score] = getManyById("winner", "points", "score");
+
+			console.log(name)
+			console.log(data.payload.name)
+
+			name.innerText = data.payload.name
+			points.innerText = data.payload.points
+			score.innerText = data.payload.score
+
+		}
+
+		function insertTimer(data){
+			let timer = data.payload.time
+			document.getElementById("timer").innerText = timer	
+
+		}	
 		
 		function createParty(){
 			let name = document.getElementById("username").value
@@ -77,6 +213,34 @@
 			ws.send(JSON.stringify(data))
 
 
+		}
+
+		function addUserToTable(data){
+
+			console.log(data.payload.members)
+
+			let members = data.payload.members
+
+			let table = document.getElementById('tableContents')
+			let newTable
+			members.forEach( member => {
+
+				let template = `
+				<tr>
+				<td class="px-6 py-4">1</td>
+				<td class="px-6 py-4 font-medium text-gray-900">${member.username}</td>
+				<td class="px-6 py-4">${member.karma}</td>
+				<td class="px-6 py-4">${member.points}</td>
+				<td class="px-6 py-4">${member.username}</td>
+				</tr>`
+
+				newTable += template
+
+			});
+
+			table.innerHTML = newTable
+
+					
 		}
 		function sendMessage() {
 			const input = document.getElementById("msg");
