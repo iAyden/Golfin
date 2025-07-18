@@ -33,14 +33,19 @@ class SocketService {
 
     startGame(code:string){ this.send("startGame",{code}); }
 
-
+    buyTrap(trapName: string) { this.send("buyTrap", { trap: trapName }); }
 
     on(eventType: string, callback: Callback){
         this.listeners[eventType] ??= this.listeners[eventType] = [];
         this.listeners[eventType].push(callback);
     }
-   
 
+    off(eventType: string, callback: Callback) {
+        if (!this.listeners[eventType]) return;
+        this.listeners[eventType] = this.listeners[eventType].filter(cb => cb !== callback);
+    }
+
+   
     private emit(eventType: string, data: any){
         (this.listeners[eventType]) ? this.listeners[eventType].forEach((cb) => cb(data)): console.error("No hay listeners para el evento:", eventType); // ternario
     }
@@ -57,15 +62,9 @@ class SocketService {
             this.listeners[eventType] = this.listeners[eventType].filter(cb => cb !== handler);
         };
         this.on(eventType, handler);
-    });
-
-
-    
+    }); 
 }
-
 }
-
-
 const socketService = new SocketService();
 
 export default socketService;
