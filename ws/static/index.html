@@ -15,7 +15,6 @@
 	<button onclick="joinParty()">Join Party </button>
 	<button onclick="startGame()">Start Game</button>
 
-	<button onclick="score()">Score</button>
 	  <button 
     onclick="toggleModal()" 
     class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
@@ -24,19 +23,40 @@
 
   <!-- Modal -->
   <div 
-    id="modal" 
+    id="turnModal" 
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+   	<div id="modalData"> 
+    <div class="bg-white p-6 rounded shadow-lg w-96 relative">
+      <h2 class="text-xl font-bold mb-4">This is a modal</h2>
+      <p id="title"class="mb-4">Est tu turno</p>
+	  <p id="timer"></p>
+	<button onclick="score()">Score</button>
+      <button 
+        onclick="toggleModal('turnModal')" 
+        class="absolute top-2 right-2 text-gray-500 hover:text-black text-xl font-bold">&times;</button>
+      <button 
+        onclick="toggleModal('turnModal')" 
+        class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+        Close
+      </button>
+    </div>
+</div>
+  </div>
+
+  <div 
+    id="scoredModal" 
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
    	<div id="modalData"> 
     <div class="bg-white p-6 rounded shadow-lg w-96 relative">
       <h2 class="text-xl font-bold mb-4">This is a modal</h2>
       <p id="name"class="mb-4">Est tu turno</p>
-	  <p id="timer"></p>
+	  <p id="points"></p>
 	  <p id="score"></p>
       <button 
-        onclick="toggleModal()" 
+        onclick="toggleModal('scoredModal')" 
         class="absolute top-2 right-2 text-gray-500 hover:text-black text-xl font-bold">&times;</button>
       <button 
-        onclick="toggleModal()" 
+        onclick="toggleModal('scoredModal')" 
         class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
         Close
       </button>
@@ -45,8 +65,8 @@
   </div>
 
   <script>
-   async function toggleModal(type) {
-      const modal = document.getElementById('modal');
+   async function toggleModal(modalId) {
+      const modal = document.getElementById(modalId);
 	  modal.classList.toggle("hidden")
     }
 
@@ -68,6 +88,14 @@ function wait(ms) {
 	<p id="karma"></p>
 
 	<br>
+	<p>Game code</p>
+	<p id="gameCode"></p>
+	<br>
+
+
+	<p>Game Id</p>
+	<br>
+	<p id="gameId"></p>
 	<table class="min-w-full divide-y divide-gray-200 text-sm text-left">
   <thead class="bg-gray-100 text-gray-700 uppercase tracking-wider">
     <tr>
@@ -88,7 +116,7 @@ function wait(ms) {
 	<script>
 		const ws = new WebSocket("ws://localhost:1337/game");
 
-		ws.onmessage = function(event) {
+		ws.onmessage = async function (event) {
 			const messages = document.getElementById("messages");
 			const li = document.createElement("li");
 			let data = JSON.parse(event.data)
@@ -100,25 +128,37 @@ function wait(ms) {
 			switch (data.type) {
 				case "createParty":
 					console.log("createParty lógica!")	
+					let code = document.getElementById("code")
 
+					console.log(code)
+					document.getElementById("code").value = data.payload.code
+					document.getElementById("gameCode").innerText = data.payload.code
 					addUserToTable(data)
 
 					break;
 				case "joinParty":
 					console.log("joinparty logic")		
+					document.getElementById("code").value = data.payload.code
+					document.getElementById("gameCode").innerText = data.payload.code
 					addUserToTable(data)			
 					break
 				case "startGame": 
 					console.log("startgame logic")
 					messages.innerText =""
 					addUserToTable(data)
+					break
+				case "gameId":
+					let id = data.payload.gameId
+
+					document.getElementById("gameId").innerText = id
+
 
 					break	
 				case "startUserTurn":
-					toggleModal()
+					toggleModal("turnModal")
 					break
 				case "endUserTurn":
-					toggleModal()
+					toggleModal("turnModal")
 					break
 				case "startTimer":
 					insertTimer(data)
@@ -128,22 +168,41 @@ function wait(ms) {
 					insertTimer(data)
 					break	
 				case "playerFinished":
-						console.log(document.getElementById("modal").classList.contains("hidden"))
-						toggleModal()
+					console.log("holaaaaaaaa")
+					document.getElementById("name").innerText = data.payload.name
+					document.getElementById("points").innerText = data.payload.points
+					document.getElementById("score").innerText = data.payload.score
+
+					toggleModal("scoredModal")
+					break
+
+				case "endPlayerFinished":	
+					console.log("hello")
+					toggleModal("scoredModal")
+
+					break
+				
+				case "gameEnded":
+					alert("Se acabó el juego perros")
 					break
 				  default: 
 					break;
 			}
-			// li.textContent = JSON.stringify(data.payload) 
-			// messages.appendChild(li);
-		};
-
-		function getManyById(...ids) {
-  return ids.map(id => document.getElementById(id));
+			// li.textContent = JSON.stringify(data.payload) // messages.appendChild(li); }; 
 }
 
-function score(){
-	
+async function score(){
+
+	let id = document.getElementById("gameId").innerText
+
+	data = {
+		id :  parseInt(id)
+	}
+	await fetch("/playerScored", {
+		method : "POST",
+		headers : {"Content-Type" : "application/json"},
+		body : JSON.stringify(data) 
+	})
 }
 
 		function insertWinner(data){
