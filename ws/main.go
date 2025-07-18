@@ -181,14 +181,16 @@ func (game *Game) gameLoop() {
 
 	fmt.Println("el id del juego es")
 	fmt.Println(game.Id)
-	start := time.Now()
 
 	var mensaje Message
+
+	globalTime := time.Now()
 
 	fmt.Println("El juego es ", games[game.Id])
 	for !finished {
 		for i := range party.Members {
 
+			start := time.Now()
 			if party.Members[i].Finished {
 				fmt.Println("Salteamos el turno del jugador", party.Members[i].Finished, party.Members[i].Name)
 				i++
@@ -256,20 +258,22 @@ func (game *Game) gameLoop() {
 	}
 	fmt.Println("fin de la partida")
 
-	msg := Message{
-		Type: "gameEnded",
-	}
-	game.Party.Broadcast <- msg
-	<-done
-
 	winner := getWinner(game.Party.Members)
 	winner.Stats.Won = 1
 
 	fmt.Println("Ganó la partida", winner.Name)
 
 	game.Stats.Winner = winner.Name
-	game.Stats.TimeElapsed = int(time.Since(start))
+	game.Stats.TimeElapsed = int(time.Since(globalTime))
 
+	payload, _ := json.Marshal(game.Stats)
+	msg := Message{
+		Type:    "gameEnded",
+		Payload: payload,
+	}
+
+	game.Party.Broadcast <- msg
+	<-done
 	sendUserStats(game.Party.Members)
 	sendGameStats(game)
 

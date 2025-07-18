@@ -168,11 +168,16 @@ function wait(ms) {
 					insertTimer(data)
 					break	
 				case "playerFinished":
-					console.log("holaaaaaaaa")
-					document.getElementById("name").innerText = data.payload.name
-					document.getElementById("points").innerText = data.payload.points
-					document.getElementById("score").innerText = data.payload.score
+					let name = document.getElementById("name")
+					name.innerText = data.payload.name
 
+					let points = document.getElementById("points")
+					points.innerText = data.payload.points
+
+					let score = document.getElementById("score")
+					score.innerText = data.payload.score
+
+					addPointsToTable(name,points)
 					toggleModal("scoredModal")
 					break
 
@@ -189,6 +194,12 @@ function wait(ms) {
 					break;
 			}
 			// li.textContent = JSON.stringify(data.payload) // messages.appendChild(li); }; 
+}
+
+
+function addPointsToTable(pName, pPoints){
+	let table = document.getElementById("tableContents")
+	console.log(table)
 }
 
 async function score(){
