@@ -133,8 +133,11 @@ export default function CreateLobbyScreen() {
   const [points, setPoints] = useState(0);
   const [karma, setKarma] = useState(0);
   const [currentTurnPlayer, setCurrentTurnPlayer] = useState<string | null>(null);
-  const [turnIndex, setTurnIndex] = useState(0);
-  
+  const [isMyTurn, setIsMyTurn] = useState(false);
+  const [prepTime, setPrepTime] = useState<number | null>(null);
+  const [turnTime, setTurnTime] = useState<number>(0);
+  const [showTurnModal, setShowTurnModal] = useState(false);
+
 
   // TIENDA
   const shopItems: ShopItemType[] = [
@@ -158,7 +161,7 @@ useEffect(() => {
     if (payload?.code) {
       console.log("Payload members:", payload.members);
       setPartyData(payload);
-      setIsOwner(true);
+      setIsOwner(payload.owner === userName);
       setCurrentView("lobby");
 
       const currentPlayer = payload.members.find(m => m.username === userName);
@@ -171,21 +174,20 @@ useEffect(() => {
       setUserCards(payload.members.map(member => ({
         id: member.username,
         name: member.username,
-        role: member.username === payload.owner ? "OWNER" : "VISITOR",
+        role: member.username === payload.owner ? "Owner" : "VISITOR",
         score: member.points,
         karma: member.karma,
         image: require("../assets/images/golf.png")
       })));
-    } else {
-      setError("No se pudo crear la partida");
     }
+     else { setError("No se pudo crear la partida"); }
   };
 
   const handleJoinParty = (payload: PartyData) => {
     if (payload?.code) {
       console.log("Payload members:", payload.members);
       setPartyData(payload);
-      setIsOwner(true);
+      setIsOwner(payload.owner === userName);
       setCurrentView("lobby");
 
       const currentPlayer = payload.members.find(m => m.username === userName);
@@ -203,18 +205,14 @@ useEffect(() => {
         karma: member.karma,
         image: require("../assets/images/golf.png")
       })));
-    } else {
-      setError("Error al unirse al juego");
-    }
+    } 
+    else { setError("Error al unirse al juego"); }
   };
 
   const handlePlayerJoined = (updatedParty: PartyData) => {
     setPartyData(updatedParty);
     const currentPlayer = updatedParty.members.find(m => m.username === userName);
-    if (currentPlayer) {
-      setPoints(currentPlayer.points);
-      setKarma(currentPlayer.karma);
-    }
+    if (currentPlayer) { setPoints(currentPlayer.points); setKarma(currentPlayer.karma); }
 
     setUserCards(updatedParty.members.map(member => ({
       id: member.username,
@@ -227,58 +225,57 @@ useEffect(() => {
   };
 
 const handleKarmaTrigger = (payload: { username: string; karma: number }) => {
-  setUserCards(prev => 
-    prev.map(card => 
-      card.name === payload.username ? { ...card, karma: payload.karma } : card
-    )
-  );
-  if (payload.username === userName) setKarma(payload.karma);
+  console.log("TRAMPA trigueada:", payload.username, payload.karma);
 };
 
 
-
-  const handleBuyTrap = (payload: { Karma: number }) => {
-    if (payload.Karma !== undefined) setKarma(payload.Karma);
-  };
-
-  const handlePlayerFinished = (payload: { name: string; score: string; points: number }) => {
-    console.log("playerFinished payload:", payload);
-    if (payload.name === userName) setPoints(payload.points);
-  };
-
-  const handleStartUserTurn = (payload: { username: string } | null) => {
-    console.log("startUserTurn payload:", payload);
-    if (!payload || !payload.username) return;
-    setCurrentTurnPlayer(payload.username);
-  };
+  const handleBuyTrap = (payload: { Karma: number }) => { if (payload.Karma !== undefined) setKarma(payload.Karma); };
 
 
-  /////////////////// REAL TIME updater ////////////////////
+  /////////////////// REAL TIME updater /////////////
   const handleGlobalTimer = (payload: { time: number }) => { setSeconds(payload.time); };
-  const handleStartTimer = (payload: { time: number }) => {
-    setSeconds(payload.time);
-  };
-
-  // Ignoren esto, lo probare mas adelante es una babosada que programe
-  const handleTurnTimer = (payload: { time: number }) => {
-    setSeconds(payload.time);
-    if (payload.time === 0 && userCards.length > 0) {
-      setTurnIndex(prevIndex => {
-        const nextIndex = (prevIndex + 1) % userCards.length;
-        setCurrentTurnPlayer(userCards[nextIndex].name);
-        return nextIndex;
-      });
-    }
-  };
   //////////////////////////////////////////////////
 
+  //////////////////////// TURNOS DE LOS USUARIOS ////////////////////////
+const handleStartTimer = (payload: { time: number }) => { setPrepTime(payload.time); };
+
+const handleTurnTimer = (payload: { time: number }) => {
+  setTurnTime(payload.time);
+
+  if (payload.time === 0) {
+    setShowTurnModal(false);
+    setIsMyTurn(false);
+    setPrepTime(null);
+  }
+};
+
+const handleStartUserTurn = (payload: any) => {
+  if (payload === null) {
+
+    setPrepTime(null);
+    setShowTurnModal(true);
+    setIsMyTurn(true);
+  } else {
+    setShowTurnModal(false);
+    setIsMyTurn(false);
+    setPrepTime(null);
+    setTurnTime(0);
+  }
+};
+
+///////////////////////// PLayer finished que NO FUNCIONA//////////////////////
+
+const handlePlayerFinished = (payload: any) => {
+  console.log("EL PLAYERFINISHED ESTA FUNCIONANDO POR FAVOR FUNCIONA");
+  setShowTurnModal(false);   
+};
+/////////////////////////////////////////////////////////////////////////////
 
   ///////////////// START GAME HANDLER /////////////////////
 const handleStartGame = (payload: PartyData) => {
   setGameStarted(true);
   setSeconds(0);
   setPartyData(payload);
-
   const currentPlayer = payload.members.find(m => m.username === userName);
   if (currentPlayer) {
     console.log("Payload members:", payload.members);
@@ -296,8 +293,8 @@ const handleStartGame = (payload: PartyData) => {
   })));
 };
 
-////////////////////////////////////////////////////////////
 
+  ////////////////////////// Aqui los handlers que reccionan por cada eventi ////////////////////////
   socketService.on("createParty", handleCreateParty);
   socketService.on("joinParty", handleJoinParty);
   socketService.on("playerJoined", handlePlayerJoined);
@@ -309,6 +306,7 @@ const handleStartGame = (payload: PartyData) => {
   socketService.on("startUserTurn", handleStartUserTurn);
   socketService.on("turnTimer", handleTurnTimer);
   socketService.on("startGame", handleStartGame);
+  
 
   setTimeout(() => setIsReady(true), 500);
 
@@ -374,20 +372,12 @@ const handleStartGame = (payload: PartyData) => {
   };
 
   const buyItem = (itemId: string) => {
-    if (!gameStarted) {
-      Alert.alert("Espera", "INICIA EL JUEGO PRIMERO");
-      return;
-    }
+    if (!gameStarted) {  Alert.alert("Espera", "INICIA EL JUEGO PRIMERO"); return; }
     const item = shopItems.find(i => i.id === itemId);
     if (!item) return;
 
-    if (karma >= item.cost) {
-     
-      socketService.buyTrap(item.name);
-     
-    } else {
-      Alert.alert("Error", "NO TIENES KARMA SUFICIENTE");
-    }
+    if (karma >= item.cost) { socketService.buyTrap(item.name); } 
+    else { Alert.alert("Error", "NO TIENES KARMA SUFICIENTE"); }
   };
 
 
@@ -469,17 +459,8 @@ const handleStartGame = (payload: PartyData) => {
       <View style={styles.container}>
         {/* FRENTE DE LA CARTA */}
         <Animated.View
-          style={[
-            styles.cardFace,
-            styles.cardFront,
-            frontAnimatedStyle,
-            { display: showFront ? "flex" : "none" },
-          ]}
-        >
-          <ScrollView
-            contentContainerStyle={styles.frontContent}
-            showsVerticalScrollIndicator={false}
-          >
+          style={[ styles.cardFace, styles.cardFront, frontAnimatedStyle, { display: showFront ? "flex" : "none" }, ]}>
+          <ScrollView contentContainerStyle={styles.frontContent} showsVerticalScrollIndicator={false} >
             <View style={styles.frontHeader}>
               <View style={styles.titleContainer}>
                 <Text style={styles.mainTitle}>Party</Text>
@@ -493,6 +474,7 @@ const handleStartGame = (payload: PartyData) => {
                 </View>
               )}
             </View>
+
 <View style={styles.userCardsContainer}>
   {userCards.map((user) => (
       <View key={user.id} style={[ styles.userCard,  user.name === currentTurnPlayer && { backgroundColor: "#ffd700" } ]}>
@@ -517,42 +499,52 @@ const handleStartGame = (payload: PartyData) => {
             ))}
           </View>
 
-            {userCards.length === 0 && (
-              <Text style={styles.noUsersText}>No hay usuarios conectados.</Text>
-            )}
+        {showTurnModal && (
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              {prepTime !== null && prepTime > 0 ? (
+                <>  
+                  <Text style={styles.modalText}>Watch out...</Text>
+                  <Text style={styles.timerText}>{prepTime}s missing</Text>
+                </>
+              ) 
+              : /* etse es el ods puntos del ternario */
+              (
+                isMyTurn && (
+                  <>
+                    <Text style={styles.modalText}>¡Go ahead!</Text>
+                    <Text style={styles.timerText}>{turnTime}s missing</Text>
+                  </>
+                )
+              )}
+            </View>
+          </View>
+        )}
 
-            {!gameStarted ? (
-              <TouchableOpacity
-                disabled={isDisabled}
-                style={[
-                  styles.startButton,
-                  isDisabled ? styles.disabledStartButton : styles.activeStartButton
-                ]}
-                onPress={startGame}
-              >
-                <Text style={styles.startButtonText}>{owner}</Text>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity style={styles.flipButton} onPress={flipCard}>
-                <Text style={styles.flipButtonText}>Ir a la Tienda</Text>
-              </TouchableOpacity>
-            )}
+          {userCards.length === 1 && ( <Text style={styles.noUsersText}>There are not users connected.</Text> )}
+
+        {!gameStarted && isOwner && (
+            <TouchableOpacity style={[styles.startButton, styles.activeStartButton]} onPress={startGame} >
+              <Text style={styles.startButtonText}>Empezar</Text>
+            </TouchableOpacity>
+          )}
+
+          {gameStarted && (
+            <TouchableOpacity style={styles.flipButton} onPress={flipCard} >
+              <Text style={styles.flipButtonText}>Ir a la Tienda</Text>
+            </TouchableOpacity>
+
+        )}
+
+
+
+
           </ScrollView>
         </Animated.View>
 
         {/* TRASERO DE LA CARTA */}
-        <Animated.View
-          style={[
-            styles.cardFace,
-            styles.cardBack,
-            backAnimatedStyle,
-            { display: showFront ? "none" : "flex" },
-          ]}
-        >
-          <ScrollView
-            contentContainerStyle={styles.backContent}
-            showsVerticalScrollIndicator={false}
-          >
+        <Animated.View style={[ styles.cardFace, styles.cardBack, backAnimatedStyle,{ display: showFront ? "none" : "flex" },]}>
+          <ScrollView contentContainerStyle={styles.backContent} showsVerticalScrollIndicator={false} >
             <View style={styles.titleContainer}>
               <Text style={styles.mainTitle}>Traps</Text>
               <Text style={styles.subtitle}>Use an hability to get karma</Text>
@@ -590,11 +582,7 @@ const handleStartGame = (payload: PartyData) => {
               {shopItems.map((item) => (
                 <TouchableOpacity
                   key={item.id}
-                  style={[
-                    styles.shopItem,
-                    { backgroundColor: item.backgroundColor },
-                    (points < item.cost || !gameStarted) && styles.disabledItem,
-                  ]}
+                  style={[ styles.shopItem, { backgroundColor: item.backgroundColor }, (points < item.cost || !gameStarted) && styles.disabledItem, ]}
                   onPress={() => buyItem(item.id)}
                   disabled={points < item.cost || !gameStarted}
                 >
@@ -605,11 +593,7 @@ const handleStartGame = (payload: PartyData) => {
               ))}
             </View>
 
-            <TouchableOpacity
-              style={[styles.flipButton, !gameStarted && styles.disabledButton]}
-              onPress={flipCard}
-              disabled={!gameStarted}
-            >
+            <TouchableOpacity  style={[styles.flipButton, !gameStarted && styles.disabledButton]} onPress={flipCard}  disabled={!gameStarted} >
               <Text style={styles.flipButtonText}>Back to lobby</Text>
             </TouchableOpacity>
           </ScrollView>
@@ -910,10 +894,10 @@ const styles = StyleSheet.create({
     tintColor: "white",
   },
   noUsersText: {
-    color: "rgba(255, 255, 255, 0.7)",
+    color: "rgba(255, 255, 255, 0.9)",
     textAlign: "center",
     marginTop: 20,
-    fontSize: isSmallDevice ? 14 : 16,
+    fontSize: isSmallDevice ? 20 : 25,
   },
   startButton: {
     paddingVertical: isSmallDevice ? 12 : 14,
@@ -1035,4 +1019,34 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
+   modalOverlay: {
+    position: "absolute",
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 9999,
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 30,
+    borderRadius: 20,
+    alignItems: "center",
+  },
+  modalText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  timerText: {
+    fontSize: 20,
+    color: "gray",
+  },
+  waitingText: {
+  color: 'white',
+  fontSize: 16,
+  marginTop: 10,
+  textAlign: 'center',
+}
+
 });
