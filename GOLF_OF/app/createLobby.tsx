@@ -61,6 +61,16 @@ interface PartyData {
   members: Player[];
 }
 
+type User = {
+  id: string;
+  name: string;
+  image: ImageSourcePropType;
+  role: string;
+  score: number;
+  karma: number;
+};
+
+
 // Dimensiones y tipos de dispositivo
 const { width, height } = Dimensions.get("window");
 const isSmallDevice = width < 375;
@@ -146,12 +156,14 @@ useEffect(() => {
 
   const handleCreateParty = (payload: PartyData) => {
     if (payload?.code) {
+      console.log("Payload members:", payload.members);
       setPartyData(payload);
       setIsOwner(true);
       setCurrentView("lobby");
 
       const currentPlayer = payload.members.find(m => m.username === userName);
       if (currentPlayer) {
+        console.log("Payload members:", payload.members);
         setPoints(currentPlayer.points);
         setKarma(currentPlayer.karma);
       }
@@ -171,12 +183,14 @@ useEffect(() => {
 
   const handleJoinParty = (payload: PartyData) => {
     if (payload?.code) {
+      console.log("Payload members:", payload.members);
       setPartyData(payload);
       setIsOwner(true);
       setCurrentView("lobby");
 
       const currentPlayer = payload.members.find(m => m.username === userName);
       if (currentPlayer) {
+        console.log("Payload members:", payload.members);
         setPoints(currentPlayer.points);
         setKarma(currentPlayer.karma);
       }
@@ -201,6 +215,7 @@ useEffect(() => {
       setPoints(currentPlayer.points);
       setKarma(currentPlayer.karma);
     }
+
     setUserCards(updatedParty.members.map(member => ({
       id: member.username,
       name: member.username,
@@ -211,18 +226,13 @@ useEffect(() => {
     })));
   };
 
-
 const handleKarmaTrigger = (payload: { username: string; karma: number }) => {
-  // Actualiza el karma en la lista de jugadores  del array de objetos
-  setUserCards(prevCards =>
-    prevCards.map(card =>
+  setUserCards(prev => 
+    prev.map(card => 
       card.name === payload.username ? { ...card, karma: payload.karma } : card
     )
   );
-
-  if (payload.username === userName) {
-    setKarma(payload.karma);
-  }
+  if (payload.username === userName) setKarma(payload.karma);
 };
 
 
@@ -249,7 +259,7 @@ const handleKarmaTrigger = (payload: { username: string; karma: number }) => {
     setSeconds(payload.time);
   };
 
-  // Here there is the handler that updates the seconds in the frontend 
+  // Ignoren esto, lo probare mas adelante es una babosada que programe
   const handleTurnTimer = (payload: { time: number }) => {
     setSeconds(payload.time);
     if (payload.time === 0 && userCards.length > 0) {
@@ -264,19 +274,28 @@ const handleKarmaTrigger = (payload: { username: string; karma: number }) => {
 
 
   ///////////////// START GAME HANDLER /////////////////////
-  const handleStartGame = (payload: PartyData) => {
+const handleStartGame = (payload: PartyData) => {
   setGameStarted(true);
   setSeconds(0);
-  
-  setPartyData(payload); // The updater of all party
-  
-  // THis looks the current player in the menbers of the party
+  setPartyData(payload);
+
   const currentPlayer = payload.members.find(m => m.username === userName);
   if (currentPlayer) {
-    setKarma(currentPlayer.karma);
+    console.log("Payload members:", payload.members);
+    setKarma(currentPlayer.karma); 
     setPoints(currentPlayer.stats?.points ?? 0);
   }
+
+  setUserCards(payload.members.map(member => ({
+    id: member.username,
+    name: member.username,
+    role: member.username === payload.owner ? "OWNER" : "VISITOR",
+    score: member.points,
+    karma: member.karma,
+    image: require("../assets/images/golf.png")
+  })));
 };
+
 ////////////////////////////////////////////////////////////
 
   socketService.on("createParty", handleCreateParty);
@@ -487,11 +506,11 @@ const handleKarmaTrigger = (payload: { username: string; karma: number }) => {
                 <View style={styles.pointsContainerRight}>
                   <View style={styles.pointsRow}>
                     <Image source={icons.scoreIcon} style={styles.iconImage} />
-                    <Text style={styles.pointsText}>{user.score}</Text>
+                    <Text style={styles.pointsText}>{(user.score) ? user.score : "0"} </Text>
                   </View>
                   <View style={styles.pointsRow}>
                     <Image source={icons.karmaIcon} style={styles.iconImage} />
-                    <Text style={styles.pointsText}>Karma: {karma}</Text>
+                    <Text style={styles.pointsText}>{(user.karma) ? user.karma: "0"}</Text>
                   </View>
                 </View>
               </View>
