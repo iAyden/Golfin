@@ -194,7 +194,8 @@ func (game *Game) gameLoop() {
 	for !finished {
 		for i := range party.Members {
 
-			start := time.Now()
+			start := time.Now().Add(-time.Duration(game.Round*10) * time.Second)
+
 			if party.Members[i].Finished {
 				fmt.Println("Salteamos el turno del jugador", party.Members[i].Finished, party.Members[i].Name)
 				if i+1 == len(party.Members) {
