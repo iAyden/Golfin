@@ -60,7 +60,8 @@ type User struct {
 	BoughtTraps []string
 	Stats       UStats `json:"stats"`
 
-	Msg chan Message `json:"-"`
+	Msg   chan Message `json:"-"`
+	Nuked chan string  `json:"-"`
 }
 
 type Party struct {
@@ -134,6 +135,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	user := &User{
 		UserConn: ws,
 		Msg:      make(chan Message),
+		Nuked:    make(chan string),
 	}
 
 	fmt.Print("Nuevo user con web socket")
@@ -146,6 +148,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 
 func (user *User) readMessages() {
 	for {
+		fmt.Println("esperando mensaje....")
 		_, rawMsg, err := user.UserConn.ReadMessage()
 		if err != nil {
 			fmt.Println(err)
@@ -154,8 +157,7 @@ func (user *User) readMessages() {
 		var msg Message
 
 		json.Unmarshal(rawMsg, &msg)
-		fmt.Println("El mensaje que recibimos del cliente es:")
-		fmt.Println(msg)
+		fmt.Println("El mensaje que recibimos del cliente es: ", msg)
 
 		switch msg.Type {
 		case "createParty":
@@ -163,9 +165,11 @@ func (user *User) readMessages() {
 		case "joinParty":
 			joinParty(user, msg)
 		case "startGame":
-			startGame(user, msg)
-
-			//nukeamos esta funcion de lectura
+			//xddddi
+			go startGame(user, msg)
+		case "nuke":
+			fmt.Println("Nukeamos con éxito")
+			user.Nuked <- "nukeado"
 			return
 		}
 	}
@@ -181,17 +185,24 @@ func (game *Game) gameLoop() {
 
 	fmt.Println("el id del juego es")
 	fmt.Println(game.Id)
-	start := time.Now()
 
 	var mensaje Message
+
+	globalTime := time.Now()
 
 	fmt.Println("El juego es ", games[game.Id])
 	for !finished {
 		for i := range party.Members {
 
+			start := time.Now().Add(-time.Duration(game.Round*10) * time.Second)
+
 			if party.Members[i].Finished {
 				fmt.Println("Salteamos el turno del jugador", party.Members[i].Finished, party.Members[i].Name)
-				i++
+				if i+1 == len(party.Members) {
+					i = 0
+				} else {
+					i++
+				}
 				//idea
 				//cuando un jugador termine puede darle a otros jugadores karma
 				//le podemos dar más karma con cada ronda qué pasa
@@ -256,20 +267,22 @@ func (game *Game) gameLoop() {
 	}
 	fmt.Println("fin de la partida")
 
-	msg := Message{
-		Type: "gameEnded",
-	}
-	game.Party.Broadcast <- msg
-	<-done
-
 	winner := getWinner(game.Party.Members)
 	winner.Stats.Won = 1
 
 	fmt.Println("Ganó la partida", winner.Name)
 
 	game.Stats.Winner = winner.Name
-	game.Stats.TimeElapsed = int(time.Since(start))
+	game.Stats.TimeElapsed = int(time.Since(globalTime))
 
+	payload, _ := json.Marshal(game.Stats)
+	msg := Message{
+		Type:    "gameEnded",
+		Payload: payload,
+	}
+
+	game.Party.Broadcast <- msg
+	<-done
 	sendUserStats(game.Party.Members)
 	sendGameStats(game)
 
@@ -466,7 +479,7 @@ func activateTrap(user *User, msg Message, game *Game) {
 	http.Get(url)
 
 	var data = map[string]interface{}{
-		"Trap": trap,
+		"trap": trap,
 	}
 	var gameMembers = game.Party.Members
 
@@ -509,7 +522,7 @@ func buyTrap(user *User, msg Message) {
 		user.Karma -= trapPrice[trap]
 
 		data := map[string]interface{}{
-			"Karma": user.Karma,
+			"karma": user.Karma,
 		}
 
 		user.BoughtTraps = append(user.BoughtTraps, trap)
@@ -526,6 +539,11 @@ func buyTrap(user *User, msg Message) {
 var trapPrice = make(map[string]int)
 
 func hasEnoughKarma(trap string, player *User) bool {
+	//cancer
+	trapPrice["fan"] = 100
+	trapPrice["car"] = 250
+	trapPrice["earthquake"] = 500
+
 	return player.Karma >= trapPrice[trap]
 }
 
@@ -619,6 +637,12 @@ func startGame(user *User, msg Message) {
 		randInt := mathRand.Intn(250) + 100
 		party.Members[i].Karma = randInt
 
+		data := map[string]interface{}{
+			"karma": party.Members[i].Karma,
+		}
+
+		sendMessage("userStartGame", data, party.Members[i])
+
 		randInt = mathRand.Intn(len(party.Members))
 
 		playerP := party.Members[randInt]
@@ -647,7 +671,7 @@ func startGame(user *User, msg Message) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(data)
+	// fmt.Println(data)
 
 	intnum, _ := strconv.Atoi(string(data))
 	games[intnum] = game
@@ -674,11 +698,15 @@ func startGame(user *User, msg Message) {
 	stringNum := strconv.Itoa(intnum)
 	os.WriteFile("gameSeed.txt", []byte(stringNum), 0644)
 
-	go game.gameLoop()
-
+	interfaceMap := map[string]interface{}{}
 	for i := 0; i < len(party.Members); i++ {
-		party.Members[i].readGameMessages(game)
+		fmt.Println("Nukeando a ", party.Members[i].Name)
+		sendMessage("nuke", interfaceMap, party.Members[i])
+		<-party.Members[i].Nuked
+		fmt.Println("Nukeamos el reader de ", party.Members[i].Name)
+		go party.Members[i].readGameMessages(game)
 	}
+	go game.gameLoop()
 
 }
 

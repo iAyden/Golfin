@@ -96,6 +96,10 @@ function wait(ms) {
 	<p>Game Id</p>
 	<br>
 	<p id="gameId"></p>
+
+  	<h1 >Points</h1>
+  	<h1 id="playerPoints"></h1>
+
 	<table class="min-w-full divide-y divide-gray-200 text-sm text-left">
   <thead class="bg-gray-100 text-gray-700 uppercase tracking-wider">
     <tr>
@@ -112,6 +116,12 @@ function wait(ms) {
 
 	<ul id="messages"></ul>
 
+<button id="fan" onclick="buyTrap('fan')">Ventilador</button> 
+<button id="fan" onclick="activateTrap('fan')">Activar</button>  <br>
+<button id="car" onclick="buyTrap('car')">Car</button><br>
+<button id="earthquake" onclick="buyTrap('earthquake')">earthquake</button> <br>
+
+<button onclick="nukeReaderFunction()">Nuke</button>
 	
 	<script>
 		const ws = new WebSocket("ws://localhost:1337/game");
@@ -120,10 +130,10 @@ function wait(ms) {
 			const messages = document.getElementById("messages");
 			const li = document.createElement("li");
 			let data = JSON.parse(event.data)
-
-			console.log("el mensaje que recibimos del server esl")
-			console.log(data.type)
-			console.log(data.payload)
+			if(!(data.type == "globalTimer" || data.type == "turnTimer" || data.type  == "startTimer")){
+				console.log("el mensaje que recibimos del server esl")
+				console.log(data)
+			}
 
 			switch (data.type) {
 				case "createParty":
@@ -146,6 +156,11 @@ function wait(ms) {
 					console.log("startgame logic")
 					messages.innerText =""
 					addUserToTable(data)
+					
+					break
+				case "userStartGame" : 
+					document.getElementById("karma").innerText = data.payload.karma
+
 					break
 				case "gameId":
 					let id = data.payload.gameId
@@ -168,10 +183,16 @@ function wait(ms) {
 					insertTimer(data)
 					break	
 				case "playerFinished":
-					console.log("holaaaaaaaa")
-					document.getElementById("name").innerText = data.payload.name
-					document.getElementById("points").innerText = data.payload.points
-					document.getElementById("score").innerText = data.payload.score
+					let name = document.getElementById("name")
+					name.innerText = data.payload.name
+
+					let points = document.getElementById("points")
+					points.innerText = data.payload.points
+
+					let score = document.getElementById("score")
+					score.innerText = data.payload.score
+
+					document.getElementById("playerPoints").innerText = data.payload.points
 
 					toggleModal("scoredModal")
 					break
@@ -185,10 +206,71 @@ function wait(ms) {
 				case "gameEnded":
 					alert("Se acabó el juego perros")
 					break
+				case "buyTrap" : 
+					//con esto checamos si el payload está vacio
+					if (Object.keys(data.payload).length === 0){
+						alert("not enough kamrma")
+						break
+					}
+					document.getElementById("karma").innerText = data.payload.karma
+					break
+
+				case "karmaTrigger": 
+					alert("karma triggered perro")
+					document.getElementById("karma").innerText = data.payload.karma
+
+
+					break
+
+				case "nuke" : 
+					nukeReaderFunction()
+				break
 				  default: 
 					break;
 			}
 			// li.textContent = JSON.stringify(data.payload) // messages.appendChild(li); }; 
+}
+
+
+		function activateTrap(trapName){
+
+			let data = {
+				type : "activateTrap",
+				payload : {
+					trap : trapName
+				}
+			}	
+			
+			console.log(data)
+			ws.send(JSON.stringify(data))
+			
+		}
+		function buyTrap(trapName){
+
+			let data = {
+				type : "buyTrap",
+				payload : {
+					trap : trapName
+				}
+			}	
+			
+			console.log(data)
+			ws.send(JSON.stringify(data))
+		}
+function nukeReaderFunction(){
+
+	let data = {
+		type : "nuke",
+		payload : { nuke : "nuke"}
+	}	
+	
+	console.log(data)
+	console.log("Nukealo alv")
+	ws.send(JSON.stringify(data))
+}
+function addPointsToTable(pName, pPoints){
+	let table = document.getElementById("tableContents")
+	console.log(table)
 }
 
 async function score(){
