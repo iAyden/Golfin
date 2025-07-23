@@ -43,7 +43,7 @@ public class GameService {
             dto.getWinner(),
             dto.getTotalSpringedTraps(),
             dto.getTotalTime(),
-            playerIds  // Aquí es List<String>
+            playerIds  
         );
 
         return gameRepository.save(game);
