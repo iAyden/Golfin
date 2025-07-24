@@ -209,6 +209,9 @@ useEffect(() => {
     else { setError("Error al unirse al juego"); }
   };
 
+  const handleGameId = (payload: any) => {
+    console.log("Evento gameId recibido:", payload);
+  };
   const handlePlayerJoined = (updatedParty: PartyData) => {
     setPartyData(updatedParty);
     const currentPlayer = updatedParty.members.find(m => m.username === userName);
@@ -263,14 +266,18 @@ const handleStartUserTurn = (payload: any) => {
   }
 };
 
-///////////////////////// PLayer finished que NO FUNCIONA//////////////////////
+const handleEndPlayerFinished = (payload: any) => { console.log("se cierra modal de turno"); };
 
+///////////////////////// PLayer finished que NO FUNCIONA//////////////////////
 const handlePlayerFinished = (payload: any) => {
-  console.log("EL PLAYERFINISHED ESTA FUNCIONANDO POR FAVOR FUNCIONA");
+  console.log("Se anoto un punto");
   setShowTurnModal(false);   
 };
 /////////////////////////////////////////////////////////////////////////////
+const handleEndUserTurn = (payload: any) => {
+  console.log("Evento endUserTurn recibido:", payload);
 
+};
   ///////////////// START GAME HANDLER /////////////////////
 const handleStartGame = (payload: PartyData) => {
   setGameStarted(true);
@@ -295,6 +302,7 @@ const handleStartGame = (payload: PartyData) => {
 
 
   ////////////////////////// Aqui los handlers que reccionan por cada eventi ////////////////////////
+  socketService.on("gameId", handleGameId);
   socketService.on("createParty", handleCreateParty);
   socketService.on("joinParty", handleJoinParty);
   socketService.on("playerJoined", handlePlayerJoined);
@@ -306,11 +314,15 @@ const handleStartGame = (payload: PartyData) => {
   socketService.on("startUserTurn", handleStartUserTurn);
   socketService.on("turnTimer", handleTurnTimer);
   socketService.on("startGame", handleStartGame);
+  socketService.on("endPlayerFinished", handleEndPlayerFinished);
+  socketService.on("endUserTurn", handleEndUserTurn);
+  
   
 
   setTimeout(() => setIsReady(true), 500);
 
   return () => {
+    socketService.off("gameId", handleGameId);
     socketService.off("createParty", handleCreateParty);
     socketService.off("joinParty", handleJoinParty);
     socketService.off("playerJoined", handlePlayerJoined);
@@ -322,6 +334,8 @@ const handleStartGame = (payload: PartyData) => {
     socketService.off("startUserTurn", handleStartUserTurn);
     socketService.off("turnTimer", handleTurnTimer);
     socketService.off("startGame", handleStartGame);
+    socketService.off("endPlayerFinished", handleEndPlayerFinished);
+    socketService.off("endUserTurn", handleEndUserTurn);
     socketService.close();
   };
 }, [userName]);
@@ -476,27 +490,35 @@ const handleStartGame = (payload: PartyData) => {
             </View>
 
 <View style={styles.userCardsContainer}>
-  {userCards.map((user) => (
-      <View key={user.id} style={[ styles.userCard,  user.name === currentTurnPlayer && { backgroundColor: "#ffd700" } ]}>
-            <View style={styles.userInfoContainer}>
-                  <Image source={user.image} style={styles.userImage} />
-                  <View style={styles.userTextContainer}>
-                    <Text style={styles.userName}>{user.name}</Text>
-                    <Text style={styles.userRole}>{user.role}</Text>
-                  </View>
-                </View>
-                <View style={styles.pointsContainerRight}>
-                  <View style={styles.pointsRow}>
-                    <Image source={icons.scoreIcon} style={styles.iconImage} />
-                    <Text style={styles.pointsText}>{(user.score) ? user.score : "0"} </Text>
-                  </View>
-                  <View style={styles.pointsRow}>
-                    <Image source={icons.karmaIcon} style={styles.iconImage} />
-                    <Text style={styles.pointsText}>{(user.karma) ? user.karma: "0"}</Text>
-                  </View>
-                </View>
-              </View>
-            ))}
+  {[...userCards]
+  .sort((a, b) => (b.score || 0) - (a.score || 0))
+  .map((user) => (
+    <View
+      key={user.id}
+      style={[
+        styles.userCard,
+        user.name === currentTurnPlayer && { backgroundColor: "#ffd700" },
+      ]}
+    >
+      <View style={styles.userInfoContainer}>
+        <Image source={user.image} style={styles.userImage} />
+        <View style={styles.userTextContainer}>
+          <Text style={styles.userName}>{user.name}</Text>
+          <Text style={styles.userRole}>{user.role}</Text>
+        </View>
+      </View>
+      <View style={styles.pointsContainerRight}>
+        <View style={styles.pointsRow}>
+          <Image source={icons.scoreIcon} style={styles.iconImage} />
+          <Text style={styles.pointsText}>{user.score || "0"}</Text>
+        </View>
+        <View style={styles.pointsRow}>
+          <Image source={icons.karmaIcon} style={styles.iconImage} />
+          <Text style={styles.pointsText}>{user.karma || "0"}</Text>
+        </View>
+      </View>
+    </View>
+))}
           </View>
 
         {showTurnModal && (
@@ -535,7 +557,6 @@ const handleStartGame = (payload: PartyData) => {
             </TouchableOpacity>
 
         )}
-
 
 
 
