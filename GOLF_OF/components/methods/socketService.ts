@@ -31,7 +31,7 @@ class SocketService {
 
     joinLobby(username:string, code:string) { this.send("joinParty",{username,code});  }
 
-    startGame(code:string){ this.send("startGame",{code}); }
+    startGame(code: string) { this.send("startGame", { code }); }
 
     buyTrap(trapName: string) { this.send("buyTrap", { trap: trapName }); }
 

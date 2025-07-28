@@ -122,23 +122,6 @@ export default function CreateLobbyScreen() {
     movingHole: require("@/assets/images/fireC.png"),
   };
 
-  // Estados del juego
-  const [seconds, setSeconds] = useState(0);
-  const [gameStarted, setGameStarted] = useState(false);
-  const [userCards, setUserCards] = useState<UserCardType[]>([]);
-  const owner = isOwner ? "Empezar" : "En espera";
-  const isDisabled = !isOwner;
-
-  // Puntos y karma
-  const [points, setPoints] = useState(0);
-  const [karma, setKarma] = useState(0);
-  const [currentTurnPlayer, setCurrentTurnPlayer] = useState<string | null>(null);
-  const [isMyTurn, setIsMyTurn] = useState(false);
-  const [prepTime, setPrepTime] = useState<number | null>(null);
-  const [turnTime, setTurnTime] = useState<number>(0);
-  const [showTurnModal, setShowTurnModal] = useState(false);
-
-
   // TIENDA
   const shopItems: ShopItemType[] = [
     { id: "1", name: "Rampa", icon: icons.ramp, cost: 600, backgroundColor: "#2ecc71" },
@@ -152,7 +135,28 @@ export default function CreateLobbyScreen() {
     { id: "9", name: "Hoyo móvil", icon: icons.movingHole, cost: 500, backgroundColor: "#2ecc71" },
   ];
 
+    // Estados del juego
+  const [seconds, setSeconds] = useState(0);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [userCards, setUserCards] = useState<UserCardType[]>([]);
+  const owner = isOwner ? "Empezar" : "En espera";
+  const isDisabled = !isOwner;
+  // Puntos y karma
+  const [points, setPoints] = useState(0);
+  const [karma, setKarma] = useState(0);
+  const [currentTurnPlayer, setCurrentTurnPlayer] = useState<string | null>(null);
+  const [isMyTurn, setIsMyTurn] = useState(false);
+  const [prepTime, setPrepTime] = useState<number | null>(null);
+  const [turnTime, setTurnTime] = useState<number>(0);
+  const [showTurnModal, setShowTurnModal] = useState(false);
+
   const router = useRouter();
+
+const userNameRef = useRef(userName);
+useEffect(() => {
+  userNameRef.current = userName;
+}, [userName]);
+
 ////////////////////// WEBSOCKETS ///////////////////////////////////
 useEffect(() => {
   socketService.connect("ws://localhost:1337/game");
@@ -161,7 +165,7 @@ useEffect(() => {
     if (payload?.code) {
       console.log("Payload members:", payload.members);
       setPartyData(payload);
-      setIsOwner(payload.owner === userName);
+      setIsOwner(payload.owner === userNameRef.current); 
       setCurrentView("lobby");
 
       const currentPlayer = payload.members.find(m => m.username === userName);
@@ -187,7 +191,7 @@ useEffect(() => {
     if (payload?.code) {
       console.log("Payload members:", payload.members);
       setPartyData(payload);
-      setIsOwner(payload.owner === userName);
+      setIsOwner(payload.owner === userNameRef.current);
       setCurrentView("lobby");
 
       const currentPlayer = payload.members.find(m => m.username === userName);
@@ -225,6 +229,8 @@ useEffect(() => {
       karma: member.karma,
       image: require("../assets/images/golf.png")
     })));
+
+  setIsOwner(updatedParty.owner === userNameRef.current);
   };
 
 const handleKarmaTrigger = (payload: { username: string; karma: number }) => {
@@ -236,21 +242,29 @@ const handleKarmaTrigger = (payload: { username: string; karma: number }) => {
 
 
   /////////////////// REAL TIME updater /////////////
-  const handleGlobalTimer = (payload: { time: number }) => { setSeconds(payload.time); };
+  const handleGlobalTimer = (payload: { time: number }) => {
+  console.log("Global timer recibido:", payload.time);
+  setSeconds(payload.time);
+};
   //////////////////////////////////////////////////
 
   //////////////////////// TURNOS DE LOS USUARIOS ////////////////////////
-const handleStartTimer = (payload: { time: number }) => { setPrepTime(payload.time); };
+const handleStartTimer = (payload: { time: number }) => {
+  console.log("startTimer recibido:", payload.time);
+  setPrepTime(payload.time); 
+};
+
 
 const handleTurnTimer = (payload: { time: number }) => {
+  console.log("turnTimer recibido:", payload.time);
   setTurnTime(payload.time);
-
   if (payload.time === 0) {
     setShowTurnModal(false);
     setIsMyTurn(false);
     setPrepTime(null);
   }
 };
+
 
 const handleStartUserTurn = (payload: any) => {
   if (payload === null) {
@@ -300,9 +314,25 @@ const handleStartGame = (payload: PartyData) => {
   })));
 };
 
+const handleUserStartGame =  () => {
+  console.log("Recibido userStartGame, indicando que fuiste el wey que creo la partida");
+  setGameStarted(true); 
+};
+
+const handleNuke = (payload: any) => {
+  console.log("Evento nuke recibido:", payload);
+  setGameStarted(true); 
+
+  socketService.send("nuke", {});
+};
+
+
+
 
   ////////////////////////// Aqui los handlers que reccionan por cada eventi ////////////////////////
   socketService.on("gameId", handleGameId);
+  socketService.on("nuke", handleNuke);
+  socketService.on("userStartGame", handleUserStartGame);
   socketService.on("createParty", handleCreateParty);
   socketService.on("joinParty", handleJoinParty);
   socketService.on("playerJoined", handlePlayerJoined);
@@ -323,6 +353,8 @@ const handleStartGame = (payload: PartyData) => {
 
   return () => {
     socketService.off("gameId", handleGameId);
+    socketService.off("nuke", handleNuke);
+    socketService.off("userStartGame", handleUserStartGame);
     socketService.off("createParty", handleCreateParty);
     socketService.off("joinParty", handleJoinParty);
     socketService.off("playerJoined", handlePlayerJoined);
@@ -338,9 +370,12 @@ const handleStartGame = (payload: PartyData) => {
     socketService.off("endUserTurn", handleEndUserTurn);
     socketService.close();
   };
-}, [userName]);
+}, []);
 
 
+const handleStartPress = () => {
+  if (partyData) socketService.startGame(partyData.code);
+};
 
 
 
@@ -409,6 +444,16 @@ const handleStartGame = (payload: PartyData) => {
   socketService.on("startGame", handleStartGame);
   return () => socketService.off("startGame", handleStartGame);
 }, []);
+
+useEffect(() => {
+  if (prepTime !== null && prepTime > 0) {
+    const interval = setInterval(() => {
+      setPrepTime(prev => (prev !== null && prev > 0 ? prev - 1 : null));
+    }, 1000);
+    return () => clearInterval(interval);
+  }
+}, [prepTime]);
+
 
   
 
