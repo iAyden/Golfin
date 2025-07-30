@@ -213,9 +213,8 @@ useEffect(() => {
     else { setError("Error al unirse al juego"); }
   };
 
-  const handleGameId = (payload: any) => {
-    console.log("Evento gameId recibido:", payload);
-  };
+  const handleGameId = (payload: any) => { console.log("Evento gameId recibido:", payload); };
+  
   const handlePlayerJoined = (updatedParty: PartyData) => {
     setPartyData(updatedParty);
     const currentPlayer = updatedParty.members.find(m => m.username === userName);
@@ -233,9 +232,7 @@ useEffect(() => {
   setIsOwner(updatedParty.owner === userNameRef.current);
   };
 
-const handleKarmaTrigger = (payload: { username: string; karma: number }) => {
-  console.log("TRAMPA trigueada:", payload.username, payload.karma);
-};
+const handleKarmaTrigger = (payload: { username: string; karma: number }) => { console.log("TRAMPA trigueada:", payload.username, payload.karma); };
 
 
   const handleBuyTrap = (payload: { Karma: number }) => { if (payload.Karma !== undefined) setKarma(payload.Karma); };
@@ -290,8 +287,8 @@ const handlePlayerFinished = (payload: any) => {
 /////////////////////////////////////////////////////////////////////////////
 const handleEndUserTurn = (payload: any) => {
   console.log("Evento endUserTurn recibido:", payload);
-
 };
+
   ///////////////// START GAME HANDLER /////////////////////
 const handleStartGame = (payload: PartyData) => {
   setGameStarted(true);
@@ -315,7 +312,7 @@ const handleStartGame = (payload: PartyData) => {
 };
 
 const handleUserStartGame =  () => {
-  console.log("Recibido userStartGame, indicando que fuiste el wey que creo la partida");
+  console.log("Recivido userStartGame, indicando que fuiste el wey que creo la partida");
   setGameStarted(true); 
 };
 
@@ -373,9 +370,7 @@ const handleNuke = (payload: any) => {
 }, []);
 
 
-const handleStartPress = () => {
-  if (partyData) socketService.startGame(partyData.code);
-};
+const handleStartPress = () => { if (partyData) socketService.startGame(partyData.code); };
 
 
 
@@ -445,6 +440,8 @@ const handleStartPress = () => {
   return () => socketService.off("startGame", handleStartGame);
 }, []);
 
+
+/// NO LE MUEVAN POR FAVOR
 useEffect(() => {
   if (prepTime !== null && prepTime > 0) {
     const interval = setInterval(() => {
