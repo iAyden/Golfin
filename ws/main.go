@@ -274,9 +274,9 @@ func (game *Game) gameLoop() {
 
 	game.Stats.Winner = winner.Name
 	game.Stats.TimeElapsed = int(time.Since(globalTime))
+	game.Stats.Players = game.Party.Members
 
-	fmt.Println(game.Stats.Winner)
-	fmt.Println(game.Stats.TimeElapsed)
+	fmt.Println(game.Stats)
 
 	payload, _ := json.Marshal(game.Stats)
 	msg := Message{
