@@ -9,22 +9,20 @@ public class Game {
 
     @Id
     private String id;
-
-    private String course;
     private String winner;
-    private int totalSpringedTraps;
+    private List<String> players;
+    private String course;
     private int totalTime;
-    private List<String> playerIds;
-    private List <String> playerUsernames;
+    private int totalSpringedTraps;
     public Game() {}
 
-    public Game(String id, String course, String winner, int totalSpringedTraps, int totalTime, List<String> playerIds) {
+    public Game(String id, String course, String winner, int totalSpringedTraps, int totalTime, List<String> players) {
         this.id = id;
-        this.course = course;
         this.winner = winner;
-        this.totalSpringedTraps = totalSpringedTraps;
+        this.players=players;
+        this.course = course;
         this.totalTime = totalTime;
-        this.playerIds = playerIds;
+        this.totalSpringedTraps = totalSpringedTraps;
     }
 
     // Getters y Setters
@@ -64,19 +62,12 @@ public class Game {
         this.totalTime = totalTime;
     }
 
-    public List<String> getPlayerIds() {
-        return playerIds;
+    public List<String> getPlayers() {
+        return players;
     }
 
-    public void setPlayerIds(List<String> playerIds) {
-        this.playerIds = playerIds;
+    public void setPlayers(List<String> players) {
+        this.players = players;
     }
     
-    public List<String> getPlayerUsernames(){
-        return playerUsernames;
-    }
-
-    public void setPlayerUsernames(List<String> playerUsernames){
-        this.playerUsernames = playerUsernames;
-    }
 }

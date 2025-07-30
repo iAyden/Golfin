@@ -4,12 +4,14 @@ import java.util.List;
 
 public class GameDTO {
     private String id;
-    private String course;
     private String winner;
-    private int totalSpringedTraps;
+    private List<String> players;
+    private String course;
     private int totalTime;
-    private List<String> playerIds; // IDs en lugar de usernames
-    private List<String> playerUsernames; // sigue viniendo como usernames
+    private int totalSpringedTraps;
+
+    // private List<String> playerIds; // IDs en lugar de usernames
+    // private List<String> playerUsernames; // sigue viniendo como usernames
 
     public GameDTO() {}
 
@@ -24,6 +26,7 @@ public class GameDTO {
     public String getWinner() {
         return winner;
     }
+
 
     public void setWinner(String winner) {
         this.winner = winner;
@@ -45,25 +48,19 @@ public class GameDTO {
         this.totalTime = totalTime;
     }
 
-    public List<String> getPlayerIds() {
-        return playerIds;
-    }
-
-    public void setPlayerIds(List<String> playerIds) {
-        this.playerIds = playerIds;
-    }
-    public List<String> getPlayerUsernames() {
-    return playerUsernames;
-}
-
-    public void setPlayerUsernames(List<String> playerUsernames) {
-    this.playerUsernames = playerUsernames;
-    }
+    
     public String getId(){
         return id;
     }
 
     public void setId(String id){
         this.id = id;
+    }
+    public void setPlayers(List<String> players){
+        this.players = players;
+    }
+
+    public List<String> getPlayers(){
+        return players;
     }
 }

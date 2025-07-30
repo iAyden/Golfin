@@ -30,7 +30,7 @@ public class GameService {
     private MongoTemplate mongoTemplate;
 
     public Game saveGame(GameDTO dto) {
-        List<String> playerIds = dto.getPlayerUsernames()
+        List<String> playerIds = dto.getPlayers()
             .stream()
             .map(username -> userRepository.findByUsername(username))
             .filter(Optional::isPresent)
