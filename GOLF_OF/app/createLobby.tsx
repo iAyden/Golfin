@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -8,14 +8,16 @@ import {
   Animated,
   ImageBackground,
   useWindowDimensions,
-  Alert
+  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 
 export default function CreateLobbyScreen() {
-  const [fontsLoaded] = useFonts({ gharison: require("../assets/fonts/gharison.ttf"), });
-  
+  const [fontsLoaded] = useFonts({
+    gharison: require("../assets/fonts/gharison.ttf"),
+  });
+
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const isSmallScreen = width < 700;
@@ -26,11 +28,10 @@ export default function CreateLobbyScreen() {
   const [userName, setUserName] = useState("");
   const [isReady, setIsReady] = useState(false);
 
-
   const joinScale = useRef(new Animated.Value(1)).current;
   const createScale = useRef(new Animated.Value(1)).current;
 
-  console.log("isReady =", isReady);  
+  console.log("isReady =", isReady);
   const onJoinPressIn = () => {
     Animated.spring(joinScale, {
       toValue: 0.95,
@@ -45,7 +46,6 @@ export default function CreateLobbyScreen() {
       useNativeDriver: true,
     }).start();
   };
-
 
   const onCreatePressIn = () => {
     Animated.spring(createScale, {
@@ -62,7 +62,6 @@ export default function CreateLobbyScreen() {
     }).start();
   };
 
-    
   const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
@@ -145,9 +144,10 @@ export default function CreateLobbyScreen() {
     Alert.alert("Éxito", "partida hehca");
   };
 
-
-   return (
-    <View style={[styles.bg, { paddingTop: isSmallScreen ? insets.top || 24 : 0 }]}>
+  return (
+    <View
+      style={[styles.bg, { paddingTop: isSmallScreen ? insets.top || 24 : 0 }]}
+    >
       <ImageBackground
         source={require("../assets/images/BG IMG GLF.png")}
         style={styles.imageBg}
@@ -186,11 +186,29 @@ export default function CreateLobbyScreen() {
 
               <Pressable
                 onPress={handleJoin}
-                onPressIn={() => Animated.spring(joinScale, { toValue: 0.95, useNativeDriver: true }).start()}
-                onPressOut={() => Animated.spring(joinScale, { toValue: 1, friction: 3, tension: 40, useNativeDriver: true }).start()}
+                onPressIn={() =>
+                  Animated.spring(joinScale, {
+                    toValue: 0.95,
+                    useNativeDriver: true,
+                  }).start()
+                }
+                onPressOut={() =>
+                  Animated.spring(joinScale, {
+                    toValue: 1,
+                    friction: 3,
+                    tension: 40,
+                    useNativeDriver: true,
+                  }).start()
+                }
                 disabled={!true}
               >
-                <Animated.View style={[styles.joinBtn, { transform: [{ scale: joinScale }] }, !isReady && { opacity: 0.5 }]}>
+                <Animated.View
+                  style={[
+                    styles.joinBtn,
+                    { transform: [{ scale: joinScale }] },
+                    !isReady && { opacity: 0.5 },
+                  ]}
+                >
                   <Text style={styles.btnText}>Join</Text>
                 </Animated.View>
               </Pressable>
@@ -202,10 +220,27 @@ export default function CreateLobbyScreen() {
               <Text style={styles.sectionTitle}>Don't have a code?</Text>
               <Pressable
                 onPress={handleCreate}
-                onPressIn={() => Animated.spring(createScale, { toValue: 0.95, useNativeDriver: true }).start()}
-                onPressOut={() => Animated.spring(createScale, { toValue: 1, friction: 3, tension: 40, useNativeDriver: true }).start()}
+                onPressIn={() =>
+                  Animated.spring(createScale, {
+                    toValue: 0.95,
+                    useNativeDriver: true,
+                  }).start()
+                }
+                onPressOut={() =>
+                  Animated.spring(createScale, {
+                    toValue: 1,
+                    friction: 3,
+                    tension: 40,
+                    useNativeDriver: true,
+                  }).start()
+                }
               >
-                <Animated.View style={[styles.createBtn, { transform: [{ scale: createScale }] }]}>
+                <Animated.View
+                  style={[
+                    styles.createBtn,
+                    { transform: [{ scale: createScale }] },
+                  ]}
+                >
                   <Text style={styles.btnText}>Create party</Text>
                 </Animated.View>
               </Pressable>

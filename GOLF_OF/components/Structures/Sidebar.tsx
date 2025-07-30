@@ -76,17 +76,63 @@ const Sidebar: React.FC<SidebarProps & { style?: any }> = ({
     }
     setMenuItems(MENU_ITEMS);
   }, [isLoggedIn]);
+
+  // --- Friends CRUD State ---
+  const [friends, setFriends] = useState<{ id: string; name: string }[]>([]); // List of friends
+  const [showAddFriendModal, setShowAddFriendModal] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<
+    { id: string; name: string }[]
+  >([]);
+
+  // --- CRUD Handlers for Friends ---
+  const handleAddFriend = (user: { id: string; name: string }) => {
+    // Add friend to list (simulate API call)
+    setFriends((prev) => [...prev, user]);
+    setShowAddFriendModal(false);
+    setSearchQuery("");
+    setSearchResults([]);
+  };
+
+  const handleEditFriend = (friend: { id: string; name: string }) => {
+    // Open edit modal or inline edit (to be implemented)
+    // Example: setEditFriend(friend)
+  };
+
+  const handleDeleteFriend = (friend: { id: string; name: string }) => {
+    // Remove friend from list (simulate API call)
+    setFriends((prev) => prev.filter((f) => f.id !== friend.id));
+  };
+
+  // For search, simulate API call
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+    // Simulate search result
+    setSearchResults(
+      [
+        { id: "1", name: "Alice" },
+        { id: "2", name: "Bob" },
+        { id: "3", name: "Charlie" },
+      ].filter((user) =>
+        user.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+  }, [searchQuery]);
+
   return (
     <Animated.View style={[styles.sidebar, style, { width }]}>
       {isVisible && (
         <>
           {/* AQUI ESTA EL ENCABEZADO DE LA SIDE BAR, HAY QUE VER EL LOGO PARA VER COMO SE PUEDE HACER */}
           <View style={styles.sidebarHeader}>
-            <Image
+            {/* <Image
               source={require("@/assets/images/icon.png")}
               style={styles.sidebarLogo}
               accessibilityLabel="Logo Eco Noticias"
-            />
+            /> */}
             <Text style={styles.sidebarTitle}>golfin'</Text>
           </View>
 

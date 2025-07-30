@@ -11,6 +11,7 @@ import {
   ImageBackground,
   TouchableOpacity,
   useWindowDimensions,
+  TextInput,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import Sidebar from "@/components/Structures/Sidebar";
@@ -44,6 +45,20 @@ const App: React.FC = () => {
   const [activeCard, setActiveCard] = useState<
     "profile" | "history" | "friends"
   >("profile");
+
+  // --- Friends CRUD State FOR TEST USES ONLY DONT FREAK OUT ---
+  const [friends, setFriends] = useState<{ id: string; name: string }[]>([
+    { id: "1", name: "Alice Birdie" },
+    { id: "2", name: "Bob Eagle" },
+    { id: "3", name: "Charlie Putter" },
+    { id: "4", name: "Daisy Driver" },
+    { id: "5", name: "Eddie Fairway" },
+  ]);
+  const [showAddFriendModal, setShowAddFriendModal] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<
+    { id: string; name: string }[]
+  >([]);
 
   useEffect(() => {
     console.log("use efect");
@@ -80,7 +95,63 @@ const App: React.FC = () => {
     setActiveMenu(menuItem);
   };
 
-  // Responsive styles for cards, rowCards, and tabs
+  // --- CRUD Handlers for Friends ---
+  const handleAddFriend = (user: { id: string; name: string }) => {
+    setFriends((prev) => [...prev, user]);
+    setShowAddFriendModal(false);
+    setSearchQuery("");
+    setSearchResults([]);
+  };
+
+  const handleEditFriend = (friend: { id: string; name: string }) => {
+    // Open edit modal or inline edit (to be implemented)
+    // Example: setEditFriend(friend)
+  };
+
+  // --- Delete Friend Confirmation State ---
+  const [friendToDelete, setFriendToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const handleDeleteFriend = (friend: { id: string; name: string }) => {
+    setFriendToDelete(friend);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteFriend = () => {
+    if (friendToDelete) {
+      setFriends((prev) => prev.filter((f) => f.id !== friendToDelete.id));
+      setFriendToDelete(null);
+      setShowDeleteModal(false);
+    }
+  };
+
+  const cancelDeleteFriend = () => {
+    setFriendToDelete(null);
+    setShowDeleteModal(false);
+  };
+
+  // For search, simulate API call TESTS!!!!
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+    // Simulate search result
+    setSearchResults(
+      [
+        { id: "1", name: "Alice" },
+        { id: "2", name: "Bob" },
+        { id: "3", name: "Charlie" },
+      ].filter((user) =>
+        user.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+  }, [searchQuery]);
+
+  // We got only one block of code and is truly responsive cuh
   const dynamicStyles = StyleSheet.create({
     rowCards: {
       flexDirection: width < 700 ? "column" : "row",
@@ -88,7 +159,7 @@ const App: React.FC = () => {
       alignItems: width < 700 ? "stretch" : "flex-start",
       gap: width < 500 ? 8 : 16,
       width: "100%",
-      padding: 24, // add padding around the group of cards
+      padding: 24,
     },
     card: {
       backgroundColor: "rgb(99, 150, 57)",
@@ -188,6 +259,321 @@ const App: React.FC = () => {
     );
   }
 
+  // Responsive tab navigation for small screens
+  const renderTabs = () => (
+    <View
+      style={{
+        width: "100%",
+        alignItems: "center",
+        marginBottom: 0,
+        position: "relative",
+        zIndex: 10,
+      }}
+    >
+      <View style={folderTabStyles.tabRow}>
+        {[
+          { key: "profile", label: "Stats" },
+          { key: "history", label: "History" },
+          { key: "friends", label: "Friends" },
+        ].map((tab, idx) => (
+          <TouchableOpacity
+            key={tab.key}
+            style={[
+              folderTabStyles.tab,
+              activeCard === tab.key && folderTabStyles.tabActive,
+              idx === 0 ? { borderTopLeftRadius: 12 } : {},
+              idx === 2 ? { borderTopRightRadius: 12 } : {},
+              activeCard === tab.key ? { marginBottom: -4 } : {},
+              { borderBottomColor: "transparent" },
+            ]}
+            onPress={() => setActiveCard(tab.key as typeof activeCard)}
+          >
+            <Text
+              style={[
+                folderTabStyles.tabText,
+                activeCard === tab.key && folderTabStyles.tabTextActive,
+              ]}
+            >
+              {tab.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
+  );
+
+  // Main cards rendering (profile, history, friends)
+  const renderCards = () => (
+    <View
+      style={
+        isSmallScreen
+          ? [dynamicStyles.card, { marginTop: 0, paddingTop: 32 }]
+          : dynamicStyles.rowCards
+      }
+    >
+      {/* Profile Card */}
+      {(isSmallScreen ? activeCard === "profile" : true) && (
+        <View style={dynamicStyles.card}>
+          <View style={styles.profileSection}>
+            <Image
+              source={
+                profileData?.photoUrl?.startsWith("http")
+                  ? { uri: profileData.photoUrl }
+                  : require("../assets/images/no_pfp.jpg")
+              }
+              style={styles.profileImg}
+            />
+            <Text style={styles.cardTitle}>{profileData?.username}</Text>
+            {!isSmallScreen && (
+              <Text style={styles.badgeGreen}>{profileData?.role}</Text>
+            )}
+            <Text style={styles.gamerTag}>{profileData?.email}</Text>
+            <View style={styles.socialIcons}>
+              <FontAwesome
+                name="edit"
+                size={24}
+                color="#069809"
+                style={styles.socialIcon}
+              />
+              <FontAwesome
+                name="sign-out"
+                size={24}
+                color="#069809"
+                style={styles.socialIcon}
+              />
+            </View>
+          </View>
+          <View style={styles.divider} />
+          <View style={styles.gameStats}>
+            <View style={styles.gameItem}>
+              <View style={styles.gameIcon}>
+                <FontAwesome name="flag" size={24} color="#069809" />
+              </View>
+              <View style={styles.gameInfo}>
+                <Text style={styles.gameName}>Hole in one</Text>
+                <Text style={styles.gameDetail}>Range: challenguer lol</Text>
+              </View>
+            </View>
+            <View style={styles.gameItem}>
+              <View style={styles.gameIcon}>
+                <FontAwesome name="clock-o" size={24} color="#069809" />
+              </View>
+              <View style={styles.gameInfo}>
+                <Text style={styles.gameName}>Scoring time</Text>
+                <Text style={styles.gameDetail}>Range: PLATA</Text>
+              </View>
+            </View>
+            <View style={styles.gameItem}>
+              <View style={styles.gameIcon}>
+                <FontAwesome name="heartbeat" size={24} color="#069809" />
+              </View>
+              <View style={styles.gameInfo}>
+                <Text style={styles.gameName}>Hole interrupted</Text>
+                <Text style={styles.gameDetail}>Range: PLATINITO</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      )}
+      {/* History Card */}
+      {(isSmallScreen ? activeCard === "history" : true) && (
+        <View style={dynamicStyles.card}>
+          <Text style={styles.cardTitle}>History</Text>
+          <View style={styles.lastGameSection}>
+            <Text style={styles.lastGameTitle}>Last Game Played</Text>
+            <Text style={styles.lastGameDetail}>"Golf Masters 2025"</Text>
+            <Text style={styles.lastGameSubDetail}>Date: 2025-06-01</Text>
+            <Text style={styles.lastGameSubDetail}>Score: 72 (-1)</Text>
+            <Text style={styles.lastGameSubDetail}>Traps Activated: 3</Text>
+            <Text style={styles.lastGameSubDetail}>
+              Birdies: 5 | Pars: 10 | Bogeys: 3
+            </Text>
+          </View>
+          <Image
+            source={{
+              uri: "https://media.tacdn.com/media/attractions-splice-spp-674x446/07/b3/5b/3a.jpg",
+            }}
+            style={styles.imgTemporada}
+          />
+          <View style={styles.progressContainer}>
+            <Text style={styles.progressLabel}>
+              <FontAwesome name="crosshairs" size={16} /> Total hoyos anotados:
+              87%
+            </Text>
+            <View style={styles.progressBarBg}>
+              <View style={[styles.progressBar, { width: "87%" }]} />
+            </View>
+          </View>
+          <View style={styles.progressContainer}>
+            <Text style={styles.progressLabel}>
+              <FontAwesome name="tachometer" size={16} /> Rendimiento: 320%
+            </Text>
+            <View style={styles.progressBarBg}>
+              <View style={[styles.progressBar, { width: "80%" }]} />
+            </View>
+          </View>
+          <View style={styles.divider} />
+          <Text style={styles.sectionTitle}>Golf Achievements</Text>
+          <View style={styles.achievementItem}>
+            <FontAwesome
+              name="trophy"
+              size={24}
+              color="#FFD700"
+              style={styles.achievementIcon}
+            />
+            <View style={styles.achievementText}>
+              <Text style={styles.achievementTitle}>El mas mejor</Text>
+              <Text>Primer puesto - Torneo internacional de BEYBLADE</Text>
+            </View>
+          </View>
+          <View style={styles.achievementItem}>
+            <FontAwesome
+              name="star"
+              size={24}
+              color="#C0C0C0"
+              style={styles.achievementIcon}
+            />
+            <View style={styles.achievementText}>
+              <Text style={styles.achievementTitle}>
+                MOLESTADOR DE PERSONAS
+              </Text>
+              <Text>ME LA PARTIEROn</Text>
+            </View>
+          </View>
+          <View style={styles.achievementItem}>
+            <FontAwesome
+              name="trophy"
+              size={24}
+              color="#CD7F32"
+              style={styles.achievementIcon}
+            />
+            <View style={styles.achievementText}>
+              <Text style={styles.achievementTitle}>Holes record</Text>
+              <Text>45 hoyos seguidos</Text>
+            </View>
+          </View>
+        </View>
+      )}
+      {/* Friends Card (CRUD) */}
+      {(isSmallScreen ? activeCard === "friends" : true) && (
+        <FriendsCard
+          friends={friends}
+          handleEditFriend={handleEditFriend}
+          handleDeleteFriend={handleDeleteFriend}
+          showAddFriendModal={showAddFriendModal}
+          setShowAddFriendModal={setShowAddFriendModal}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          searchResults={searchResults}
+          handleAddFriend={handleAddFriend}
+        />
+      )}
+      {/* Delete Friend Modal (shared for all screens) */}
+      {showDeleteModal && friendToDelete && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.4)",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: 20,
+              padding: 28,
+              width: 340,
+              shadowColor: "#107C10",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.2,
+              shadowRadius: 8,
+              elevation: 10,
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 22,
+                fontWeight: "bold",
+                color: "#e53e3e",
+                marginBottom: 18,
+                textAlign: "center",
+              }}
+            >
+              Remove Friend
+            </Text>
+            <Text
+              style={{
+                fontSize: 16,
+                color: "#333",
+                marginBottom: 18,
+                textAlign: "center",
+              }}
+            >
+              Are you sure you want to remove{" "}
+              <Text style={{ fontWeight: "bold" }}>{friendToDelete.name}</Text>{" "}
+              from your friends?
+            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                gap: 16,
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#e53e3e",
+                  padding: 10,
+                  borderRadius: 8,
+                  minWidth: 80,
+                  marginRight: 8,
+                }}
+                onPress={confirmDeleteFriend}
+              >
+                <Text
+                  style={{
+                    color: "#fff",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                >
+                  Remove
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#e8f5e9",
+                  padding: 10,
+                  borderRadius: 8,
+                  minWidth: 80,
+                  marginLeft: 8,
+                }}
+                onPress={cancelDeleteFriend}
+              >
+                <Text
+                  style={{
+                    color: "#107C10",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                >
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+    </View>
+  );
+
   return (
     <ImageBackground
       source={require("../assets/images/BG IMG GLF.png")}
@@ -197,10 +583,7 @@ const App: React.FC = () => {
       <View
         style={[
           styles.container,
-          {
-            backgroundColor: "rgba(255, 255, 255, 0)",
-            flex: 1,
-          },
+          { backgroundColor: "rgba(255, 255, 255, 0)", flex: 1 },
         ]}
       >
         <Sidebar
@@ -217,70 +600,19 @@ const App: React.FC = () => {
         >
           <FontAwesome name="bars" size={28} color="#2f855a" />
         </Pressable>
-
         <View
           style={[
             styles.mainContentWrapper,
             { marginTop: isSmallScreen ? 48 : 0, flex: 1, minHeight: "100%" },
           ]}
         >
-          {/* Engulf main content for sidebar layout */}
           {isSmallScreen ? (
             <ScrollView
               contentContainerStyle={{ flexGrow: 1 }}
               showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}
             >
-              {/* Folder Tabs */}
-              <View
-                style={{
-                  width: "100%",
-                  alignItems: "center",
-                  marginBottom: 0,
-                  position: "relative",
-                  zIndex: 10,
-                }}
-              >
-                <View style={folderTabStyles.tabRow}>
-                  {(
-                    [
-                      { key: "profile", label: "Stats" },
-                      { key: "history", label: "History" },
-                      { key: "friends", label: "Friends" },
-                    ] as const
-                  ).map((tab, idx) => (
-                    <TouchableOpacity
-                      key={tab.key}
-                      style={[
-                        folderTabStyles.tab,
-                        activeCard === tab.key && folderTabStyles.tabActive,
-                        idx === 0 ? { borderTopLeftRadius: 12 } : {},
-                        idx === 2 ? { borderTopRightRadius: 12 } : {},
-                        activeCard === tab.key ? { marginBottom: -4 } : {},
-                        // Connect tab to card
-                        {
-                          borderBottomLeftRadius: idx === 0 ? 0 : 0,
-                          borderBottomRightRadius: idx === 2 ? 0 : 0,
-                        },
-                        { borderBottomColor: "transparent" },
-                      ]}
-                      onPress={() =>
-                        setActiveCard(tab.key as typeof activeCard)
-                      }
-                    >
-                      <Text
-                        style={[
-                          folderTabStyles.tabText,
-                          activeCard === tab.key &&
-                            folderTabStyles.tabTextActive,
-                        ]}
-                      >
-                        {tab.label}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
+              {renderTabs()}
               <View
                 style={{
                   width: "100%",
@@ -289,238 +621,7 @@ const App: React.FC = () => {
                   zIndex: 1,
                 }}
               >
-                <View
-                  style={[dynamicStyles.card, { marginTop: 0, paddingTop: 32 }]}
-                >
-                  {/* Card Content */}
-                  {activeCard === "profile" && (
-                    <View style={dynamicStyles.card}>
-                      {/* Profile Card */}
-                      <View style={styles.profileSection}>
-                        <Image
-                          source={
-                            profileData?.photoUrl?.startsWith("http")
-                              ? { uri: profileData.photoUrl }
-                              : require("../assets/images/no_pfp.jpg")
-                          }
-                          style={styles.profileImg}
-                        />
-
-                        <Text style={styles.cardTitle}>
-                          {profileData?.username}
-                        </Text>
-                        <Text style={styles.gamerTag}>
-                          {profileData?.email}
-                        </Text>
-                        <View style={styles.socialIcons}>
-                          <FontAwesome
-                            name="edit"
-                            size={24}
-                            color="#069809"
-                            style={styles.socialIcon}
-                          />
-                          <FontAwesome
-                            name="sign-out"
-                            size={24}
-                            color="#069809"
-                            style={styles.socialIcon}
-                          />
-                        </View>
-                      </View>
-                      <View style={styles.divider} />
-                      {/* Game Stats */}
-                      <View style={styles.gameStats}>
-                        <View style={styles.gameItem}>
-                          <View style={styles.gameIcon}>
-                            <FontAwesome
-                              name="flag"
-                              size={24}
-                              color="#069809"
-                            />
-                          </View>
-                          <View style={styles.gameInfo}>
-                            <Text style={styles.gameName}>Hole in one</Text>
-                            <Text style={styles.gameDetail}>
-                              Range: challenguer lol
-                            </Text>
-                          </View>
-                        </View>
-                        <View style={styles.gameItem}>
-                          <View style={styles.gameIcon}>
-                            <FontAwesome
-                              name="clock-o"
-                              size={24}
-                              color="#069809"
-                            />
-                          </View>
-                          <View style={styles.gameInfo}>
-                            <Text style={styles.gameName}>Scoring time</Text>
-                            <Text style={styles.gameDetail}>Range: PLATA</Text>
-                          </View>
-                        </View>
-                        <View style={styles.gameItem}>
-                          <View style={styles.gameIcon}>
-                            <FontAwesome
-                              name="heartbeat"
-                              size={24}
-                              color="#069809"
-                            />
-                          </View>
-                          <View style={styles.gameInfo}>
-                            <Text style={styles.gameName}>
-                              Hole interrupted
-                            </Text>
-                            <Text style={styles.gameDetail}>
-                              Range: PLATINITO
-                            </Text>
-                          </View>
-                        </View>
-                      </View>
-                    </View>
-                  )}
-                  {activeCard === "history" && (
-                    <View style={dynamicStyles.card}>
-                      {/* History Card */}
-                      <Text style={styles.cardTitle}>History</Text>
-                      {/* Last Game Played Section */}
-                      <View style={styles.lastGameSection}>
-                        <Text style={styles.lastGameTitle}>
-                          Last Game Played
-                        </Text>
-                        <Text style={styles.lastGameDetail}>
-                          "Golf Masters 2025"
-                        </Text>
-                        <Text style={styles.lastGameSubDetail}>
-                          Date: 2025-06-01
-                        </Text>
-                        <Text style={styles.lastGameSubDetail}>
-                          Score: 72 (-1)
-                        </Text>
-                        <Text style={styles.lastGameSubDetail}>
-                          Traps Activated: 3
-                        </Text>
-                        <Text style={styles.lastGameSubDetail}>
-                          Birdies: 5 | Pars: 10 | Bogeys: 3
-                        </Text>
-                      </View>
-                      <Image
-                        source={{
-                          uri: "https://media.tacdn.com/media/attractions-splice-spp-674x446/07/b3/5b/3a.jpg",
-                        }}
-                        style={styles.imgTemporada}
-                      />
-                      {/* Example progress bar (static) */}
-                      <View style={styles.progressContainer}>
-                        <Text style={styles.progressLabel}>
-                          <FontAwesome name="crosshairs" size={16} /> Total
-                          hoyos anotados: 87%
-                        </Text>
-                        <View style={styles.progressBarBg}>
-                          <View
-                            style={[styles.progressBar, { width: "87%" }]}
-                          />
-                        </View>
-                      </View>
-
-                      {/* <View style={styles.progressContainer}>
-                    <Text style={styles.progressLabel}>
-                      <FontAwesome name="user" size={16} /> Friends: 89%
-                    </Text>
-                    <View style={styles.progressBarBg}>
-                      <View style={[styles.progressBar, { width: "89%" }]} />
-                    </View>
-                  </View> */}
-                      <View style={styles.divider} />
-                      <Text style={styles.sectionTitle}>Golf Achievements</Text>
-                      <View style={styles.achievementItem}>
-                        <FontAwesome
-                          name="trophy"
-                          size={24}
-                          color="#FFD700"
-                          style={styles.achievementIcon}
-                        />
-                        <View style={styles.achievementText}>
-                          <Text style={styles.achievementTitle}>
-                            El mas mejor
-                          </Text>
-                          <Text>
-                            Primer puesto - Torneo internacional de BEYBLADE
-                          </Text>
-                        </View>
-                      </View>
-                      <View style={styles.achievementItem}>
-                        <FontAwesome
-                          name="star"
-                          size={24}
-                          color="#C0C0C0"
-                          style={styles.achievementIcon}
-                        />
-                        <View style={styles.achievementText}>
-                          <Text style={styles.achievementTitle}>
-                            MOLESTADOR DE PERSONAS
-                          </Text>
-                          <Text>ME LA PARTIEROn</Text>
-                        </View>
-                      </View>
-                      <View style={styles.achievementItem}>
-                        <FontAwesome
-                          name="trophy"
-                          size={24}
-                          color="#CD7F32"
-                          style={styles.achievementIcon}
-                        />
-                        <View style={styles.achievementText}>
-                          <Text style={styles.achievementTitle}>
-                            Holes record
-                          </Text>
-                          <Text>45 hoyos seguidos</Text>
-                        </View>
-                      </View>
-                    </View>
-                  )}
-                  {activeCard === "friends" && (
-                    <View style={dynamicStyles.card}>
-                      {/* Friends Card (simplified) */}
-                      <Text style={styles.cardTitle}>TABLE DE AMIGOS</Text>
-                      <View style={styles.achievementItem}>
-                        <FontAwesome
-                          name="envelope"
-                          size={24}
-                          color="#069809"
-                          style={styles.achievementIcon}
-                        />
-                        <View style={styles.achievementText}>
-                          <Text style={styles.achievementTitle}>AMIGO</Text>
-                          <Text>AMIGO</Text>
-                        </View>
-                      </View>
-                      <View style={styles.achievementItem}>
-                        <FontAwesome
-                          name="phone"
-                          size={24}
-                          color="#069809"
-                          style={styles.achievementIcon}
-                        />
-                        <View style={styles.achievementText}>
-                          <Text style={styles.achievementTitle}>AMIGO</Text>
-                          <Text>AMIGO</Text>
-                        </View>
-                      </View>
-                      <View style={styles.achievementItem}>
-                        <FontAwesome
-                          name="calendar"
-                          size={24}
-                          color="#069809"
-                          style={styles.achievementIcon}
-                        />
-                        <View style={styles.achievementText}>
-                          <Text style={styles.achievementTitle}>AMIGO</Text>
-                          <Text>AMIGO</Text>
-                        </View>
-                      </View>
-                    </View>
-                  )}
-                </View>
+                {renderCards()}
               </View>
             </ScrollView>
           ) : (
@@ -530,209 +631,284 @@ const App: React.FC = () => {
               showsHorizontalScrollIndicator={false}
               horizontal={false}
             >
-              <View style={dynamicStyles.rowCards}>
-                {/* Profile Card */}
-                <View style={dynamicStyles.card}>
-                  <View style={styles.profileSection}>
-                    <Image
-                      source={{
-                        uri: profileData?.photoUrl,
-                      }}
-                      style={styles.profileImg}
-                    />
-                    <Text style={styles.cardTitle}>
-                      {profileData?.username}
-                    </Text>
-                    <Text style={styles.badgeGreen}>{profileData?.role}</Text>
-                    <Text style={styles.gamerTag}>{profileData?.email}</Text>
-                    <View style={styles.socialIcons}>
-                      <FontAwesome
-                        name="edit"
-                        size={24}
-                        color="#069809"
-                        style={styles.socialIcon}
-                      />
-                      <FontAwesome
-                        name="sign-out"
-                        size={24}
-                        color="#069809"
-                        style={styles.socialIcon}
-                      />
-                    </View>
-                  </View>
-                  <View style={styles.divider} />
-                  {/* Game Stats */}
-                  <View style={styles.gameStats}>
-                    <View style={styles.gameItem}>
-                      <View style={styles.gameIcon}>
-                        <FontAwesome name="flag" size={24} color="#069809" />
-                      </View>
-                      <View style={styles.gameInfo}>
-                        <Text style={styles.gameName}>Hole in one</Text>
-                        <Text style={styles.gameDetail}>
-                          Range: challenguer lol
-                        </Text>
-                      </View>
-                    </View>
-                    <View style={styles.gameItem}>
-                      <View style={styles.gameIcon}>
-                        <FontAwesome name="clock-o" size={24} color="#069809" />
-                      </View>
-                      <View style={styles.gameInfo}>
-                        <Text style={styles.gameName}>Scoring time</Text>
-                        <Text style={styles.gameDetail}>Range: PLATA</Text>
-                      </View>
-                    </View>
-                    <View style={styles.gameItem}>
-                      <View style={styles.gameIcon}>
-                        <FontAwesome
-                          name="heartbeat"
-                          size={24}
-                          color="#069809"
-                        />
-                      </View>
-                      <View style={styles.gameInfo}>
-                        <Text style={styles.gameName}>Hole interrupted</Text>
-                        <Text style={styles.gameDetail}>Range: PLATINITO</Text>
-                      </View>
-                    </View>
-                  </View>
-                </View>
-                {/* History Card */}
-                <View style={dynamicStyles.card}>
-                  <Text style={styles.cardTitle}>History</Text>
-                  {/* Last Game Played Section */}
-                  <View style={styles.lastGameSection}>
-                    <Text style={styles.lastGameTitle}>Last Game Played</Text>
-                    <Text style={styles.lastGameDetail}>
-                      "Golf Masters 2025"
-                    </Text>
-                    <Text style={styles.lastGameSubDetail}>
-                      Date: 2025-06-01
-                    </Text>
-                    <Text style={styles.lastGameSubDetail}>Score: 72 (-1)</Text>
-                    <Text style={styles.lastGameSubDetail}>
-                      Traps Activated: 3
-                    </Text>
-                    <Text style={styles.lastGameSubDetail}>
-                      Birdies: 5 | Pars: 10 | Bogeys: 3
-                    </Text>
-                  </View>
-                  <Image
-                    source={{
-                      uri: "https://media.tacdn.com/media/attractions-splice-spp-674x446/07/b3/5b/3a.jpg",
-                    }}
-                    style={styles.imgTemporada}
-                  />
-                  {/* Example progress bar (static) */}
-                  <View style={styles.progressContainer}>
-                    <Text style={styles.progressLabel}>
-                      <FontAwesome name="crosshairs" size={16} /> Total hoyos
-                      anotados: 87%
-                    </Text>
-                    <View style={styles.progressBarBg}>
-                      <View style={[styles.progressBar, { width: "87%" }]} />
-                    </View>
-                  </View>
-                  <View style={styles.progressContainer}>
-                    <Text style={styles.progressLabel}>
-                      <FontAwesome name="tachometer" size={16} /> Rendimiento:
-                      320%
-                    </Text>
-                    <View style={styles.progressBarBg}>
-                      <View style={[styles.progressBar, { width: "80%" }]} />
-                    </View>
-                  </View>
-
-                  <View style={styles.divider} />
-                  <Text style={styles.sectionTitle}>Golf Achievements</Text>
-                  <View style={styles.achievementItem}>
-                    <FontAwesome
-                      name="trophy"
-                      size={24}
-                      color="#FFD700"
-                      style={styles.achievementIcon}
-                    />
-                    <View style={styles.achievementText}>
-                      <Text style={styles.achievementTitle}>El mas mejor</Text>
-                      <Text>
-                        Primer puesto - Torneo internacional de BEYBLADE
-                      </Text>
-                    </View>
-                  </View>
-                  <View style={styles.achievementItem}>
-                    <FontAwesome
-                      name="star"
-                      size={24}
-                      color="#C0C0C0"
-                      style={styles.achievementIcon}
-                    />
-                    <View style={styles.achievementText}>
-                      <Text style={styles.achievementTitle}>
-                        MOLESTADOR DE PERSONAS
-                      </Text>
-                      <Text>ME LA PARTIEROn</Text>
-                    </View>
-                  </View>
-                  <View style={styles.achievementItem}>
-                    <FontAwesome
-                      name="trophy"
-                      size={24}
-                      color="#CD7F32"
-                      style={styles.achievementIcon}
-                    />
-                    <View style={styles.achievementText}>
-                      <Text style={styles.achievementTitle}>Holes record</Text>
-                      <Text>45 hoyos seguidos</Text>
-                    </View>
-                  </View>
-                </View>
-                {/* Friends Card (simplified) */}
-                <View style={dynamicStyles.card}>
-                  <Text style={styles.cardTitle}>TABLE DE AMIGOS</Text>
-                  <View style={styles.achievementItem}>
-                    <FontAwesome
-                      name="envelope"
-                      size={24}
-                      color="#069809"
-                      style={styles.achievementIcon}
-                    />
-                    <View style={styles.achievementText}>
-                      <Text style={styles.achievementTitle}>AMIGO</Text>
-                      <Text>AMIGO</Text>
-                    </View>
-                  </View>
-                  <View style={styles.achievementItem}>
-                    <FontAwesome
-                      name="phone"
-                      size={24}
-                      color="#069809"
-                      style={styles.achievementIcon}
-                    />
-                    <View style={styles.achievementText}>
-                      <Text style={styles.achievementTitle}>AMIGO</Text>
-                      <Text>AMIGO</Text>
-                    </View>
-                  </View>
-                  <View style={styles.achievementItem}>
-                    <FontAwesome
-                      name="calendar"
-                      size={24}
-                      color="#069809"
-                      style={styles.achievementIcon}
-                    />
-                    <View style={styles.achievementText}>
-                      <Text style={styles.achievementTitle}>AMIGO</Text>
-                      <Text>AMIGO</Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
+              {renderCards()}
             </ScrollView>
           )}
         </View>
       </View>
     </ImageBackground>
+  );
+};
+
+interface Friend {
+  id: string;
+  name: string;
+}
+
+interface FriendsCardProps {
+  friends: Friend[];
+  handleEditFriend: (friend: Friend) => void;
+  handleDeleteFriend: (friend: Friend) => void;
+  showAddFriendModal: boolean;
+  setShowAddFriendModal: (show: boolean) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+  searchResults: Friend[];
+  handleAddFriend: (user: Friend) => void;
+}
+
+const FriendsCard: React.FC<FriendsCardProps> = ({
+  friends,
+  handleEditFriend,
+  handleDeleteFriend,
+  showAddFriendModal,
+  setShowAddFriendModal,
+  searchQuery,
+  setSearchQuery,
+  searchResults,
+  handleAddFriend,
+}) => {
+  const dynamicStyles = StyleSheet.create({
+    card: {
+      backgroundColor: "rgb(99, 150, 57)",
+      borderRadius: 16,
+      marginBottom: 20,
+      padding: 16,
+      width: "100%",
+      alignSelf: "stretch",
+      minWidth: 0,
+      maxWidth: 500,
+    },
+  });
+
+  // Ay yo, new design for the friends card just dropped
+  return (
+    <View style={dynamicStyles.card}>
+      <Text style={styles.cardTitle}>Friends</Text>
+      <TouchableOpacity
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          backgroundColor: "#107C10",
+          borderRadius: 20,
+          paddingVertical: 10,
+          paddingHorizontal: 18,
+          alignSelf: "center",
+          marginBottom: 12,
+        }}
+        onPress={() => setShowAddFriendModal(true)}
+      >
+        <FontAwesome name="user" size={20} color="#fad21e" />
+        <Text
+          style={{
+            color: "#fad21e",
+            fontWeight: "bold",
+            fontSize: 17,
+            marginLeft: 10,
+          }}
+        >
+          Add Friend
+        </Text>
+      </TouchableOpacity>
+      {/* Friends List */}
+      {friends.length === 0 ? (
+        <Text style={{ color: "#fff", textAlign: "center", marginTop: 16 }}>
+          No friends yet.
+        </Text>
+      ) : (
+        friends.map((friend: Friend, idx: number) => (
+          <View
+            key={friend.id || idx}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              backgroundColor: "rgba(232,245,233,0.5)",
+              borderRadius: 12,
+              padding: 12,
+              marginBottom: 10,
+              shadowColor: "#107C10",
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 2,
+            }}
+          >
+            <View style={{ marginRight: 12 }}>
+              <FontAwesome name="user" size={28} color="#107C10" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: "#fff", fontWeight: "bold", fontSize: 16 }}>
+                {friend.name}
+              </Text>
+              <Text style={{ color: "#fad21e", fontSize: 13 }}>
+                Status: <Text style={{ color: "#fff" }}>On the Course</Text>
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => handleEditFriend(friend)}
+              style={{ marginLeft: 8 }}
+              accessibilityLabel="View Friend Stats"
+            >
+              <FontAwesome name="star" size={20} color="#fad21e" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleDeleteFriend(friend)}
+              style={{ marginLeft: 8 }}
+              accessibilityLabel="Remove Friend"
+            >
+              <FontAwesome name="trash" size={20} color="#e53e3e" />
+            </TouchableOpacity>
+          </View>
+        ))
+      )}
+      {/* Add Friend Modal */}
+      {showAddFriendModal && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.4)",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 999,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: 20,
+              padding: 28,
+              width: 340,
+              shadowColor: "#107C10",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.2,
+              shadowRadius: 8,
+              elevation: 10,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 24,
+                fontWeight: "bold",
+                color: "#107C10",
+                marginBottom: 18,
+                textAlign: "center",
+              }}
+            >
+              Add a Golfin Buddy
+            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: 16,
+              }}
+            >
+              <FontAwesome name="search" size={18} color="#107C10" />
+              <Text style={{ marginLeft: 10, color: "#107C10", fontSize: 16 }}>
+                Search:
+              </Text>
+              <TextInput
+                style={{
+                  flex: 1,
+                  marginLeft: 10,
+                  borderWidth: 1,
+                  borderColor: "#fad21e",
+                  borderRadius: 10,
+                  paddingHorizontal: 12,
+                  height: 38,
+                  fontSize: 16,
+                  color: "#333",
+                  backgroundColor: "#f0fff4",
+                }}
+                placeholder="Type username..."
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
+            </View>
+            <View style={{ marginTop: 8, marginBottom: 8 }}>
+              {searchResults.length === 0 ? (
+                <Text
+                  style={{
+                    color: "#107C10",
+                    fontSize: 15,
+                    textAlign: "center",
+                    marginTop: 12,
+                  }}
+                >
+                  No users found.
+                </Text>
+              ) : (
+                searchResults.map((user: Friend, idx: number) => (
+                  <View
+                    key={user.id || idx}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      backgroundColor: "#e8f5e9",
+                      borderRadius: 10,
+                      padding: 10,
+                      marginBottom: 8,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        flex: 1,
+                        color: "#107C10",
+                        fontSize: 16,
+                        fontWeight: "600",
+                      }}
+                    >
+                      {user.name}
+                    </Text>
+                    <TouchableOpacity
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        backgroundColor: "#fad21e",
+                        borderRadius: 8,
+                        padding: 8,
+                      }}
+                      onPress={() => handleAddFriend(user)}
+                    >
+                      <FontAwesome name="plus" size={18} color="#107C10" />
+                      <Text
+                        style={{
+                          color: "#107C10",
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          marginLeft: 6,
+                        }}
+                      >
+                        Add
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                ))
+              )}
+            </View>
+            <TouchableOpacity
+              style={{
+                marginTop: 18,
+                alignSelf: "center",
+                padding: 10,
+                backgroundColor: "#e8f5e9",
+                borderRadius: 10,
+              }}
+              onPress={() => setShowAddFriendModal(false)}
+            >
+              <Text
+                style={{ color: "#107C10", fontSize: 17, fontWeight: "bold" }}
+              >
+                Close
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+    </View>
   );
 };
 
