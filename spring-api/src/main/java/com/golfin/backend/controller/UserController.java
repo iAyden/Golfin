@@ -26,7 +26,7 @@ public class UserController {
     }
 
    @GetMapping("/profile")
-public ResponseEntity<?> getProfile(@RequestHeader("Authorization") String authHeader){
+    public ResponseEntity<?> getProfile(@RequestHeader("Authorization") String authHeader){
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Falta-token");
     }
