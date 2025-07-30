@@ -363,21 +363,7 @@ func sendGameStats(game *Game) {
 
 	json, _ := json.Marshal(data)
 
-	res, err := http.Post(springApiUrl+"/api/games/add", "application/json", bytes.NewBuffer(json))
-	fmt.Println(res, err)
-}
-func sendUserStats(members []*User) {
-
-	for _, member := range members {
-		post := map[string]interface{}{
-			"username": member.Name,
-			"data":     member.Stats,
-		}
-		data, _ := json.Marshal(post)
-		res, err := http.Post(springApiUrl+"/api/stats/add-ustats", "application/json", bytes.NewBuffer(data))
-		fmt.Println(res, err)
-	}
-
+	http.Post(springApiUrl+"api/games/add", "application/json", bytes.NewBuffer(json))
 }
 
 func getWinner(members []*User) *User {
@@ -389,6 +375,18 @@ func getWinner(members []*User) *User {
 	}
 
 	return winner
+
+}
+func sendUserStats(members []*User) {
+
+	for _, member := range members {
+		post := map[string]interface{}{
+			"username": member.Name,
+			"data":     member.Stats,
+		}
+		data, _ := json.Marshal(post)
+		http.Post(springApiUrl+"api/stats/add-ustats", "application/json", bytes.NewBuffer(data))
+	}
 
 }
 
