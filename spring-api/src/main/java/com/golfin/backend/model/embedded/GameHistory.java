@@ -12,8 +12,7 @@ public class GameHistory {
     private int bogeys;
     private double holePercentage;
     private double performance;
-
-    // Getters y Setters
+    
     public String getGameName() { return gameName; }
     public void setGameName(String gameName) { this.gameName = gameName; }
 

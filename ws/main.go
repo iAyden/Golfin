@@ -60,7 +60,8 @@ type User struct {
 	BoughtTraps []string
 	Stats       UStats `json:"stats"`
 
-	Msg chan Message `json:"-"`
+	Msg   chan Message `json:"-"`
+	Nuked chan string  `json:"-"`
 }
 
 type Party struct {
@@ -88,6 +89,7 @@ type Game struct {
 var games = make(map[int]*Game)
 
 func main() {
+	fmt.Println("Servidor corriendo en el puerto 1337")
 	http.HandleFunc("/game", handleConnections)
 	http.HandleFunc("/playerScored", playerScored)
 	http.Handle("/", http.FileServer(http.Dir("static")))
@@ -99,6 +101,8 @@ func playerScored(w http.ResponseWriter, r *http.Request) {
 	//increible la validación
 	//creo qué tan solo sería checar el origen del request
 	//que concuerde con el del pico
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	var data = make(map[string]interface{})
 
 	json.NewDecoder(r.Body).Decode(&data)
@@ -131,6 +135,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	user := &User{
 		UserConn: ws,
 		Msg:      make(chan Message),
+		Nuked:    make(chan string),
 	}
 
 	fmt.Print("Nuevo user con web socket")
@@ -143,6 +148,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 
 func (user *User) readMessages() {
 	for {
+		fmt.Println("esperando mensaje....")
 		_, rawMsg, err := user.UserConn.ReadMessage()
 		if err != nil {
 			fmt.Println(err)
@@ -151,8 +157,7 @@ func (user *User) readMessages() {
 		var msg Message
 
 		json.Unmarshal(rawMsg, &msg)
-		fmt.Println("El mensaje que recibimos del cliente es:")
-		fmt.Println(msg)
+		fmt.Println("El mensaje que recibimos del cliente es: ", msg)
 
 		switch msg.Type {
 		case "createParty":
@@ -160,8 +165,11 @@ func (user *User) readMessages() {
 		case "joinParty":
 			joinParty(user, msg)
 		case "startGame":
-			startGame(user, msg)
-			//nukeamos esta funcion de lectura
+			//xddddi
+			go startGame(user, msg)
+		case "nuke":
+			fmt.Println("Nukeamos con éxito")
+			user.Nuked <- "nukeado"
 			return
 		}
 	}
@@ -173,17 +181,28 @@ func (game *Game) gameLoop() {
 	party := game.Party
 	game.Round = 1
 
+	var globalTimer int
+
 	fmt.Println("el id del juego es")
 	fmt.Println(game.Id)
-	start := time.Now()
+
+	var mensaje Message
+
+	globalTime := time.Now()
 
 	fmt.Println("El juego es ", games[game.Id])
 	for !finished {
 		for i := range party.Members {
 
+			start := time.Now().Add(-time.Duration(game.Round*10) * time.Second)
+
 			if party.Members[i].Finished {
-				i++
 				fmt.Println("Salteamos el turno del jugador", party.Members[i].Finished, party.Members[i].Name)
+				if i+1 == len(party.Members) {
+					i = 0
+				} else {
+					i++
+				}
 				//idea
 				//cuando un jugador termine puede darle a otros jugadores karma
 				//le podemos dar más karma con cada ronda qué pasa
@@ -203,68 +222,50 @@ func (game *Game) gameLoop() {
 				data["time"] = j
 				sendMessage("startTimer", data, party.Members[i])
 
+				data["time"] = globalTimer
+				mensaje.Type = "globalTimer"
+				mensaje.Payload, _ = json.Marshal(data)
+				game.Party.Broadcast <- mensaje
+				<-done
 				time.Sleep(1 * time.Second)
-
+				globalTimer++
 			}
 
 			for j := 10; j >= 0; j-- {
+
 				data["time"] = j
 				sendMessage("turnTimer", data, party.Members[i])
 
+				data["time"] = globalTimer
+				mensaje.Type = "globalTimer"
+				mensaje.Payload, _ = json.Marshal(data)
+				game.Party.Broadcast <- mensaje
+				<-done
+
 				if party.Members[i].Finished {
-					timeOfGoal := time.Since(start)
-					score := getScoreName(4, game.Round)
-
-					points := calculatePoints(score, timeOfGoal)
-					party.Members[i].Stats.Points = points
-					party.Members[i].Stats.Shots = game.Round
-
-					data := map[string]interface{}{
-						"name":   party.Members[i].Name,
-						"score":  score,
-						"points": points,
-					}
-
-					payload, _ := json.Marshal(data)
-
-					msg := Message{
-						Type:    "playerFinished",
-						Payload: payload,
-					}
-
-					party.Broadcast <- msg
-					<-done
-
-					//en este punto podemos mandar el mensaje para redirigir
-					//a la pantalla de fantasmas (jugadores qué ya terminaron)
-					msg = Message{
-						Type: "finished",
-					}
-					party.Members[i].Msg <- msg
-
+					playerFinished(party, game, i, start)
+					finished = partyFinished(party)
 					break
 				}
 
 				time.Sleep(1 * time.Second)
+				globalTimer++
+			}
+
+			sendMessage("endUserTurn", msg, party.Members[i])
+
+			if finished {
+				break
 			}
 
 		}
 
 		game.Round++
+		finished = partyFinished(party)
 
-		temp := true
-		for _, player := range party.Members {
-			finished = temp && player.Finished
-			temp = player.Finished
-		}
+		fmt.Println("se acabó la partida ", finished)
 	}
 	fmt.Println("fin de la partida")
-
-	msg := Message{
-		Type: "gameEnded",
-	}
-	game.Party.Broadcast <- msg
-	<-done
 
 	winner := getWinner(game.Party.Members)
 	winner.Stats.Won = 1
@@ -272,10 +273,79 @@ func (game *Game) gameLoop() {
 	fmt.Println("Ganó la partida", winner.Name)
 
 	game.Stats.Winner = winner.Name
-	game.Stats.TimeElapsed = int(time.Since(start))
+	game.Stats.TimeElapsed = int(time.Since(globalTime))
 
+	payload, _ := json.Marshal(game.Stats)
+	msg := Message{
+		Type:    "gameEnded",
+		Payload: payload,
+	}
+
+	game.Party.Broadcast <- msg
+	<-done
 	sendUserStats(game.Party.Members)
 	sendGameStats(game)
+
+}
+
+func partyFinished(party *Party) bool {
+
+	temp := true
+	finished := false
+
+	for _, player := range party.Members {
+		mutex.Lock()
+		fmt.Println(player.Name, player.Finished)
+		finished = temp && player.Finished
+		temp = player.Finished
+		mutex.Unlock()
+	}
+
+	return finished
+}
+
+func playerFinished(party *Party, game *Game, i int, start time.Time) {
+
+	fmt.Println(party.Members[i].Name, " acabó!")
+	timeOfGoal := time.Since(start)
+	score := getScoreName(4, game.Round)
+
+	points := calculatePoints(score, timeOfGoal)
+	party.Members[i].Stats.Points = points
+	party.Members[i].Stats.Shots = game.Round
+
+	data := map[string]interface{}{
+		"name":   party.Members[i].Name,
+		"score":  score,
+		"points": points,
+	}
+
+	payload, _ := json.Marshal(data)
+
+	msg := Message{
+		Type:    "playerFinished",
+		Payload: payload,
+	}
+
+	party.Broadcast <- msg
+	<-done
+	time.Sleep(5 * time.Second)
+
+	msg.Type = "endPlayerFinished"
+	party.Broadcast <- msg
+	<-done
+
+	//en este punto podemos mandar el mensaje para redirigir
+	//a la pantalla de fantasmas (jugadores qué ya terminaron)
+	msg = Message{
+		Type: "finished",
+	}
+
+	party.Members[i].Msg <- msg
+
+}
+
+func playerTurn() {
 
 }
 func sendGameStats(game *Game) {
@@ -409,7 +479,7 @@ func activateTrap(user *User, msg Message, game *Game) {
 	http.Get(url)
 
 	var data = map[string]interface{}{
-		"Trap": trap,
+		"trap": trap,
 	}
 	var gameMembers = game.Party.Members
 
@@ -452,7 +522,7 @@ func buyTrap(user *User, msg Message) {
 		user.Karma -= trapPrice[trap]
 
 		data := map[string]interface{}{
-			"Karma": user.Karma,
+			"karma": user.Karma,
 		}
 
 		user.BoughtTraps = append(user.BoughtTraps, trap)
@@ -469,6 +539,11 @@ func buyTrap(user *User, msg Message) {
 var trapPrice = make(map[string]int)
 
 func hasEnoughKarma(trap string, player *User) bool {
+	//cancer
+	trapPrice["fan"] = 100
+	trapPrice["car"] = 250
+	trapPrice["earthquake"] = 500
+
 	return player.Karma >= trapPrice[trap]
 }
 
@@ -562,6 +637,12 @@ func startGame(user *User, msg Message) {
 		randInt := mathRand.Intn(250) + 100
 		party.Members[i].Karma = randInt
 
+		data := map[string]interface{}{
+			"karma": party.Members[i].Karma,
+		}
+
+		sendMessage("userStartGame", data, party.Members[i])
+
 		randInt = mathRand.Intn(len(party.Members))
 
 		playerP := party.Members[randInt]
@@ -590,21 +671,43 @@ func startGame(user *User, msg Message) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(data)
+	// fmt.Println(data)
 
 	intnum, _ := strconv.Atoi(string(data))
 	games[intnum] = game
 	game.Id = intnum
+
+	gameIdMap := map[string]interface{}{
+		"gameId": game.Id,
+	}
+
+	gameIdJson, _ := json.Marshal(gameIdMap)
+	message := Message{
+		Type:    "gameId",
+		Payload: gameIdJson,
+	}
+
+	party.Broadcast <- message
+	<-done
+
+	endpoint := fmt.Sprintf("/gameId?id=%d", intnum)
+	http.Get(raspUrl + endpoint)
+
 	intnum++
 
 	stringNum := strconv.Itoa(intnum)
 	os.WriteFile("gameSeed.txt", []byte(stringNum), 0644)
 
+	interfaceMap := map[string]interface{}{}
+	for i := 0; i < len(party.Members); i++ {
+		fmt.Println("Nukeando a ", party.Members[i].Name)
+		sendMessage("nuke", interfaceMap, party.Members[i])
+		<-party.Members[i].Nuked
+		fmt.Println("Nukeamos el reader de ", party.Members[i].Name)
+		go party.Members[i].readGameMessages(game)
+	}
 	go game.gameLoop()
 
-	for i := 0; i < len(party.Members); i++ {
-		party.Members[i].readGameMessages(game)
-	}
 }
 
 var done = make(chan string)

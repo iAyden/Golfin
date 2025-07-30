@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
 import com.golfin.backend.model.embedded.*;
 @Document(collection = "users")
 public class User {
@@ -25,7 +27,9 @@ public class User {
     private List<GameHistory> gameHistory = new ArrayList<>();
     private List<Achievement> achievements = new ArrayList<>();
     private List<String> friends = new ArrayList<>();
-    private Stats stats;
+    @Field("stats")
+    private List<UserStats> stats = new ArrayList<>();
+
 
     public User(String username, String email, String password) {
         // Agregar hasheo de la pswd 
@@ -74,6 +78,12 @@ public class User {
     public List<String> getFriends() { return friends; }
     public void setFriends(List<String> friends) { this.friends = friends; }
 
-    public Stats getStats() { return stats; }
-    public void setStats(Stats stats) { this.stats = stats; }
+    public List<UserStats> getStats() {
+        return stats;
+    }
+
+    public void setStats(List<UserStats> stats) {
+        this.stats = stats;
+    }
+
 }
