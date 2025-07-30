@@ -363,7 +363,7 @@ func sendGameStats(game *Game) {
 
 	json, _ := json.Marshal(data)
 
-	http.Post(springApiUrl+"api/games/add", "application/json", bytes.NewBuffer(json))
+	http.Post(springApiUrl+"/api/games/add", "application/json", bytes.NewBuffer(json))
 }
 
 func getWinner(members []*User) *User {
@@ -385,7 +385,7 @@ func sendUserStats(members []*User) {
 			"data":     member.Stats,
 		}
 		data, _ := json.Marshal(post)
-		http.Post(springApiUrl+"api/stats/add-ustats", "application/json", bytes.NewBuffer(data))
+		http.Post(springApiUrl+"/api/stats/add-ustats", "application/json", bytes.NewBuffer(data))
 	}
 
 }
