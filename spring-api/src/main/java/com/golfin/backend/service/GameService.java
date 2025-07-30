@@ -39,6 +39,7 @@ public class GameService {
             .collect(Collectors.toList());
 
         Game game = new Game(
+            dto.getId(),
             dto.getCourse(),
             dto.getWinner(),
             dto.getTotalSpringedTraps(),

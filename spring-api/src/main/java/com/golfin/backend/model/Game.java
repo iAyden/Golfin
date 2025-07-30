@@ -18,7 +18,8 @@ public class Game {
     private List <String> playerUsernames;
     public Game() {}
 
-    public Game(String course, String winner, int totalSpringedTraps, int totalTime, List<String> playerIds) {
+    public Game(String id, String course, String winner, int totalSpringedTraps, int totalTime, List<String> playerIds) {
+        this.id = id;
         this.course = course;
         this.winner = winner;
         this.totalSpringedTraps = totalSpringedTraps;

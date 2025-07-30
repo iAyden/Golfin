@@ -3,7 +3,7 @@ package com.golfin.backend.dto;
 import java.util.List;
 
 public class GameDTO {
-
+    private String id;
     private String course;
     private String winner;
     private int totalSpringedTraps;
@@ -59,5 +59,11 @@ public class GameDTO {
     public void setPlayerUsernames(List<String> playerUsernames) {
     this.playerUsernames = playerUsernames;
     }
+    public String getId(){
+        return id;
+    }
 
+    public void setId(String id){
+        this.id = id;
+    }
 }

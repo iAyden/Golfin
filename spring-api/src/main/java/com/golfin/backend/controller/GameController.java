@@ -31,7 +31,7 @@ public class GameController {
         }
     }
 
-            @GetMapping("/with-players")
+    @GetMapping("/with-players")
         public ResponseEntity<?> getGamesWithPlayerDetails() {
             List<Document> games = gameService.getGamesWithPlayerDetails();
             return ResponseEntity.ok(games);
