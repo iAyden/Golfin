@@ -41,12 +41,12 @@ type UStats struct {
 }
 
 type GStats struct {
-	GameId             int     `json:"id"`
-	Winner             string  `json:"winner"`
-	Players            []*User `json:"players"`
-	Course             string  `json:"course"`
-	TimeElapsed        int     `json:"totalTime"`
-	TotalSpringedTraps int     `json:"totalSpringedTraps"`
+	GameId             int      `json:"id"`
+	Winner             string   `json:"winner"`
+	Players            []string `json:"players"`
+	Course             string   `json:"course"`
+	TimeElapsed        int      `json:"totalTime"`
+	TotalSpringedTraps int      `json:"totalSpringedTraps"`
 }
 
 type User struct {
@@ -273,10 +273,13 @@ func (game *Game) gameLoop() {
 	fmt.Println("Ganó la partida", winner.Name)
 
 	game.Stats.Winner = winner.Name
-	game.Stats.TimeElapsed = int(time.Since(globalTime).Seconds())
-	game.Stats.Players = game.Party.Members
+	game.Stats.TimeElapsed = int(time.Since(globalTime))
 
-	fmt.Println(game.Stats)
+	for _, player := range game.Party.Members {
+		game.Stats.Players = append(game.Stats.Players, player.Name)
+	}
+
+	fmt.Println(game.Stats.Players)
 
 	payload, _ := json.Marshal(game.Stats)
 	msg := Message{
