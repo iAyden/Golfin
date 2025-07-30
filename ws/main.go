@@ -17,7 +17,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-const springApiUrl = "golfin.dns.net:8888"
+const springApiUrl = "http://127.0.0.1:8080"
 const raspUrl = "http:arduinito.net"
 
 var upgrader = websocket.Upgrader{
@@ -356,7 +356,21 @@ func sendGameStats(game *Game) {
 
 	json, _ := json.Marshal(data)
 
-	http.Post(springApiUrl+"/add-gstats", "application/json", bytes.NewBuffer(json))
+	res, err := http.Post(springApiUrl+"/api/games/add", "application/json", bytes.NewBuffer(json))
+	fmt.Println(res, err)
+}
+func sendUserStats(members []*User) {
+
+	for _, member := range members {
+		post := map[string]interface{}{
+			"username": member.Name,
+			"data":     member.Stats,
+		}
+		data, _ := json.Marshal(post)
+		res, err := http.Post(springApiUrl+"/api/stats/add-ustats", "application/json", bytes.NewBuffer(data))
+		fmt.Println(res, err)
+	}
+
 }
 
 func getWinner(members []*User) *User {
@@ -368,18 +382,6 @@ func getWinner(members []*User) *User {
 	}
 
 	return winner
-
-}
-func sendUserStats(members []*User) {
-
-	for _, member := range members {
-		post := map[string]interface{}{
-			"username": member.Name,
-			"data":     member.Stats,
-		}
-		data, _ := json.Marshal(post)
-		http.Post(springApiUrl+"/add-ustats", "application/json", bytes.NewBuffer(data))
-	}
 
 }
 
