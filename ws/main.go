@@ -275,6 +275,9 @@ func (game *Game) gameLoop() {
 	game.Stats.Winner = winner.Name
 	game.Stats.TimeElapsed = int(time.Since(globalTime))
 
+	fmt.Println(game.Stats.Winner)
+	fmt.Println(game.Stats.TimeElapsed)
+
 	payload, _ := json.Marshal(game.Stats)
 	msg := Message{
 		Type:    "gameEnded",
@@ -350,8 +353,12 @@ func playerTurn() {
 }
 func sendGameStats(game *Game) {
 	data := map[string]interface{}{
-		"id":    game.Id,
-		"stats": game.Stats,
+		"id":                 game.Id,
+		"winner":             game.Stats.Winner,
+		"players":            game.Stats.Players,
+		"course":             game.Stats.Course,
+		"totalTime":          game.Stats.TimeElapsed,
+		"totalSpringedTraps": game.Stats.TotalSpringedTraps,
 	}
 
 	json, _ := json.Marshal(data)
