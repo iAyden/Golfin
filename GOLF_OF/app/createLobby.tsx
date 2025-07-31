@@ -326,6 +326,11 @@ const handleNuke = (payload: any) => {
 
 
 
+const handleBuyTrap = (payload : any) => {
+  console.log("Esto llego del evento de handeBuyTrap: ", payload);
+}
+
+
   ////////////////////////// Aqui los handlers que reccionan por cada eventi ////////////////////////
   socketService.on("gameId", handleGameId);
   socketService.on("nuke", handleNuke);
@@ -373,6 +378,14 @@ const handleNuke = (payload: any) => {
 const handleStartPress = () => { if (partyData) socketService.startGame(partyData.code); };
 
 
+const BuyTrap = (nameTrap : string ) => { 
+  if (!gameStarted) {  Alert.alert("Espera", "INICIA EL JUEGO PRIMERO"); return; }
+  if(nameTrap.length === 0) { console.log("No se pudo comprar la trampa"); return; }
+
+  socketService.buyTrap(nameTrap.toLowerCase());
+
+  console.log("Trampa comprada:", nameTrap);
+};
 
   // PARTE DEL TIEMPO NO LE MUEVAN
   const formatTime = (totalSeconds: number): string => {
@@ -646,8 +659,13 @@ useEffect(() => {
                 <TouchableOpacity
                   key={item.id}
                   style={[ styles.shopItem, { backgroundColor: item.backgroundColor }, (points < item.cost || !gameStarted) && styles.disabledItem, ]}
+
                   onPress={() => buyItem(item.id)}
                   disabled={points < item.cost || !gameStarted}
+
+                  onPress={() => BuyTrap(item.name)}
+                  disabled={!gameStarted}
+
                 >
                   <Image source={item.icon} style={styles.itemImage} />
                   <Text style={styles.itemName}>{item.name}</Text>
