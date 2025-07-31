@@ -234,10 +234,6 @@ useEffect(() => {
 
 const handleKarmaTrigger = (payload: { username: string; karma: number }) => { console.log("TRAMPA trigueada:", payload.username, payload.karma); };
 
-
-  const handleBuyTrap = (payload: { Karma: number }) => { if (payload.Karma !== undefined) setKarma(payload.Karma); };
-
-
   /////////////////// REAL TIME updater /////////////
   const handleGlobalTimer = (payload: { time: number }) => {
   console.log("Global timer recibido:", payload.time);
@@ -657,16 +653,11 @@ useEffect(() => {
             <View style={styles.shopGrid}>
               {shopItems.map((item) => (
                 <TouchableOpacity
-                  key={item.id}
-                  style={[ styles.shopItem, { backgroundColor: item.backgroundColor }, (points < item.cost || !gameStarted) && styles.disabledItem, ]}
-
-                  onPress={() => buyItem(item.id)}
-                  disabled={points < item.cost || !gameStarted}
-
-                  onPress={() => BuyTrap(item.name)}
-                  disabled={!gameStarted}
-
-                >
+                      key={item.id}
+                      style={[ styles.shopItem, { backgroundColor: item.backgroundColor }, (points < item.cost || !gameStarted) && styles.disabledItem, ]}
+                      onPress={() => BuyTrap(item.name)}
+                      disabled={points < item.cost || !gameStarted}
+                    >
                   <Image source={item.icon} style={styles.itemImage} />
                   <Text style={styles.itemName}>{item.name}</Text>
                   <Text style={styles.itemPrice}>{item.cost} pts</Text>
