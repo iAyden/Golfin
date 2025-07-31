@@ -310,7 +310,7 @@ const handleStartGame = (payload: PartyData) => {
 const handleUserStartGame =  () => {
   console.log("Recivido userStartGame, indicando que fuiste el wey que creo la partida");
   setGameStarted(true); 
-};
+}; 
 
 const handleNuke = (payload: any) => {
   console.log("Evento nuke recibido:", payload);
