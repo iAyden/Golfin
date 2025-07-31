@@ -13,6 +13,7 @@ type UserCardType = {
   role: string; // OWNER or VISITOR
   score: number;
   karma: number;    
+  points?: number; 
   image: ImageSourcePropType;
 };
 
@@ -68,6 +69,7 @@ type User = {
   role: string;
   score: number;
   karma: number;
+  points?: number; 
 };
 
 
@@ -124,15 +126,15 @@ export default function CreateLobbyScreen() {
 
   // TIENDA
   const shopItems: ShopItemType[] = [
-    { id: "1", name: "Rampa", icon: icons.ramp, cost: 600, backgroundColor: "#2ecc71" },
-    { id: "2", name: "Cachetada lateral", icon: icons.slap, cost: 500, backgroundColor: "#2ecc71" },
-    { id: "3", name: "Obstáculo", icon: icons.obstacle, cost: 100, backgroundColor: "#2ecc71" },
-    { id: "4", name: "Ventilador", icon: icons.fan, cost: 250, backgroundColor: "#2ecc71" },
-    { id: "5", name: "Rampa VIP", icon: icons.vipRamp, cost: 350, backgroundColor: "#2ecc71" },
-    { id: "6", name: "Carrito", icon: icons.cart, cost: 700, backgroundColor: "#2ecc71" },
-    { id: "7", name: "Terremoto", icon: icons.earthquake, cost: 400, backgroundColor: "#2ecc71" },
-    { id: "8", name: "Cachetada VIP", icon: icons.vipSlap, cost: 300, backgroundColor: "#2ecc71" },
-    { id: "9", name: "Hoyo móvil", icon: icons.movingHole, cost: 500, backgroundColor: "#2ecc71" },
+    { id: "1", name: "Tornado", icon: icons.ramp, cost: 100 , backgroundColor: "#2ecc71" },
+    { id: "2", name: "Casino", icon: icons.slap, cost: 150 , backgroundColor: "#2ecc71" },
+    { id: "3", name: "Castle", icon: icons.obstacle, cost: 125, backgroundColor: "#2ecc71" },
+    { id: "4", name: "Windmill", icon: icons.fan, cost: 150 , backgroundColor: "#2ecc71" },
+    { id: "5", name: "Wall", icon: icons.vipRamp, cost: 250, backgroundColor: "#2ecc71" },
+    { id: "6", name: "Ramp", icon: icons.cart, cost: 300 , backgroundColor: "#2ecc71" },
+    { id: "7", name: "Slap", icon: icons.earthquake, cost: 100 , backgroundColor: "#2ecc71" },
+    { id: "8", name: "hole", icon: icons.vipSlap, cost: 250 , backgroundColor: "#2ecc71" },
+    { id: "9", name: "Random", icon: icons.movingHole, cost: 150, backgroundColor: "#2ecc71" },
   ];
 
     // Estados del juego
@@ -150,6 +152,12 @@ export default function CreateLobbyScreen() {
   const [turnTime, setTurnTime] = useState<number>(0);
   const [showTurnModal, setShowTurnModal] = useState(false);
 
+  ///////////////////////// PLayer scored /////////////////////////
+  const [showModalScored, setShowModalScored] = useState(false);
+  const [namePlayerScored, setNamePlayerScored] = useState<string | null>(null);
+  const [socredPlayerScored , setScoredPlayerScored] = useState<number | null>(null);
+  const [pointsPlayerScored, setPointsPlayerScored] = useState<number | null>(null);
+  /////////////////////////////////////////////////////////////////
   const router = useRouter();
 
 const userNameRef = useRef(userName);
@@ -214,7 +222,7 @@ useEffect(() => {
   };
 
   const handleGameId = (payload: any) => { console.log("Evento gameId recibido:", payload); };
-  
+
   const handlePlayerJoined = (updatedParty: PartyData) => {
     setPartyData(updatedParty);
     const currentPlayer = updatedParty.members.find(m => m.username === userName);
@@ -232,28 +240,34 @@ useEffect(() => {
   setIsOwner(updatedParty.owner === userNameRef.current);
   };
 
-const handleKarmaTrigger = (payload: { username: string; karma: number }) => { console.log("TRAMPA trigueada:", payload.username, payload.karma); };
+  const handleKarmaTrigger = (payload: { username: string; karma: number }) => { console.log("TRAMPA trigueada:", payload.username, payload.karma); };
 
 
-  const handleBuyTrap = (payload: { Karma: number }) => { if (payload.Karma !== undefined) setKarma(payload.Karma); };
+  // const handleBuyTrap = (nameTrap : string) => { 
+  //   if (!gameStarted) {  Alert.alert("Espera", "INICIA EL JUEGO PRIMERO"); return; }
+  //   if(nameTrap.length === 0) { console.log("No se pudo comprar la trampa"); return; }
+    
+  //   socketService.buyTrap(nameTrap);
+  //   console.log("Trampa comprada:", nameTrap);
+  // };
 
 
   /////////////////// REAL TIME updater /////////////
   const handleGlobalTimer = (payload: { time: number }) => {
-  console.log("Global timer recibido:", payload.time);
+  //console.log("Global timer recibido:", payload.time);
   setSeconds(payload.time);
 };
   //////////////////////////////////////////////////
 
   //////////////////////// TURNOS DE LOS USUARIOS ////////////////////////
 const handleStartTimer = (payload: { time: number }) => {
-  console.log("startTimer recibido:", payload.time);
+  //console.log("startTimer recibido:", payload.time);
   setPrepTime(payload.time); 
 };
 
 
 const handleTurnTimer = (payload: { time: number }) => {
-  console.log("turnTimer recibido:", payload.time);
+  //console.log("turnTimer recibido:", payload.time);
   setTurnTime(payload.time);
   if (payload.time === 0) {
     setShowTurnModal(false);
@@ -277,13 +291,25 @@ const handleStartUserTurn = (payload: any) => {
   }
 };
 
-const handleEndPlayerFinished = (payload: any) => { console.log("se cierra modal de turno"); };
+const handleEndPlayerFinished = (payload: any) => { setShowModalScored(false);  console.log("se cierra modal de turno"); };
 
 ///////////////////////// PLayer finished que NO FUNCIONA//////////////////////
 const handlePlayerFinished = (payload: any) => {
-  console.log("Se anoto un punto");
+  console.log("Se anotó un punto");
+  setShowModalScored(true);
+  setNamePlayerScored(payload.name);
+  setScoredPlayerScored(payload.score);
+  setPointsPlayerScored(payload.points);
   setShowTurnModal(false);   
+
+  setUserCards((prevUserCards) =>
+    prevUserCards.map((user) =>
+      user.name === payload.name
+        ? {...user, points: payload.points, score: payload.score} : user
+    )
+  );
 };
+
 /////////////////////////////////////////////////////////////////////////////
 const handleEndUserTurn = (payload: any) => {
   console.log("Evento endUserTurn recibido:", payload);
@@ -323,8 +349,9 @@ const handleNuke = (payload: any) => {
   socketService.send("nuke", {});
 };
 
-
-
+const handledeactivateTrap = (payload: any) => {
+  console.log("Evento activateTrap recibido:", payload);
+}
 
   ////////////////////////// Aqui los handlers que reccionan por cada eventi ////////////////////////
   socketService.on("gameId", handleGameId);
@@ -334,6 +361,7 @@ const handleNuke = (payload: any) => {
   socketService.on("joinParty", handleJoinParty);
   socketService.on("playerJoined", handlePlayerJoined);
   socketService.on("globalTimer", handleGlobalTimer);
+  socketService.on("deactivateTrap",handledeactivateTrap); // new event
   socketService.on("karmaTrigger", handleKarmaTrigger);
   socketService.on("buyTrap", handleBuyTrap);
   socketService.on("playerFinished", handlePlayerFinished);
@@ -371,6 +399,15 @@ const handleNuke = (payload: any) => {
 
 
 const handleStartPress = () => { if (partyData) socketService.startGame(partyData.code); };
+
+  const handleBuyTrap = (nameTrap : string, payload ?: any) => { 
+    if (!gameStarted) {  Alert.alert("Espera", "INICIA EL JUEGO PRIMERO"); return; }
+    if(nameTrap.length === 0) { console.log("No se pudo comprar la trampa"); return; }
+    console.log("Lo que llega de la trampa:", payload);
+    socketService.buyTrap(nameTrap.toLowerCase());
+
+    console.log("Trampa comprada:", nameTrap);
+  };
 
 
 
@@ -537,22 +574,18 @@ useEffect(() => {
   .map((user) => (
     <View
       key={user.id}
-      style={[
-        styles.userCard,
-        user.name === currentTurnPlayer && { backgroundColor: "#ffd700" },
-      ]}
-    >
+      style={[ styles.userCard, user.name === currentTurnPlayer && { backgroundColor: "#ffd700" }, ]} >
       <View style={styles.userInfoContainer}>
         <Image source={user.image} style={styles.userImage} />
         <View style={styles.userTextContainer}>
           <Text style={styles.userName}>{user.name}</Text>
-          <Text style={styles.userRole}>{user.role}</Text>
+          <Text style={styles.userRole}>{user.score}</Text>
         </View>
       </View>
       <View style={styles.pointsContainerRight}>
         <View style={styles.pointsRow}>
           <Image source={icons.scoreIcon} style={styles.iconImage} />
-          <Text style={styles.pointsText}>{user.score || "0"}</Text>
+          <Text style={styles.pointsText}>{user.points || "0"}</Text>
         </View>
         <View style={styles.pointsRow}>
           <Image source={icons.karmaIcon} style={styles.iconImage} />
@@ -584,6 +617,17 @@ useEffect(() => {
             </View>
           </View>
         )}
+
+        {showModalScored && (
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>¡Punto anotado por: {namePlayerScored}!</Text>
+              <Text style={styles.timerText}>¡Score: {socredPlayerScored}!</Text>
+              <Text style={styles.timerText}>¡points: {pointsPlayerScored}!</Text>
+            </View>
+          </View>
+        )}
+        
 
           {userCards.length === 1 && ( <Text style={styles.noUsersText}>There are not users connected.</Text> )}
 
@@ -646,8 +690,8 @@ useEffect(() => {
                 <TouchableOpacity
                   key={item.id}
                   style={[ styles.shopItem, { backgroundColor: item.backgroundColor }, (points < item.cost || !gameStarted) && styles.disabledItem, ]}
-                  onPress={() => buyItem(item.id)}
-                  disabled={points < item.cost || !gameStarted}
+                  onPress={() => handleBuyTrap(item.name)}
+                  disabled={!gameStarted}
                 >
                   <Image source={item.icon} style={styles.itemImage} />
                   <Text style={styles.itemName}>{item.name}</Text>

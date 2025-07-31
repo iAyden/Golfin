@@ -13,7 +13,7 @@ class SocketService {
         this.socket.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
-                console.log("Mensaje recibido: ", data);
+                // console.log("Mensaje recibido: ", data);
                 this.emit(data.type, data.payload);
             } catch (error) { console.error("Error al parsear el mensaje: ", error); }
         }
