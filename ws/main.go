@@ -568,9 +568,16 @@ var trapPrice = make(map[string]int)
 
 func hasEnoughKarma(trap string, player *User) bool {
 	//cancer
-	trapPrice["fan"] = 100
-	trapPrice["car"] = 250
-	trapPrice["earthquake"] = 500
+	trapPrice["tornado"] = 100
+	trapPrice["casino"] = 150
+	trapPrice["castle"] = 125
+	trapPrice["windmill"] = 150
+	trapPrice["wall"] = 250
+
+	trapPrice["ramp"] = 300
+	trapPrice["slap"] = 100
+	trapPrice["hole"] = 250
+	trapPrice["random"] = 150
 
 	return player.Karma >= trapPrice[trap]
 }
