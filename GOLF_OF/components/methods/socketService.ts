@@ -13,7 +13,7 @@ class SocketService {
         this.socket.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
-                // console.log("Mensaje recibido: ", data);
+                console.log("Mensaje recibido: ", data);
                 this.emit(data.type, data.payload);
             } catch (error) { console.error("Error al parsear el mensaje: ", error); }
         }
@@ -33,7 +33,7 @@ class SocketService {
 
     startGame(code: string) { this.send("startGame", { code }); }
 
-    buyTrap(trapName: string) { this.send("buyTrap", { trap: trapName }); console.log("Entro al metodo buyTrap"); }
+    buyTrap(trapName: string) { this.send("buyTrap", { trap: trapName }); }
 
     on(eventType: string, callback: Callback){
         this.listeners[eventType] ??= this.listeners[eventType] = [];

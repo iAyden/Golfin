@@ -37,6 +37,8 @@ type UStats struct {
 	Shots         int `json:"shots"`
 	Points        int `json:"points"`
 	SpringedTraps int `json:"springedTraps"`
+	KarmaTrigger  int `json:"karmaTrigger"`
+	KarmaSpent    int `json:"karmaSpent"`
 	Won           int `json:"won"`
 }
 
@@ -374,6 +376,7 @@ func sendUserStats(members []*User) {
 			"username": member.Name,
 			"data":     member.Stats,
 		}
+		fmt.Println(member.Stats)
 		data, _ := json.Marshal(post)
 		res, err := http.Post(springApiUrl+"/api/stats/add-ustats", "application/json", bytes.NewBuffer(data))
 		fmt.Println(res, err)
@@ -527,6 +530,7 @@ func activateTrap(user *User, msg Message, game *Game) {
 			data := map[string]interface{}{
 				"karma": newTotalKarma,
 			}
+			gameMembers[i].Stats.KarmaTrigger += 1
 			sendMessage("karmaTrigger", data, gameMembers[i])
 		}
 	}
@@ -547,10 +551,12 @@ func buyTrap(user *User, msg Message) {
 	fmt.Println("El karma del jugador ", user.Name, " es de ", user.Karma)
 
 	if hasEnoughKarma(trap, user) {
+		user.Stats.KarmaSpent += trapPrice[trap]
 		user.Karma -= trapPrice[trap]
 
 		data := map[string]interface{}{
-			"karma": user.Karma,
+			"username": user.Name,
+			"karma":    user.Karma,
 		}
 
 		user.BoughtTraps = append(user.BoughtTraps, trap)
