@@ -54,7 +54,7 @@ public class UserController {
     }
 
     //este endpoint va a recibir el objeto cuando termine una partida para añadir a su historial
-    @PostMapping("/add-game")
+      @PostMapping("/add-game")
     public ResponseEntity<?> addGame(@RequestHeader("Authorization") String authHeader,
                                      @RequestBody GameHistory game) {
         String email = jwtUtil.extractEmail(authHeader.replace("Bearer ", ""));

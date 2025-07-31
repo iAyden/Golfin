@@ -5,7 +5,7 @@ import java.util.List;
 public class GameDTO {
     private String id;
     private String winner;
-    private List<String> players;
+    private List<UserGameStatsDTO> players;
     private String course;
     private int totalTime;
     private int totalSpringedTraps;
@@ -56,11 +56,11 @@ public class GameDTO {
     public void setId(String id){
         this.id = id;
     }
-    public void setPlayers(List<String> players){
+    public void setPlayers(List<UserGameStatsDTO> players){
         this.players = players;
     }
 
-    public List<String> getPlayers(){
+    public List<UserGameStatsDTO> getPlayers(){
         return players;
     }
 }

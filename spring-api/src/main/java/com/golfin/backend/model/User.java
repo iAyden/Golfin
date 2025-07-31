@@ -28,7 +28,7 @@ public class User {
     private List<Achievement> achievements = new ArrayList<>();
     private List<String> friends = new ArrayList<>();
     @Field("stats")
-    private List<UserStats> stats = new ArrayList<>();
+    private UserStats stats;
 
 
     public User(String username, String email, String password) {
@@ -78,11 +78,11 @@ public class User {
     public List<String> getFriends() { return friends; }
     public void setFriends(List<String> friends) { this.friends = friends; }
 
-    public List<UserStats> getStats() {
+    public UserStats getStats() {
         return stats;
     }
 
-    public void setStats(List<UserStats> stats) {
+    public void setStats(UserStats stats) {
         this.stats = stats;
     }
 

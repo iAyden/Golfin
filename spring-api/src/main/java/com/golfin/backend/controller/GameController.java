@@ -30,7 +30,7 @@ public class GameController {
         try {
             System.out.println("dto: " + objectMapper.writeValueAsString(dto));
         } catch (JsonProcessingException e) {
-            e.printStackTrace(); // o puedes loguearlo de forma más elegante
+            e.printStackTrace();
         }
         try {
             Game savedGame = gameService.saveGame(dto);

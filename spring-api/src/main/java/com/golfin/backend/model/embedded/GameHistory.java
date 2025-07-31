@@ -3,6 +3,7 @@ package com.golfin.backend.model.embedded;
 import java.util.Date;
 
 public class GameHistory {
+    public String id;
     private String gameName;
     private Date datePlayed;
     private int score;
@@ -13,6 +14,8 @@ public class GameHistory {
     private double holePercentage;
     private double performance;
     
+    public String id() {return id;}
+    public void setId(String id ) {this.id = id;}
     public String getGameName() { return gameName; }
     public void setGameName(String gameName) { this.gameName = gameName; }
 

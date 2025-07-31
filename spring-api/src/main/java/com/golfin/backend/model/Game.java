@@ -1,7 +1,10 @@
 package com.golfin.backend.model;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+
 import java.util.List;
 
 @Document
@@ -10,19 +13,20 @@ public class Game {
     @Id
     private String id;
     private String winner;
-    private List<String> players;
+    private List<ObjectId> players;
     private String course;
     private int totalTime;
     private int totalSpringedTraps;
     public Game() {}
 
-    public Game(String id, String course, String winner, int totalSpringedTraps, int totalTime, List<String> players) {
+    public Game(String id, String course, String winner, int totalSpringedTraps, int totalTime, List<ObjectId> players) {
         this.id = id;
         this.winner = winner;
         this.players=players;
         this.course = course;
-        this.totalTime = totalTime;
         this.totalSpringedTraps = totalSpringedTraps;
+        this.totalTime = totalTime;
+       
     }
 
     // Getters y Setters
@@ -62,11 +66,11 @@ public class Game {
         this.totalTime = totalTime;
     }
 
-    public List<String> getPlayers() {
+    public List<ObjectId> getPlayers() {
         return players;
     }
 
-    public void setPlayers(List<String> players) {
+    public void setPlayers(List<ObjectId> players) {
         this.players = players;
     }
     

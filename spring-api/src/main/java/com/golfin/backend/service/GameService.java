@@ -5,6 +5,7 @@ import com.golfin.backend.model.Game;
 import com.golfin.backend.repository.GameRepository;
 import com.golfin.backend.repository.UserRepository;
 import com.golfin.backend.model.User;
+import com.golfin.backend.model.embedded.GameHistory;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,25 +31,35 @@ public class GameService {
     private MongoTemplate mongoTemplate;
 
     public Game saveGame(GameDTO dto) {
-        List<String> playerIds = dto.getPlayers()
+        List<ObjectId> playerIds = dto.getPlayers()
             .stream()
-            .map(username -> userRepository.findByUsername(username))
+            .map(userDto -> userRepository.findByUsername(userDto.getUsername()))
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .map(User::getId)  // getId() devuelve String
+            .map(user -> new ObjectId(user.getId()))
             .collect(Collectors.toList());
-
+    
         Game game = new Game(
-            dto.getId(),
-            dto.getCourse(),
-            dto.getWinner(),
-            dto.getTotalSpringedTraps(),
-            dto.getTotalTime(),
-            playerIds  
+            dto.getId(),dto.getCourse(),
+            dto.getWinner(), dto.getTotalSpringedTraps(),
+            dto.getTotalTime(),playerIds
+            
+         
+            
         );
-
+        GameHistory history = new GameHistory();
+            history.setId(game.getId());
+        for (ObjectId playerId : game.getPlayers()) {
+            Optional<User> userOptional = userRepository.findById(playerId);
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                user.getGameHistory().add(history);
+                userRepository.save(user);
+            }
+        }
         return gameRepository.save(game);
     }
+    
 
 
 
