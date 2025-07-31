@@ -279,8 +279,6 @@ func (game *Game) gameLoop() {
 		game.Stats.Players = append(game.Stats.Players, player.Name)
 	}
 
-	fmt.Println(game.Stats.Players)
-
 	payload, _ := json.Marshal(game.Stats)
 	msg := Message{
 		Type:    "gameEnded",
@@ -476,7 +474,6 @@ func (user *User) readGameMessages(game *Game) {
 		}
 	}
 }
-
 func activateTrap(user *User, msg Message, game *Game) {
 	//si un jugador activó una trampa que otro tiene disponible
 	// se le desactiva al otro jugador hasta que acaba la duración de la trampa
@@ -485,6 +482,7 @@ func activateTrap(user *User, msg Message, game *Game) {
 	json.Unmarshal(msg.Payload, &payload)
 
 	trap := payload["trap"].(string)
+	fmt.Println("La trampa que vamos a activar es ", trap)
 	trapLocation := fmt.Sprintf("/trampa?trampa='%s'", trap)
 	url := (raspUrl + trapLocation)
 
@@ -494,12 +492,23 @@ func activateTrap(user *User, msg Message, game *Game) {
 		"trap": trap,
 	}
 	var gameMembers = game.Party.Members
+	fmt.Println("Empezamos a iterar")
+
+	for i := 0; i < len(user.BoughtTraps); i++ {
+		if user.BoughtTraps[i] == trap {
+			user.BoughtTraps = pop(user.BoughtTraps, i)
+		}
+	}
 
 	for i := 0; i < len(gameMembers); i++ {
 		traps := gameMembers[i].BoughtTraps
-		for j := 0; i < len(traps); i++ {
+		fmt.Println("iterando las trampas del miembro ", game.Party.Members[i].Name)
+
+		for j := 0; j < len(traps); j++ {
+			fmt.Println("iterando en la trampa ", traps[j])
+
 			if traps[j] == trap {
-				sendMessage("deactivateTrap", data, user)
+				sendMessage("deactivateTrap", data, game.Party.Members[i])
 			}
 		}
 	}
@@ -513,6 +522,8 @@ func activateTrap(user *User, msg Message, game *Game) {
 		if gameMembers[i].Name == affectedPlayer {
 
 			newTotalKarma := gameMembers[i].Karma + newKarma
+			gameMembers[i].Karma = newTotalKarma
+
 			data := map[string]interface{}{
 				"karma": newTotalKarma,
 			}
@@ -524,12 +535,17 @@ func activateTrap(user *User, msg Message, game *Game) {
 	game.Stats.TotalSpringedTraps += 1
 
 }
+func pop(slice []string, position int) []string {
+	return append(slice[:position], slice[position+1:]...)
+}
 func buyTrap(user *User, msg Message) {
 
 	var payload map[string]interface{}
 	json.Unmarshal(msg.Payload, &payload)
 
 	trap := payload["trap"].(string)
+	fmt.Println("El karma del jugador ", user.Name, " es de ", user.Karma)
+
 	if hasEnoughKarma(trap, user) {
 		user.Karma -= trapPrice[trap]
 
