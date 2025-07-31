@@ -400,9 +400,11 @@ const handledeactivateTrap = (payload: any) => {
 
 const handleStartPress = () => { if (partyData) socketService.startGame(partyData.code); };
 
-  const handleBuyTrap = (nameTrap : string, payload ?: any) => { 
+  const handleBuyTrap = (nameTrap : string , payload ?: any) => { 
     if (!gameStarted) {  Alert.alert("Espera", "INICIA EL JUEGO PRIMERO"); return; }
     if(nameTrap.length === 0) { console.log("No se pudo comprar la trampa"); return; }
+
+    console.log("Le llega como parametro de nombre: ", nameTrap);
     console.log("Lo que llega de la trampa:", payload);
     socketService.buyTrap(nameTrap.toLowerCase());
 
@@ -568,32 +570,32 @@ useEffect(() => {
               )}
             </View>
 
-<View style={styles.userCardsContainer}>
-  {[...userCards]
-  .sort((a, b) => (b.score || 0) - (a.score || 0))
-  .map((user) => (
-    <View
-      key={user.id}
-      style={[ styles.userCard, user.name === currentTurnPlayer && { backgroundColor: "#ffd700" }, ]} >
-      <View style={styles.userInfoContainer}>
-        <Image source={user.image} style={styles.userImage} />
-        <View style={styles.userTextContainer}>
-          <Text style={styles.userName}>{user.name}</Text>
-          <Text style={styles.userRole}>{user.score}</Text>
-        </View>
-      </View>
-      <View style={styles.pointsContainerRight}>
-        <View style={styles.pointsRow}>
-          <Image source={icons.scoreIcon} style={styles.iconImage} />
-          <Text style={styles.pointsText}>{user.points || "0"}</Text>
-        </View>
-        <View style={styles.pointsRow}>
-          <Image source={icons.karmaIcon} style={styles.iconImage} />
-          <Text style={styles.pointsText}>{user.karma || "0"}</Text>
-        </View>
-      </View>
-    </View>
-))}
+            <View style={styles.userCardsContainer}>
+              {[...userCards]
+              .sort((a, b) => (b.score || 0) - (a.score || 0))
+              .map((user) => (
+                <View
+                  key={user.id}
+                  style={[ styles.userCard, user.name === currentTurnPlayer && { backgroundColor: "#ffd700" }, ]} >
+                  <View style={styles.userInfoContainer}>
+                    <Image source={user.image} style={styles.userImage} />
+                    <View style={styles.userTextContainer}>
+                      <Text style={styles.userName}>{user.name}</Text>
+                      <Text style={styles.userRole}>{user.score}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.pointsContainerRight}>
+                    <View style={styles.pointsRow}>
+                      <Image source={icons.scoreIcon} style={styles.iconImage} />
+                      <Text style={styles.pointsText}>{user.points || "0"}</Text>
+                    </View>
+                    <View style={styles.pointsRow}>
+                      <Image source={icons.karmaIcon} style={styles.iconImage} />
+                      <Text style={styles.pointsText}>{user.karma || "0"}</Text>
+                    </View>
+                  </View>
+                </View>
+            ))}
           </View>
 
         {showTurnModal && (

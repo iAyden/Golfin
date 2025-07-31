@@ -33,7 +33,7 @@ class SocketService {
 
     startGame(code: string) { this.send("startGame", { code }); }
 
-    buyTrap(trapName: string) { this.send("buyTrap", { trap: trapName }); }
+    buyTrap(trapName: string) { this.send("buyTrap", { trap: trapName }); console.log("Entro al metodo buyTrap"); }
 
     on(eventType: string, callback: Callback){
         this.listeners[eventType] ??= this.listeners[eventType] = [];
