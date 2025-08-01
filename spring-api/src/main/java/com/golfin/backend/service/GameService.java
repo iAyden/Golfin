@@ -7,6 +7,7 @@ import com.golfin.backend.repository.UserRepository;
 import com.golfin.backend.model.User;
 import com.golfin.backend.model.embedded.GameHistory;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,7 +43,7 @@ public class GameService {
         Game game = new Game(
             dto.getId(),dto.getCourse(),
             dto.getWinner(), dto.getTotalSpringedTraps(),
-            dto.getTotalTime(),playerIds
+            dto.getTotalTime(),playerIds,new Date()
             
          
             
@@ -59,7 +60,15 @@ public class GameService {
         }
         return gameRepository.save(game);
     }
-    
+    public List<String> getUsernamesFromGame(Game game) {
+    return game.getPlayers().stream()
+        .map(userRepository::findById)
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .map(User::getUsername)
+        .collect(Collectors.toList());
+}
+
 
 
 

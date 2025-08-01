@@ -5,6 +5,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
+import java.util.Date;
+
 import java.util.List;
 
 @Document
@@ -17,15 +19,17 @@ public class Game {
     private String course;
     private int totalTime;
     private int totalSpringedTraps;
+    private Date date;
     public Game() {}
 
-    public Game(String id, String course, String winner, int totalSpringedTraps, int totalTime, List<ObjectId> players) {
+    public Game(String id, String course, String winner, int totalSpringedTraps, int totalTime, List<ObjectId> players, Date date) {
         this.id = id;
         this.winner = winner;
         this.players=players;
         this.course = course;
         this.totalSpringedTraps = totalSpringedTraps;
         this.totalTime = totalTime;
+        this.date = date;
        
     }
 
@@ -72,6 +76,14 @@ public class Game {
 
     public void setPlayers(List<ObjectId> players) {
         this.players = players;
+    }
+
+    public Date getDate(){
+        return date;
+    }
+
+    public void setDate(Date date){
+        this.date=date;
     }
     
 }

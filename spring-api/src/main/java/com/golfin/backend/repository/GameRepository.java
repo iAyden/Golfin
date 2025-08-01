@@ -15,6 +15,8 @@ public interface GameRepository extends MongoRepository<Game, String> {
 
     List<Game> findByWinner(String winner);     //Buscar juegos ganados por un jugador
 
+    List<Game> findByIdIn(List<String> ids);
+    
     // List<Game> findByPlayerIdsContaining(String playerId);
 
 }

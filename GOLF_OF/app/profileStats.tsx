@@ -19,16 +19,37 @@ import { useFonts } from "expo-font";
 import { checkAuthToken } from "@/utils/auth";
 import { getProfile } from "@/utils/api";
 import FriendCard  from "../components/UserComponents/Friends/FriendCard"
+import { boolean } from "zod";
+
+interface UserStats{
+  points: number;
+  position: number;
+  shots: number;
+  springedTraps: number;
+  won: number;
+}
+interface Game{
+  id: String;
+  winner: String;
+  players: any[];
+  course: String;
+  totalTime: number;
+  totalSpringedTraps: number;
+}
+
 interface UserProfileDTO {
   id: string;
   username: string;
   email: string;
   photoUrl: string;
   role: string;
-  gameHistory: any[];
+  gameHistory?: Game[];
   achievements: any[];
   friends: string[];
+  stats: UserStats;
 }
+
+
 
 const App: React.FC = () => {
   // Load gharison font globally
@@ -61,6 +82,8 @@ const App: React.FC = () => {
           console.log("data", data)
           setProfileData(data)
           setisCheckingAuth(false);
+        
+        
       
       }catch(error){
         console.error("Error al obtener los datos del perfil", error)
@@ -338,9 +361,9 @@ if (!fontsLoaded || isCheckingAuth){
                             />
                           </View>
                           <View style={styles.gameInfo}>
-                            <Text style={styles.gameName}>Hole in one</Text>
+                            <Text style={styles.gameName}>Average Points</Text>
                             <Text style={styles.gameDetail}>
-                              Range: challenguer lol
+                              {profileData?.stats.points}
                             </Text>
                           </View>
                         </View>
@@ -353,8 +376,10 @@ if (!fontsLoaded || isCheckingAuth){
                             />
                           </View>
                           <View style={styles.gameInfo}>
-                            <Text style={styles.gameName}>Scoring time</Text>
-                            <Text style={styles.gameDetail}>Range: PLATA</Text>
+                            <Text style={styles.gameName}>Average Postion</Text>
+                            <Text style={styles.gameDetail}>
+                              {profileData?.stats.position}
+                            </Text>
                           </View>
                         </View>
                         <View style={styles.gameItem}>
@@ -367,17 +392,54 @@ if (!fontsLoaded || isCheckingAuth){
                           </View>
                           <View style={styles.gameInfo}>
                             <Text style={styles.gameName}>
-                              Hole interrupted
+                              Shots
                             </Text>
                             <Text style={styles.gameDetail}>
-                              Range: PLATINITO
+                              {profileData?.stats.shots}
+                            </Text>
+                          </View>
+                        </View>
+                        <View style={styles.gameItem}>
+                          <View style={styles.gameIcon}>
+                            <FontAwesome
+                              name="heartbeat"
+                              size={24}
+                              color="#069809"
+                            />
+                          </View>
+                          <View style={styles.gameInfo}>
+                            <Text style={styles.gameName}>
+                              SpringedTraps
+                            </Text>
+                            <Text style={styles.gameDetail}>
+                              {profileData?.stats.springedTraps}
+                            </Text>
+                          </View>
+                        </View>
+                        <View style={styles.gameItem}>
+                          <View style={styles.gameIcon}>
+                            <FontAwesome
+                              name="heartbeat"
+                              size={24}
+                              color="#069809"
+                            />
+                          </View>
+                          <View style={styles.gameInfo}>
+                            <Text style={styles.gameName}>
+                              Wins
+                            </Text>
+                            <Text style={styles.gameDetail}>
+                              {profileData?.stats.won}
                             </Text>
                           </View>
                         </View>
                       </View>
                     </View>
                   )}
+                  
                   {activeCard === "history" && (
+                    <>
+                  {profileData?.gameHistory?.length ? (
                     <View style={dynamicStyles.card}>
                       {/* History Card */}
                       <Text style={styles.cardTitle}>History</Text>
@@ -387,19 +449,19 @@ if (!fontsLoaded || isCheckingAuth){
                           Last Game Played
                         </Text>
                         <Text style={styles.lastGameDetail}>
-                          "Golf Masters 2025"
+                          {"Course"+profileData?.gameHistory[0].course}
                         </Text>
                         <Text style={styles.lastGameSubDetail}>
                           Date: 2025-06-01
                         </Text>
                         <Text style={styles.lastGameSubDetail}>
-                          Score: 72 (-1)
+                          {"Players:"+ profileData?.gameHistory[0].players}
                         </Text>
                         <Text style={styles.lastGameSubDetail}>
-                          Traps Activated: 3
+                          {"Traps Activated:"+profileData?.gameHistory[0].totalSpringedTraps}
                         </Text>
                         <Text style={styles.lastGameSubDetail}>
-                          Birdies: 5 | Pars: 10 | Bogeys: 3
+                          {"Total Time"+profileData?.gameHistory[0].totalTime}
                         </Text>
                       </View>
                       <Image
@@ -476,6 +538,11 @@ if (!fontsLoaded || isCheckingAuth){
                         </View>
                       </View>
                     </View>
+                  ): (
+                  <Text> No game history availabe.</Text>
+
+                  )}
+                  </>
                   )}
                   {activeCard === "friends" && (
                     <View style={dynamicStyles.card}>
@@ -534,11 +601,13 @@ if (!fontsLoaded || isCheckingAuth){
                 <View style={dynamicStyles.card}>
                   <View style={styles.profileSection}>
                     <Image
-                      source={{
-                        uri: profileData?.photoUrl,
-                      }}
-                      style={styles.profileImg}
-                    />
+                        source={
+                          profileData?.photoUrl?.startsWith("http")
+                            ? { uri: profileData.photoUrl }
+                            : require("../assets/images/no_pfp.jpg")
+                        }
+                        style={styles.profileImg}
+                      />
                     <Text style={styles.cardTitle}>{profileData?.username}</Text>
                     <Text style={styles.badgeGreen}>{profileData?.role}</Text>
                     <Text style={styles.gamerTag}>{profileData?.email}</Text>

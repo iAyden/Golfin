@@ -6,6 +6,8 @@ import com.golfin.backend.dto.UserStatsDTO;
 import com.golfin.backend.model.User;
 import com.golfin.backend.model.embedded.UserStats;
 import com.golfin.backend.repository.UserRepository;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 @Service
@@ -25,13 +27,21 @@ public class StatsService {
     }
     UserStats existingStats = user.getStats(); 
     UserStats newStats = statsDTO.getData();   
-
+    int totalGamesPrev = (user.getGameHistory() != null) ? user.getGameHistory().size() : 0;
+    int totalGamesNew = totalGamesPrev + 1;
     if (existingStats == null) {
         user.setStats(newStats);
     } else {
-        existingStats.setPosition(existingStats.getPosition() + newStats.getPosition());
+        double sumPosition = existingStats.getPosition() * totalGamesPrev + newStats.getPosition();
+        double avgPosition = sumPosition / totalGamesNew;
+        int avgPostionInt = (int) Math.round(avgPosition);
+
+        double sumPoints = existingStats.getPoints() * totalGamesPrev + newStats.getPoints();
+        double avgPoints = sumPoints / totalGamesNew;
+        int avgPointsInt = (int) Math.round(avgPoints);
+        existingStats.setPosition(avgPostionInt);
         existingStats.setShots(existingStats.getShots() + newStats.getShots());
-        existingStats.setPoints(existingStats.getPoints() + newStats.getPoints());
+        existingStats.setPoints(avgPointsInt);
         existingStats.setSpringedTraps(existingStats.getSpringedTraps() + newStats.getSpringedTraps());
         existingStats.setWon(existingStats.getWon() + newStats.getWon());
     }
@@ -39,4 +49,5 @@ public class StatsService {
     userRepository.save(user);
     return true;
     }
+    
 }
