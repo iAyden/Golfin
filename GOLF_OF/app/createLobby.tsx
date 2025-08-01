@@ -234,10 +234,6 @@ useEffect(() => {
 
 const handleKarmaTrigger = (payload: { username: string; karma: number }) => { console.log("TRAMPA trigueada:", payload.username, payload.karma); };
 
-
-  const handleBuyTrap = (payload: { Karma: number }) => { if (payload.Karma !== undefined) setKarma(payload.Karma); };
-
-
   /////////////////// REAL TIME updater /////////////
   const handleGlobalTimer = (payload: { time: number }) => {
   console.log("Global timer recibido:", payload.time);
@@ -314,7 +310,7 @@ const handleStartGame = (payload: PartyData) => {
 const handleUserStartGame =  () => {
   console.log("Recivido userStartGame, indicando que fuiste el wey que creo la partida");
   setGameStarted(true); 
-};
+}; 
 
 const handleNuke = (payload: any) => {
   console.log("Evento nuke recibido:", payload);
@@ -324,6 +320,11 @@ const handleNuke = (payload: any) => {
 };
 
 
+
+
+const handleBuyTrap = (payload : any) => {
+  console.log("Esto llego del evento de handeBuyTrap: ", payload);
+}
 
 
   ////////////////////////// Aqui los handlers que reccionan por cada eventi ////////////////////////
@@ -373,6 +374,14 @@ const handleNuke = (payload: any) => {
 const handleStartPress = () => { if (partyData) socketService.startGame(partyData.code); };
 
 
+const BuyTrap = (nameTrap : string ) => { 
+  if (!gameStarted) {  Alert.alert("Espera", "INICIA EL JUEGO PRIMERO"); return; }
+  if(nameTrap.length === 0) { console.log("No se pudo comprar la trampa"); return; }
+
+  socketService.buyTrap(nameTrap.toLowerCase());
+
+  console.log("Trampa comprada:", nameTrap);
+};
 
   // PARTE DEL TIEMPO NO LE MUEVAN
   const formatTime = (totalSeconds: number): string => {
@@ -644,11 +653,11 @@ useEffect(() => {
             <View style={styles.shopGrid}>
               {shopItems.map((item) => (
                 <TouchableOpacity
-                  key={item.id}
-                  style={[ styles.shopItem, { backgroundColor: item.backgroundColor }, (points < item.cost || !gameStarted) && styles.disabledItem, ]}
-                  onPress={() => buyItem(item.id)}
-                  disabled={points < item.cost || !gameStarted}
-                >
+                      key={item.id}
+                      style={[ styles.shopItem, { backgroundColor: item.backgroundColor }, (points < item.cost || !gameStarted) && styles.disabledItem, ]}
+                      onPress={() => BuyTrap(item.name)}
+                      disabled={points < item.cost || !gameStarted}
+                    >
                   <Image source={item.icon} style={styles.itemImage} />
                   <Text style={styles.itemName}>{item.name}</Text>
                   <Text style={styles.itemPrice}>{item.cost} pts</Text>

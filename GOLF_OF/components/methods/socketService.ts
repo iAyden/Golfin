@@ -14,6 +14,7 @@ class SocketService {
             try {
                 const data = JSON.parse(event.data);
                 console.log("Mensaje recibido: ", data);
+                // console.log("Mensaje recibido: ", data.type, data.payload);
                 this.emit(data.type, data.payload);
             } catch (error) { console.error("Error al parsear el mensaje: ", error); }
         }
@@ -24,7 +25,10 @@ class SocketService {
 
 
     send(type:string, payload: any){
-        (this.socket?.readyState === WebSocket.OPEN) ? this.socket.send(JSON.stringify({type,payload})) : console.warn("El websocket no esta abierto");
+        console.log("Antes de enviar el send es: ", type , " ", payload);
+        (this.socket?.readyState === WebSocket.OPEN) ? 
+        this.socket.send(JSON.stringify({type,payload})) 
+        : console.warn("El websocket no esta abierto");
     }
 
     createLobby(username: string){ this.send("createParty",{username});  }
@@ -33,7 +37,8 @@ class SocketService {
 
     startGame(code: string) { this.send("startGame", { code }); }
 
-    buyTrap(trapName: string) { this.send("buyTrap", { trap: trapName }); }
+    buyTrap(trap: string) { this.send("buyTrap", { trap });  }
+
 
     on(eventType: string, callback: Callback){
         this.listeners[eventType] ??= this.listeners[eventType] = [];
