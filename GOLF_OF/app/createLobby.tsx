@@ -21,6 +21,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
 import socketService from "../components/methods/socketService";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Definicion de tipos
 type UserCardType = {
@@ -28,7 +29,12 @@ type UserCardType = {
   name: string;
   role: string; // OWNER or VISITOR
   score: number;
+<<<<<<< HEAD
   karma: number;
+=======
+  karma: number;    
+  points?: number; 
+>>>>>>> 230f0df (Tomorrow terminamos)
   image: ImageSourcePropType;
 };
 
@@ -85,7 +91,10 @@ type User = {
   score: number;
   karma: number;
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> 230f0df (Tomorrow terminamos)
 // Dimensiones y tipos de dispositivo
 const { width, height } = Dimensions.get("window");
 const isSmallDevice = width < 375;
@@ -149,6 +158,7 @@ export default function CreateLobbyScreen() {
 
   // TIENDA
   const shopItems: ShopItemType[] = [
+<<<<<<< HEAD
     {
       id: "1",
       name: "Rampa",
@@ -212,6 +222,17 @@ export default function CreateLobbyScreen() {
       cost: 500,
       backgroundColor: "#2ecc71",
     },
+=======
+    { id: "1", name: "tornado", icon: icons.ramp, cost: 100, backgroundColor: "#2ecc71" },
+    { id: "2", name: "casino", icon: icons.slap, cost: 150, backgroundColor: "#2ecc71" },
+    { id: "3", name: "castle", icon: icons.obstacle, cost: 125, backgroundColor: "#2ecc71" },
+    { id: "4", name: "windmill", icon: icons.fan, cost: 150, backgroundColor: "#2ecc71" },
+    { id: "5", name: "wall", icon: icons.vipRamp, cost: 250, backgroundColor: "#2ecc71" },
+    { id: "6", name: "ramp", icon: icons.cart, cost: 300, backgroundColor: "#2ecc71" },
+    { id: "7", name: "slap", icon: icons.earthquake, cost: 100, backgroundColor: "#2ecc71" },
+    { id: "8", name: "hole", icon: icons.vipSlap, cost: 250, backgroundColor: "#2ecc71" },
+    { id: "9", name: "random", icon: icons.movingHole, cost: 150, backgroundColor: "#2ecc71" },
+>>>>>>> 230f0df (Tomorrow terminamos)
   ];
 
   // Estados del juego
@@ -231,6 +252,14 @@ export default function CreateLobbyScreen() {
   const [turnTime, setTurnTime] = useState<number>(0);
   const [showTurnModal, setShowTurnModal] = useState(false);
 
+
+  /////////////////// Variables del estado del modal y la informacion del jugador ////////////////
+  const [userScoredModal, setUserScoredModal] = useState(false);            
+  const [nameUserScored, setNameUserScored] = useState<string>("");         
+  const [scoreUserScored, setScoreUserScored] = useState<string>("");       
+  const [pointsUserScored, setPointsUserScored] = useState<number>(0);      
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
   const router = useRouter();
 
   const userNameRef = useRef(userName);
@@ -238,9 +267,23 @@ export default function CreateLobbyScreen() {
     userNameRef.current = userName;
   }, [userName]);
 
+<<<<<<< HEAD
   ////////////////////// WEBSOCKETS ///////////////////////////////////
   useEffect(() => {
     socketService.connect("ws://localhost:1337/game");
+=======
+
+useEffect(() => {
+  if (userCards.length > 0) {
+    AsyncStorage.setItem('latestUserCards', JSON.stringify(userCards));
+  }
+}, [userCards]);
+
+
+////////////////////// WEBSOCKETS ///////////////////////////////////
+useEffect(() => {
+  socketService.connect("ws://localhost:1337/game");
+>>>>>>> 230f0df (Tomorrow terminamos)
 
     const handleCreateParty = (payload: PartyData) => {
       if (payload?.code) {
@@ -493,6 +536,241 @@ export default function CreateLobbyScreen() {
     console.log("Trampa comprada:", nameTrap);
   };
 
+
+  const handleJoinParty = (payload: PartyData) => {
+    if (payload?.code) {
+      console.log("Payload members:", payload.members);
+      setPartyData(payload);
+      setIsOwner(payload.owner === userNameRef.current);
+      setCurrentView("lobby");
+
+      const currentPlayer = payload.members.find(m => m.username === userName);
+      if (currentPlayer) {
+        console.log("Payload members:", payload.members);
+        setPoints(currentPlayer.points);
+        setKarma(currentPlayer.karma);
+      }
+
+      setUserCards(payload.members.map(member => ({
+        id: member.username,
+        name: member.username,
+        role: member.username === payload.owner ? "OWNER" : "VISITOR",
+        score: member.points,
+        karma: member.karma,
+        image: require("../assets/images/golf.png")
+      })));
+    } 
+    else { setError("Error al unirse al juego"); }
+  };
+
+  const handleGameId = (payload: any) => { console.log("Evento gameId recibido:", payload); };
+  
+  const handlePlayerJoined = (updatedParty: PartyData) => {
+    setPartyData(updatedParty);
+    const currentPlayer = updatedParty.members.find(m => m.username === userName);
+    if (currentPlayer) { setPoints(currentPlayer.points); setKarma(currentPlayer.karma); }
+
+    setUserCards(updatedParty.members.map(member => ({
+      id: member.username,
+      name: member.username,
+      role: member.username === updatedParty.owner ? "OWNER" : "VISITOR",
+      score: member.points,
+      karma: member.karma,
+      image: require("../assets/images/golf.png")
+    })));
+
+  setIsOwner(updatedParty.owner === userNameRef.current);
+  };
+
+const handleKarmaTrigger = (payload: { username: string; karma: number }) => { console.log("TRAMPA trigueada:", payload.username, payload.karma); };
+
+  /////////////////// REAL TIME updater /////////////
+  const handleGlobalTimer = (payload: { time: number }) => {
+  console.log("Global timer recibido:", payload.time);
+  setSeconds(payload.time);
+};
+  //////////////////////////////////////////////////
+
+  //////////////////////// TURNOS DE LOS USUARIOS ////////////////////////
+const handleStartTimer = (payload: { time: number }) => {
+  console.log("startTimer recibido:", payload.time);
+  setPrepTime(payload.time); 
+};
+
+
+const handleTurnTimer = (payload: { time: number }) => {
+  console.log("turnTimer recibido:", payload.time);
+  setTurnTime(payload.time);
+  if (payload.time === 0) {
+    setShowTurnModal(false);
+    setIsMyTurn(false);
+    setPrepTime(null);
+  }
+};
+
+
+const handleStartUserTurn = (payload: any) => {
+  if (payload === null) {
+
+    setPrepTime(null);
+    setShowTurnModal(true);
+    setIsMyTurn(true);
+  } else {
+    setShowTurnModal(false);
+    setIsMyTurn(false);
+    setPrepTime(null);
+    setTurnTime(0);
+  }
+};
+
+const handleEndPlayerFinished = (payload: any) => { console.log("se cierra modal de turno"); };
+
+///////////////////////// PLayer finished que NO FUNCIONA//////////////////////
+const handlePlayerFinished = (payload: any) => {
+  console.log("Se anoto un punto");
+  setShowTurnModal(false);   
+  setUserScoredModal(true);
+  setNameUserScored(payload.name);
+  setPointsUserScored(payload.points);
+  setScoreUserScored(payload.score);
+
+  setUserCards(prevUserCards =>
+    prevUserCards.map(card =>
+      card.name === payload.name
+        ? { ...card, points: payload.points, karma: card.karma } // Actualizas points y karma si quieres
+        : card
+    )
+  );
+
+};
+/////////////////////////////////////////////////////////////////////////////
+const handleEndUserTurn = (payload: any) => {
+  console.log("Evento endUserTurn recibido:", payload);
+};
+
+  ///////////////// START GAME HANDLER /////////////////////
+const handleStartGame = (payload: PartyData) => {
+  setGameStarted(true);
+  setSeconds(0);
+  setPartyData(payload);
+  const currentPlayer = payload.members.find(m => m.username === userName);
+  if (currentPlayer) {
+    console.log("Payload members:", payload.members);
+    setKarma(currentPlayer.karma); 
+    setPoints(currentPlayer.stats?.points ?? 0);
+  }
+
+  setUserCards(payload.members.map(member => ({
+    id: member.username,
+    name: member.username,
+    role: member.username === payload.owner ? "OWNER" : "VISITOR",
+    score: member.points,
+    karma: member.karma,
+    image: require("../assets/images/golf.png")
+  })));
+};
+
+const handleUserStartGame =  () => {
+  console.log("Recivido userStartGame, indicando que fuiste el wey que creo la partida");
+  setGameStarted(true); 
+};
+
+const handleNuke = (payload: any) => {
+  console.log("Evento nuke recibido:", payload);
+  setGameStarted(true); 
+
+  socketService.send("nuke", {});
+};
+
+
+ 
+
+const handleBuyTrap = (payload : any) => {
+  console.log("Esto llego del evento de handeBuyTrap: ", payload);
+
+    setUserCards(prevUserCards =>
+    prevUserCards.map(card =>
+      card.name === payload.username
+        ? { ...card, karma: payload.karma }
+        : card
+    )
+  );
+}
+
+const handleGameEnded = async () => {
+  const stored = await AsyncStorage.getItem('latestUserCards');
+  const envio = stored ? JSON.parse(stored) : [];
+
+  console.log("Datos a enviar a LeaderBoard:", envio);
+
+  await AsyncStorage.setItem('leaderboardData', JSON.stringify(envio));
+  router.push('/LeaderBoard');
+};
+
+
+
+  ////////////////////////// Aqui los handlers que reccionan por cada eventi ////////////////////////
+  socketService.on("gameId", handleGameId);
+  socketService.on("nuke", handleNuke);
+  socketService.on("userStartGame", handleUserStartGame);
+  socketService.on("createParty", handleCreateParty);
+  socketService.on("joinParty", handleJoinParty);
+  socketService.on("playerJoined", handlePlayerJoined);
+  socketService.on("globalTimer", handleGlobalTimer);
+  socketService.on("karmaTrigger", handleKarmaTrigger);
+  socketService.on("buyTrap", handleBuyTrap);
+  socketService.on("playerFinished", handlePlayerFinished);
+  socketService.on("startTimer", handleStartTimer);
+  socketService.on("startUserTurn", handleStartUserTurn);
+  socketService.on("turnTimer", handleTurnTimer);
+  socketService.on("startGame", handleStartGame);
+  socketService.on("endPlayerFinished", handleEndPlayerFinished);
+  socketService.on("endUserTurn", handleEndUserTurn);
+  socketService.on("gameEnded", handleGameEnded);
+  
+  
+
+  setTimeout(() => setIsReady(true), 500);
+
+  return () => {
+    socketService.off("gameId", handleGameId);
+    socketService.off("nuke", handleNuke);
+    socketService.off("userStartGame", handleUserStartGame);
+    socketService.off("createParty", handleCreateParty);
+    socketService.off("joinParty", handleJoinParty);
+    socketService.off("playerJoined", handlePlayerJoined);
+    socketService.off("globalTimer", handleGlobalTimer);
+    socketService.off("karmaTrigger", handleKarmaTrigger);
+    socketService.off("buyTrap", handleBuyTrap);
+    socketService.off("playerFinished", handlePlayerFinished);
+    socketService.off("startTimer", handleStartTimer);
+    socketService.off("startUserTurn", handleStartUserTurn);
+    socketService.off("turnTimer", handleTurnTimer);
+    socketService.off("startGame", handleStartGame);
+    socketService.off("endPlayerFinished", handleEndPlayerFinished);
+    socketService.off("endUserTurn", handleEndUserTurn);
+    socketService.off("gameEnded", handleGameEnded);
+    socketService.close();
+  };
+}, []);
+
+
+
+
+
+const handleStartPress = () => { if (partyData) socketService.startGame(partyData.code); };
+
+
+const BuyTrap = (nameTrap : string ) => { 
+  if (!gameStarted) {  Alert.alert("Espera", "INICIA EL JUEGO PRIMERO"); return; }
+  if(nameTrap.length === 0) { console.log("No se pudo comprar la trampa"); return; }
+
+  socketService.buyTrap(nameTrap.toLowerCase());
+
+  console.log("Trampa comprada:", nameTrap);
+};
+
+>>>>>>> 230f0df (Tomorrow terminamos)
   // PARTE DEL TIEMPO NO LE MUEVAN
   const formatTime = (totalSeconds: number): string => {
     const hours = Math.floor(totalSeconds / 3600);
@@ -576,6 +854,7 @@ export default function CreateLobbyScreen() {
     return () => socketService.off("startGame", handleStartGame);
   }, []);
 
+<<<<<<< HEAD
   /// NO LE MUEVAN POR FAVOR
   useEffect(() => {
     if (prepTime !== null && prepTime > 0) {
@@ -585,6 +864,33 @@ export default function CreateLobbyScreen() {
       return () => clearInterval(interval);
     }
   }, [prepTime]);
+=======
+/// NO LE MUEVAN POR FAVOR
+useEffect(() => {
+  if (prepTime !== null && prepTime > 0) {
+    const interval = setInterval(() => {
+      setPrepTime(prev => (prev !== null && prev > 0 ? prev - 1 : null));
+    }, 1000);
+    return () => clearInterval(interval);
+  }
+}, [prepTime]);
+
+useEffect(() => {
+  if (userScoredModal) {
+    const timer = setTimeout(() => {
+      setUserScoredModal(false);
+    }, 3000); // 3 segundos
+
+    return () => clearTimeout(timer); // Limpieza por si se desmonta antes
+  }
+}, [userScoredModal]);
+
+
+
+/////////////////////////////////
+ console.log("UserCards data IMPRESA: ", userCards);
+///////////////////////////////
+>>>>>>> 230f0df (Tomorrow terminamos)
 
   const renderJoinCreateView = () => (
     <View style={styles.card}>
@@ -603,6 +909,7 @@ export default function CreateLobbyScreen() {
           maxLength={20}
           autoCapitalize="words"
         />
+        
         <TextInput
           style={styles.input}
           placeholder="Enter code"
@@ -707,6 +1014,7 @@ export default function CreateLobbyScreen() {
               )}
             </View>
 
+<<<<<<< HEAD
             <View style={styles.userCardsContainer}>
               {[...userCards]
                 .sort((a, b) => (b.score || 0) - (a.score || 0))
@@ -749,8 +1057,63 @@ export default function CreateLobbyScreen() {
                     </View>
                   </View>
                 ))}
+=======
+    <View style={styles.userCardsContainer}>
+      {[...userCards].sort((primerItem, segundoItem) =>
+        (primerItem.points || 0) === 0 && (segundoItem.points || 0) === 0 ? 0 : 
+        (primerItem.points || 0) === 0 ? 1 :  (segundoItem.points || 0) === 0 ? -1 : 
+        (primerItem.points || 0) - (segundoItem.points || 0) 
+      )
+
+      .map((user) => (
+        <View
+          key={user.id}
+          style={[
+            styles.userCard,
+            user.name === currentTurnPlayer && { backgroundColor: "#ffd700" },
+          ]}
+        >
+          <View style={styles.userInfoContainer}>
+            <Image source={user.image} style={styles.userImage} />
+            <View style={styles.userTextContainer}>
+              <Text style={styles.userName}>{user.name}</Text>
+              <Text style={styles.userRole}>{user.role}</Text>
+            </View>
+          </View>
+          <View style={styles.pointsContainerRight}>
+            <View style={styles.pointsRow}>
+              <Image source={icons.scoreIcon} style={styles.iconImage} />
+              <Text style={styles.pointsText}>{user.points || "0"}</Text>
+            </View>
+            <View style={styles.pointsRow}>
+              <Image source={icons.karmaIcon} style={styles.iconImage} />
+              <Text style={styles.pointsText}>{user.name === userName ? user.karma || "0" : "?"}</Text>
+            </View>
+          </View>
+        </View>
+    ))}
+          </View>
+
+        {showTurnModal && (
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              {prepTime !== null && prepTime > 0 ? (
+                <>
+                  <Text style={styles.modalTitle}>Watch out...</Text>
+                  <Text style={styles.modalTimer}>{prepTime}s remaining</Text>
+                </>
+              ) : (
+                isMyTurn && (
+                  <>
+                    <Text style={styles.modalTitle}>¡Go ahead!</Text>
+                    <Text style={styles.modalTimer}>{turnTime}s remaining</Text>
+                  </>
+                )
+              )}
+>>>>>>> 230f0df (Tomorrow terminamos)
             </View>
 
+<<<<<<< HEAD
             {showTurnModal && (
               <View style={styles.modalOverlay}>
                 <View style={styles.modalContent}>
@@ -773,6 +1136,37 @@ export default function CreateLobbyScreen() {
                 </View>
               </View>
             )}
+=======
+        {userScoredModal && (
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <>
+                <Text style={styles.modalTitle}>¡{nameUserScored} scored!</Text>
+                <Text style={styles.modalScore}>Score: {scoreUserScored}</Text>
+                <Text style={styles.modalPoints}>Points: {pointsUserScored} </Text>
+              </>
+            </View>
+          </View>
+        )}
+
+
+
+
+          {userCards.length === 1 && ( <Text style={styles.noUsersText}>There are not users connected.</Text> )}
+
+        {!gameStarted && isOwner && (
+            <TouchableOpacity style={[styles.startButton, styles.activeStartButton]} onPress={startGame} >
+              <Text style={styles.startButtonText}>Empezar</Text>
+            </TouchableOpacity>
+          )}
+
+          {gameStarted && (
+            <TouchableOpacity style={styles.flipButton} onPress={flipCard} >
+              <Text style={styles.flipButtonText}>Ir a la Tienda</Text>
+            </TouchableOpacity>
+
+        )}
+>>>>>>> 230f0df (Tomorrow terminamos)
 
             {userCards.length === 1 && (
               <Text style={styles.noUsersText}>
@@ -846,6 +1240,7 @@ export default function CreateLobbyScreen() {
             <View style={styles.shopGrid}>
               {shopItems.map((item) => (
                 <TouchableOpacity
+<<<<<<< HEAD
                   key={item.id}
                   style={[
                     styles.shopItem,
@@ -855,6 +1250,13 @@ export default function CreateLobbyScreen() {
                   onPress={() => BuyTrap(item.name)}
                   disabled={points < item.cost || !gameStarted}
                 >
+=======
+                      key={item.id}
+                      style={[ styles.shopItem, { backgroundColor: item.backgroundColor }, (points < item.cost || !gameStarted) && styles.disabledItem,]}
+                      onPress={() => BuyTrap(item.name)}
+                      disabled={ !gameStarted}
+                    >
+>>>>>>> 230f0df (Tomorrow terminamos)
                   <Image source={item.icon} style={styles.itemImage} />
                   <Text style={styles.itemName}>{item.name}</Text>
                   <Text style={styles.itemPrice}>{item.cost} pts</Text>
@@ -1295,6 +1697,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
+<<<<<<< HEAD
   modalOverlay: {
     position: "absolute",
     top: 0,
@@ -1302,25 +1705,77 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: "rgba(0,0,0,0.6)",
+=======
+ modalOverlay: {
+    position: "absolute",
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.7)", 
+>>>>>>> 230f0df (Tomorrow terminamos)
     justifyContent: "center",
     alignItems: "center",
     zIndex: 9999,
+    paddingHorizontal: 20,
   },
+
   modalContent: {
-    backgroundColor: "white",
-    padding: 30,
-    borderRadius: 20,
+    backgroundColor: "#e2e2e2", 
+    borderRadius: 28,
+    paddingVertical: 36,
+    paddingHorizontal: 30,
+    width: "90%",
+    maxWidth: 380,
     alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#aaff4c", 
+    shadowColor: "#2ecc71",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 18,
   },
-  modalText: {
+
+  modalTitle: {
+    fontSize: 28,
+    fontWeight: "900",
+    color: "#27ae60", 
+    marginBottom: 14,
+    textAlign: "center",
+    letterSpacing: 1.1,
+    textShadowColor: "rgba(0,0,0,0.15)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
+
+  modalTimer: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#34495e", 
+    textAlign: "center",
+    letterSpacing: 0.6,
+    marginTop: 6,
+  },
+
+  modalScore: {
     fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
+    fontWeight: "800",
+    color: "#000000", 
+    marginBottom: 8,
+    textAlign: "center",
+    letterSpacing: 1,
   },
-  timerText: {
+
+  modalPoints: {
     fontSize: 20,
-    color: "gray",
+    fontWeight: "700",
+    color: "#e74c3c", 
+    textAlign: "center",
+    marginTop: 4,
+    letterSpacing: 1,
+    textShadowColor: "rgba(231, 76, 60, 0.8)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 5,
   },
+<<<<<<< HEAD
   waitingText: {
     color: "white",
     fontSize: 16,
@@ -1328,3 +1783,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+=======
+
+});
+>>>>>>> 230f0df (Tomorrow terminamos)
