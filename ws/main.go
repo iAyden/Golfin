@@ -33,6 +33,7 @@ type Message struct {
 }
 
 type UStats struct {
+	GameId        int `json:"id"`
 	Position      int `json:"position"`
 	Shots         int `json:"shots"`
 	Points        int `json:"points"`
@@ -277,7 +278,8 @@ func (game *Game) gameLoop() {
 	game.Stats.Winner = winner.Name
 	game.Stats.TimeElapsed = int(time.Since(globalTime))
 
-	for _, player := range game.Party.Members {
+	for i, player := range game.Party.Members {
+		game.Party.Members[i].Stats.GameId = game.Id
 		game.Stats.Players = append(game.Stats.Players, player.Name)
 	}
 
@@ -348,10 +350,6 @@ func playerFinished(party *Party, game *Game, i int, start time.Time) {
 	}
 
 	party.Members[i].Msg <- msg
-
-}
-
-func playerTurn() {
 
 }
 func sendGameStats(game *Game) {
@@ -671,20 +669,10 @@ func startGame(user *User, msg Message) {
 	json.Unmarshal(msg.Payload, &rqPayload)
 	code := rqPayload["code"].(string)
 
-	mathRand.Seed(time.Now().UnixNano())
 	party := partys[code]
 	for i := range party.Members {
 
-		randInt := mathRand.Intn(250) + 100
-		party.Members[i].Karma = randInt
-
-		data := map[string]interface{}{
-			"karma": party.Members[i].Karma,
-		}
-
-		sendMessage("userStartGame", data, party.Members[i])
-
-		randInt = mathRand.Intn(len(party.Members))
+		randInt := mathRand.Intn(len(party.Members))
 
 		playerP := party.Members[randInt]
 
@@ -693,6 +681,19 @@ func startGame(user *User, msg Message) {
 
 		//existe la manera para swapear a,b = b,a
 
+	}
+	for i := range party.Members {
+
+		randInt := mathRand.Intn(250) + 100
+		fmt.Println("Karma aleatorio de ", party.Members[i].Name)
+		fmt.Println(randInt)
+		party.Members[i].Karma = randInt
+
+		data := map[string]interface{}{
+			"karma": party.Members[i].Karma,
+		}
+
+		sendMessage("userStartGame", data, party.Members[i])
 	}
 	payload, _ := json.Marshal(party)
 
