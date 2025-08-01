@@ -1,0 +1,401 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>Go WebSocket Test</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+	<h3>WebSocket Message Sender</h3>
+	<input id="username" type="text" placeholder="Username" />
+	<input type="text" id="code" placeholder="Code">
+	<button onclick="createParty()">Create Party</button>
+
+	<button onclick="joinParty()">Join Party </button>
+	<button onclick="startGame()">Start Game</button>
+
+	  <button 
+    onclick="toggleModal('turnModal')" 
+    class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+    Open Modal
+  </button>
+
+  <!-- Modal -->
+  <div 
+    id="turnModal" 
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+   	<div id="modalData"> 
+    <div class="bg-white p-6 rounded shadow-lg w-96 relative">
+      <h2 class="text-xl font-bold mb-4">This is a modal</h2>
+      <p id="title"class="mb-4">Est tu turno</p>
+	  <p id="timer"></p>
+	<button onclick="score()">Score</button>
+      <button 
+        onclick="toggleModal('turnModal')" 
+        class="absolute top-2 right-2 text-gray-500 hover:text-black text-xl font-bold">&times;</button>
+      <button 
+        onclick="toggleModal('turnModal')" 
+        class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+        Close
+      </button>
+    </div>
+</div>
+  </div>
+
+  <div 
+    id="scoredModal" 
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+   	<div id="modalData"> 
+    <div class="bg-white p-6 rounded shadow-lg w-96 relative">
+      <h2 class="text-xl font-bold mb-4">This is a modal</h2>
+      <p id="name"class="mb-4">Est tu turno</p>
+	  <p id="points"></p>
+	  <p id="score"></p>
+      <button 
+        onclick="toggleModal('scoredModal')" 
+        class="absolute top-2 right-2 text-gray-500 hover:text-black text-xl font-bold">&times;</button>
+      <button 
+        onclick="toggleModal('scoredModal')" 
+        class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+        Close
+      </button>
+    </div>
+</div>
+  </div>
+
+  <script>
+   async function toggleModal(modalId) {
+      const modal = document.getElementById(modalId);
+	  modal.classList.toggle("hidden")
+    }
+
+
+
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+  </script>
+
+	<p>Username</p>
+	<p id="username"></p>
+
+	<br>
+
+	<p>Karma</p>
+	<p id="karma"></p>
+
+	<br>
+	<p>Game code</p>
+	<p id="gameCode"></p>
+	<br>
+
+
+	<p>Game Id</p>
+	<br>
+	<p id="gameId"></p>
+
+  	<h1 >Points</h1>
+  	<h1 id="playerPoints"></h1>
+
+	<table class="min-w-full divide-y divide-gray-200 text-sm text-left">
+  <thead class="bg-gray-100 text-gray-700 uppercase tracking-wider">
+    <tr>
+      <th class="px-6 py-3">#</th>
+      <th class="px-6 py-3">Player</th>
+      <th class="px-6 py-3">Position</th>
+      <th class="px-6 py-3">Team</th>
+      <th class="px-6 py-3">Score</th>
+    </tr>
+  </thead>
+  <tbody id= "tableContents" ="divide-y divide-gray-200">
+  </tbody>
+</table>
+
+	<ul id="messages"></ul>
+
+<button id="fan" onclick="buyTrap('fan')">Ventilador</button> 
+<button id="fan" onclick="activateTrap('fan')">Activar</button>  <br>
+<button id="car" onclick="buyTrap('car')">Car</button><br>
+<button id="earthquake" onclick="buyTrap('earthquake')">earthquake</button> <br>
+
+<button onclick="nukeReaderFunction()">Nuke</button>
+	
+	<script>
+		const ws = new WebSocket("ws://localhost:1337/game");
+
+		ws.onmessage = async function (event) {
+			const messages = document.getElementById("messages");
+			const li = document.createElement("li");
+			let data = JSON.parse(event.data)
+			if(!(data.type == "globalTimer" || data.type == "turnTimer" || data.type  == "startTimer")){
+				console.log("el mensaje que recibimos del server esl")
+				console.log(data)
+			}
+
+			switch (data.type) {
+				case "createParty":
+					console.log("createParty lógica!")	
+					let code = document.getElementById("code")
+
+					console.log(code)
+					document.getElementById("code").value = data.payload.code
+					document.getElementById("gameCode").innerText = data.payload.code
+					addUserToTable(data)
+
+					break;
+				case "joinParty":
+					console.log("joinparty logic")		
+					document.getElementById("code").value = data.payload.code
+					document.getElementById("gameCode").innerText = data.payload.code
+					addUserToTable(data)			
+					break
+				case "startGame": 
+					console.log("startgame logic")
+					messages.innerText =""
+					addUserToTable(data)
+					
+					break
+				case "userStartGame" : 
+					document.getElementById("karma").innerText = data.payload.karma
+
+					break
+				case "gameId":
+					let id = data.payload.gameId
+
+					document.getElementById("gameId").innerText = id
+
+
+					break	
+				case "startUserTurn":
+					toggleModal("turnModal")
+					break
+				case "endUserTurn":
+					toggleModal("turnModal")
+					break
+				case "startTimer":
+					insertTimer(data)
+					break
+
+				case "turnTimer":
+					insertTimer(data)
+					break	
+				case "playerFinished":
+					let name = document.getElementById("name")
+					name.innerText = data.payload.name
+
+					let points = document.getElementById("points")
+					points.innerText = data.payload.points
+
+					let score = document.getElementById("score")
+					score.innerText = data.payload.score
+
+					document.getElementById("playerPoints").innerText = data.payload.points
+
+					toggleModal("scoredModal")
+					break
+
+				case "endPlayerFinished":	
+					console.log("hello")
+					toggleModal("scoredModal")
+
+					break
+				
+				case "gameEnded":
+					alert("Se acabó el juego perros")
+					break
+				case "buyTrap" : 
+					//con esto checamos si el payload está vacio
+					if (Object.keys(data.payload).length === 0){
+						alert("not enough kamrma")
+						break
+					}
+					document.getElementById("karma").innerText = data.payload.karma
+					break
+
+				case "karmaTrigger": 
+					alert("karma triggered perro")
+					document.getElementById("karma").innerText = data.payload.karma
+
+
+					break
+
+				case "nuke" : 
+					nukeReaderFunction()
+				break
+				  default: 
+					break;
+			}
+			// li.textContent = JSON.stringify(data.payload) // messages.appendChild(li); }; 
+}
+
+
+		function activateTrap(trapName){
+
+			let data = {
+				type : "activateTrap",
+				payload : {
+					trap : trapName
+				}
+			}	
+			
+			console.log(data)
+			ws.send(JSON.stringify(data))
+			
+		}
+		function buyTrap(trapName){
+
+			let data = {
+				type : "buyTrap",
+				payload : {
+					trap : trapName
+				}
+			}	
+			
+			console.log(data)
+			ws.send(JSON.stringify(data))
+		}
+function nukeReaderFunction(){
+
+	let data = {
+		type : "nuke",
+		payload : { nuke : "nuke"}
+	}	
+	
+	console.log(data)
+	console.log("Nukealo alv")
+	ws.send(JSON.stringify(data))
+}
+function addPointsToTable(pName, pPoints){
+	let table = document.getElementById("tableContents")
+	console.log(table)
+}
+
+async function score(){
+
+	let id = document.getElementById("gameId").innerText
+
+	data = {
+		id :  parseInt(id)
+	}
+	await fetch("/playerScored", {
+		method : "POST",
+		headers : {"Content-Type" : "application/json"},
+		body : JSON.stringify(data) 
+	})
+}
+
+		function insertWinner(data){
+			let [name, points, score] = getManyById("winner", "points", "score");
+
+			console.log(name)
+			console.log(data.payload.name)
+
+			name.innerText = data.payload.name
+			points.innerText = data.payload.points
+			score.innerText = data.payload.score
+
+		}
+
+		function insertTimer(data){
+			let timer = data.payload.time
+			document.getElementById("timer").innerText = timer	
+
+		}	
+		
+		function createParty(){
+			let name = document.getElementById("username").value
+			let data = {
+				type : "createParty",
+				payload : {
+					username : name
+				}
+			}	
+			
+			console.log(data)
+			ws.send(JSON.stringify(data))
+
+		}
+
+		function joinParty(){
+			console.log("hola")
+			let name = document.getElementById("username").value
+			let code = document.getElementById("code").value
+			let data = {
+				type : "joinParty",
+				payload : {
+					username : name,
+					code : code 
+				}
+			}	
+			
+			console.log(data)
+			ws.send(JSON.stringify(data))
+
+		}
+
+		function startGame(){
+		//provicionalmente vamos a obtener el código desde el text input
+		//el codigo se obtiene del mismo html cuando ya esté bien implementado
+		//el boton que acciona el inicio del juego solo debería aparecerle al dueno de la partyj
+		 
+			let codigo = document.getElementById("code").value
+
+			let data = {
+				type : "startGame",
+				payload : {
+					code : codigo
+				} 
+
+			}
+
+			ws.send(JSON.stringify(data))
+
+
+		}
+
+		function addUserToTable(data){
+
+			console.log(data.payload.members)
+
+			let members = data.payload.members
+
+			let table = document.getElementById('tableContents')
+			let newTable
+			members.forEach( member => {
+
+				let template = `
+				<tr>
+				<td class="px-6 py-4">1</td>
+				<td class="px-6 py-4 font-medium text-gray-900">${member.username}</td>
+				<td class="px-6 py-4">${member.karma}</td>
+				<td class="px-6 py-4">${member.points}</td>
+				<td class="px-6 py-4">${member.username}</td>
+				</tr>`
+
+				newTable += template
+
+			});
+
+			table.innerHTML = newTable
+
+					
+		}
+		function sendMessage() {
+			const input = document.getElementById("msg");
+			if(ws.readyState === WebSocket.OPEN) {
+				ws.send(input.value);
+				const messages = document.getElementById("messages");
+				const li = document.createElement("li");
+				li.textContent = "You: " + input.value;
+				messages.appendChild(li);
+				input.value = "";
+			} else {
+				alert("WebSocket is not open.");
+			}
+		}
+	</script>
+</body>
+</html>
