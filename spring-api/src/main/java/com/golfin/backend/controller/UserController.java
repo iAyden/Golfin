@@ -79,6 +79,7 @@ public class UserController {
         gameDTO.setTotalSpringedTraps(game.getTotalSpringedTraps());
         gameDTO.setTotalTime(game.getTotalTime());
         gameDTO.setPlayers(playersDTOs);
+        gameDTO.setDate(new Date());
 
         gameDTOs.add(gameDTO);
     }

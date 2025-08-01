@@ -67,7 +67,7 @@ public class GameService {
         .map(Optional::get)
         .map(User::getUsername)
         .collect(Collectors.toList());
-}
+    }
 
 
 

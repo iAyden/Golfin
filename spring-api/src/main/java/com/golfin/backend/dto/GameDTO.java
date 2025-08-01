@@ -1,7 +1,7 @@
 package com.golfin.backend.dto;
 
 import java.util.List;
-
+import java.util.Date;
 public class GameDTO {
     private String id;
     private String winner;
@@ -9,7 +9,7 @@ public class GameDTO {
     private String course;
     private int totalTime;
     private int totalSpringedTraps;
-
+    private Date date;
     // private List<String> playerIds; // IDs en lugar de usernames
     // private List<String> playerUsernames; // sigue viniendo como usernames
 
@@ -62,5 +62,13 @@ public class GameDTO {
 
     public List<UserGameStatsDTO> getPlayers(){
         return players;
+    }
+
+    public Date getDate(){
+        return date;
+    }
+
+    public void setDate(Date date){
+        this.date=date;
     }
 }

@@ -395,18 +395,6 @@ func getWinner(members []*User) *User {
 	return winner
 
 }
-func sendUserStats(members []*User) {
-
-	for _, member := range members {
-		post := map[string]interface{}{
-			"username": member.Name,
-			"data":     member.Stats,
-		}
-		data, _ := json.Marshal(post)
-		http.Post(springApiUrl+"/api/stats/add-ustats", "application/json", bytes.NewBuffer(data))
-	}
-
-}
 
 var shotsMultp = map[string]float32{
 	"ace":           2.00,

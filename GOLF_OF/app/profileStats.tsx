@@ -13,6 +13,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import * as Animatable from 'react-native-animatable'; //animacionesss
 import Sidebar from "@/components/Structures/Sidebar";
 // import { Text } from '@/components/Themed';
 import { useFonts } from "expo-font";
@@ -26,15 +27,26 @@ interface UserStats{
   position: number;
   shots: number;
   springedTraps: number;
+  karmaTrigger: number;
+  karmaSpent: number;
   won: number;
 }
 interface Game{
   id: String;
   winner: String;
-  players: any[];
+  players: Players[];
   course: String;
   totalTime: number;
   totalSpringedTraps: number;
+  date: Date;
+}
+
+interface Players{
+  username: String;
+}
+interface Achievement{
+  title: String;
+  description: String;
 }
 
 interface UserProfileDTO {
@@ -44,7 +56,7 @@ interface UserProfileDTO {
   photoUrl: string;
   role: string;
   gameHistory?: Game[];
-  achievements: any[];
+  achievements: Achievement[];
   friends: string[];
   stats: UserStats;
 }
@@ -433,6 +445,23 @@ if (!fontsLoaded || isCheckingAuth){
                             </Text>
                           </View>
                         </View>
+                             <View style={styles.gameItem}>
+                          <View style={styles.gameIcon}>
+                            <FontAwesome
+                              name="heartbeat"
+                              size={24}
+                              color="#069809"
+                            />
+                          </View>
+                          <View style={styles.gameInfo}>
+                            <Text style={styles.gameName}>
+                              Karma Spent
+                            </Text>
+                            <Text style={styles.gameDetail}>
+                              {profileData?.stats.karmaSpent}
+                            </Text>
+                          </View>
+                        </View>
                       </View>
                     </View>
                   )}
@@ -444,33 +473,33 @@ if (!fontsLoaded || isCheckingAuth){
                       {/* History Card */}
                       <Text style={styles.cardTitle}>History</Text>
                       {/* Last Game Played Section */}
-                      <View style={styles.lastGameSection}>
-                        <Text style={styles.lastGameTitle}>
-                          Last Game Played
-                        </Text>
-                        <Text style={styles.lastGameDetail}>
-                          {"Course"+profileData?.gameHistory[0].course}
-                        </Text>
-                        <Text style={styles.lastGameSubDetail}>
-                          Date: 2025-06-01
-                        </Text>
-                        <Text style={styles.lastGameSubDetail}>
-                          {"Players:"+ profileData?.gameHistory[0].players}
-                        </Text>
-                        <Text style={styles.lastGameSubDetail}>
-                          {"Traps Activated:"+profileData?.gameHistory[0].totalSpringedTraps}
-                        </Text>
-                        <Text style={styles.lastGameSubDetail}>
-                          {"Total Time"+profileData?.gameHistory[0].totalTime}
-                        </Text>
-                      </View>
-                      <Image
-                        source={{
-                          uri: "https://media.tacdn.com/media/attractions-splice-spp-674x446/07/b3/5b/3a.jpg",
-                        }}
-                        style={styles.imgTemporada}
-                      />
-                      {/* Example progress bar (static) */}
+                      {profileData?.gameHistory?.map((game, index) => (
+                         <Animatable.View
+                        key={index}
+                        animation="fadeInUp"
+                        delay={index * 200}
+                        style={styles.lastGameSection}
+                      >
+                          <View key={index} style={styles.lastGameSection}>
+                            <Text style={styles.lastGameTitle}>Course: {game.course}</Text>
+                            <Text style={styles.lastGameSubDetail}>
+                              Date: {new Date(game.date).toLocaleDateString()}
+                            </Text>
+                            <Text style={styles.lastGameSubDetail}>
+                              Players: {game.players.map(p => p.username).join(", ")}
+                            </Text>
+                            <Text style={styles.lastGameSubDetail}>
+                              Traps Activated: {game.totalSpringedTraps}
+                            </Text>
+                            <Text style={styles.lastGameSubDetail}>
+                              Total Time: {game.totalTime}s
+                            </Text>
+                            <View style={styles.divider} />
+                          </View>
+                          </Animatable.View>
+                        ))}
+
+                        {/* Example progress bar (static) */}
                       <View style={styles.progressContainer}>
                         <Text style={styles.progressLabel}>
                           <FontAwesome name="crosshairs" size={16} /> Total
@@ -493,51 +522,21 @@ if (!fontsLoaded || isCheckingAuth){
                   </View> */}
                       <View style={styles.divider} />
                       <Text style={styles.sectionTitle}>Golf Achievements</Text>
-                      <View style={styles.achievementItem}>
-                        <FontAwesome
-                          name="trophy"
-                          size={24}
-                          color="#FFD700"
-                          style={styles.achievementIcon}
-                        />
+                      {profileData?.achievements?.map((ach, index) => (
+                      <Animatable.View
+                        key={index}
+                        animation="fadeInUp"
+                        delay={index * 200}
+                        style={styles.achievementItem}
+                      >
+                        <FontAwesome name="trophy" size={24} color="#FFD700" style={styles.achievementIcon} />
                         <View style={styles.achievementText}>
-                          <Text style={styles.achievementTitle}>
-                            El mas mejor
-                          </Text>
-                          <Text>
-                            Primer puesto - Torneo internacional de BEYBLADE
-                          </Text>
+                          <Text style={styles.achievementTitle}>{ach.title}</Text>
+                          <Text>{ach.description}</Text>
                         </View>
+                      </Animatable.View>
+                    ))}
                       </View>
-                      <View style={styles.achievementItem}>
-                        <FontAwesome
-                          name="star"
-                          size={24}
-                          color="#C0C0C0"
-                          style={styles.achievementIcon}
-                        />
-                        <View style={styles.achievementText}>
-                          <Text style={styles.achievementTitle}>
-                            MOLESTADOR DE PERSONAS
-                          </Text>
-                          <Text>ME LA PARTIEROn</Text>
-                        </View>
-                      </View>
-                      <View style={styles.achievementItem}>
-                        <FontAwesome
-                          name="trophy"
-                          size={24}
-                          color="#CD7F32"
-                          style={styles.achievementIcon}
-                        />
-                        <View style={styles.achievementText}>
-                          <Text style={styles.achievementTitle}>
-                            Holes record
-                          </Text>
-                          <Text>45 hoyos seguidos</Text>
-                        </View>
-                      </View>
-                    </View>
                   ): (
                   <Text> No game history availabe.</Text>
 
