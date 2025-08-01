@@ -17,7 +17,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-const springApiUrl = "golfin.dns.net:8888"
+const springApiUrl = "http://127.0.0.1:8080"
 const raspUrl = "http:arduinito.net"
 
 var upgrader = websocket.Upgrader{
@@ -37,16 +37,18 @@ type UStats struct {
 	Shots         int `json:"shots"`
 	Points        int `json:"points"`
 	SpringedTraps int `json:"springedTraps"`
+	KarmaTrigger  int `json:"karmaTrigger"`
+	KarmaSpent    int `json:"karmaSpent"`
 	Won           int `json:"won"`
 }
 
 type GStats struct {
-	GameId             int     `json:"id"`
-	Winner             string  `json:"winner"`
-	Players            []*User `json:"players"`
-	Course             string  `json:"course"`
-	TimeElapsed        int     `json:"totalTime"`
-	TotalSpringedTraps int     `json:"totalSpringedTraps"`
+	GameId             int      `json:"id"`
+	Winner             string   `json:"winner"`
+	Players            []string `json:"players"`
+	Course             string   `json:"course"`
+	TimeElapsed        int      `json:"totalTime"`
+	TotalSpringedTraps int      `json:"totalSpringedTraps"`
 }
 
 type User struct {
@@ -275,6 +277,10 @@ func (game *Game) gameLoop() {
 	game.Stats.Winner = winner.Name
 	game.Stats.TimeElapsed = int(time.Since(globalTime))
 
+	for _, player := range game.Party.Members {
+		game.Stats.Players = append(game.Stats.Players, player.Name)
+	}
+
 	payload, _ := json.Marshal(game.Stats)
 	msg := Message{
 		Type:    "gameEnded",
@@ -350,13 +356,32 @@ func playerTurn() {
 }
 func sendGameStats(game *Game) {
 	data := map[string]interface{}{
-		"id":    game.Id,
-		"stats": game.Stats,
+		"id":                 game.Id,
+		"winner":             game.Stats.Winner,
+		"players":            game.Stats.Players,
+		"course":             game.Stats.Course,
+		"totalTime":          game.Stats.TimeElapsed,
+		"totalSpringedTraps": game.Stats.TotalSpringedTraps,
 	}
 
 	json, _ := json.Marshal(data)
 
-	http.Post(springApiUrl+"/add-gstats", "application/json", bytes.NewBuffer(json))
+	res, err := http.Post(springApiUrl+"/api/games/add", "application/json", bytes.NewBuffer(json))
+	fmt.Println(res, err)
+}
+func sendUserStats(members []*User) {
+
+	for _, member := range members {
+		post := map[string]interface{}{
+			"username": member.Name,
+			"data":     member.Stats,
+		}
+		fmt.Println(member.Stats)
+		data, _ := json.Marshal(post)
+		res, err := http.Post(springApiUrl+"/api/stats/add-ustats", "application/json", bytes.NewBuffer(data))
+		fmt.Println(res, err)
+	}
+
 }
 
 func getWinner(members []*User) *User {
@@ -368,18 +393,6 @@ func getWinner(members []*User) *User {
 	}
 
 	return winner
-
-}
-func sendUserStats(members []*User) {
-
-	for _, member := range members {
-		post := map[string]interface{}{
-			"username": member.Name,
-			"data":     member.Stats,
-		}
-		data, _ := json.Marshal(post)
-		http.Post(springApiUrl+"/add-ustats", "application/json", bytes.NewBuffer(data))
-	}
 
 }
 
@@ -464,7 +477,6 @@ func (user *User) readGameMessages(game *Game) {
 		}
 	}
 }
-
 func activateTrap(user *User, msg Message, game *Game) {
 	//si un jugador activó una trampa que otro tiene disponible
 	// se le desactiva al otro jugador hasta que acaba la duración de la trampa
@@ -473,6 +485,7 @@ func activateTrap(user *User, msg Message, game *Game) {
 	json.Unmarshal(msg.Payload, &payload)
 
 	trap := payload["trap"].(string)
+	fmt.Println("La trampa que vamos a activar es ", trap)
 	trapLocation := fmt.Sprintf("/trampa?trampa='%s'", trap)
 	url := (raspUrl + trapLocation)
 
@@ -482,12 +495,23 @@ func activateTrap(user *User, msg Message, game *Game) {
 		"trap": trap,
 	}
 	var gameMembers = game.Party.Members
+	fmt.Println("Empezamos a iterar")
+
+	for i := 0; i < len(user.BoughtTraps); i++ {
+		if user.BoughtTraps[i] == trap {
+			user.BoughtTraps = pop(user.BoughtTraps, i)
+		}
+	}
 
 	for i := 0; i < len(gameMembers); i++ {
 		traps := gameMembers[i].BoughtTraps
-		for j := 0; i < len(traps); i++ {
+		fmt.Println("iterando las trampas del miembro ", game.Party.Members[i].Name)
+
+		for j := 0; j < len(traps); j++ {
+			fmt.Println("iterando en la trampa ", traps[j])
+
 			if traps[j] == trap {
-				sendMessage("deactivateTrap", data, user)
+				sendMessage("deactivateTrap", data, game.Party.Members[i])
 			}
 		}
 	}
@@ -501,9 +525,12 @@ func activateTrap(user *User, msg Message, game *Game) {
 		if gameMembers[i].Name == affectedPlayer {
 
 			newTotalKarma := gameMembers[i].Karma + newKarma
+			gameMembers[i].Karma = newTotalKarma
+
 			data := map[string]interface{}{
 				"karma": newTotalKarma,
 			}
+			gameMembers[i].Stats.KarmaTrigger += 1
 			sendMessage("karmaTrigger", data, gameMembers[i])
 		}
 	}
@@ -512,17 +539,24 @@ func activateTrap(user *User, msg Message, game *Game) {
 	game.Stats.TotalSpringedTraps += 1
 
 }
+func pop(slice []string, position int) []string {
+	return append(slice[:position], slice[position+1:]...)
+}
 func buyTrap(user *User, msg Message) {
 
 	var payload map[string]interface{}
 	json.Unmarshal(msg.Payload, &payload)
 
 	trap := payload["trap"].(string)
+	fmt.Println("El karma del jugador ", user.Name, " es de ", user.Karma)
+
 	if hasEnoughKarma(trap, user) {
+		user.Stats.KarmaSpent += trapPrice[trap]
 		user.Karma -= trapPrice[trap]
 
 		data := map[string]interface{}{
-			"karma": user.Karma,
+			"username": user.Name,
+			"karma":    user.Karma,
 		}
 
 		user.BoughtTraps = append(user.BoughtTraps, trap)
@@ -540,9 +574,16 @@ var trapPrice = make(map[string]int)
 
 func hasEnoughKarma(trap string, player *User) bool {
 	//cancer
-	trapPrice["fan"] = 100
-	trapPrice["car"] = 250
-	trapPrice["earthquake"] = 500
+	trapPrice["tornado"] = 100
+	trapPrice["casino"] = 150
+	trapPrice["castle"] = 125
+	trapPrice["windmill"] = 150
+	trapPrice["wall"] = 250
+
+	trapPrice["ramp"] = 300
+	trapPrice["slap"] = 100
+	trapPrice["hole"] = 250
+	trapPrice["random"] = 150
 
 	return player.Karma >= trapPrice[trap]
 }

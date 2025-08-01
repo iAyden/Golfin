@@ -307,6 +307,7 @@ export default function CreateLobbyScreen() {
     const handleGameId = (payload: any) => {
       console.log("Evento gameId recibido:", payload);
     };
+
     const handlePlayerJoined = (updatedParty: PartyData) => {
       setPartyData(updatedParty);
       const currentPlayer = updatedParty.members.find(
@@ -336,10 +337,6 @@ export default function CreateLobbyScreen() {
       karma: number;
     }) => {
       console.log("TRAMPA trigueada:", payload.username, payload.karma);
-    };
-
-    const handleBuyTrap = (payload: { Karma: number }) => {
-      if (payload.Karma !== undefined) setKarma(payload.Karma);
     };
 
     /////////////////// REAL TIME updater /////////////
@@ -391,6 +388,7 @@ export default function CreateLobbyScreen() {
     const handleEndUserTurn = (payload: any) => {
       console.log("Evento endUserTurn recibido:", payload);
     };
+
     ///////////////// START GAME HANDLER /////////////////////
     const handleStartGame = (payload: PartyData) => {
       setGameStarted(true);
@@ -419,7 +417,7 @@ export default function CreateLobbyScreen() {
 
     const handleUserStartGame = () => {
       console.log(
-        "Recibido userStartGame, indicando que fuiste el wey que creo la partida"
+        "Recivido userStartGame, indicando que fuiste el wey que creo la partida"
       );
       setGameStarted(true);
     };
@@ -429,6 +427,10 @@ export default function CreateLobbyScreen() {
       setGameStarted(true);
 
       socketService.send("nuke", {});
+    };
+
+    const handleBuyTrap = (payload: any) => {
+      console.log("Esto llego del evento de handeBuyTrap: ", payload);
     };
 
     ////////////////////////// Aqui los handlers que reccionan por cada eventi ////////////////////////
@@ -474,6 +476,21 @@ export default function CreateLobbyScreen() {
 
   const handleStartPress = () => {
     if (partyData) socketService.startGame(partyData.code);
+  };
+
+  const BuyTrap = (nameTrap: string) => {
+    if (!gameStarted) {
+      Alert.alert("Espera", "INICIA EL JUEGO PRIMERO");
+      return;
+    }
+    if (nameTrap.length === 0) {
+      console.log("No se pudo comprar la trampa");
+      return;
+    }
+
+    socketService.buyTrap(nameTrap.toLowerCase());
+
+    console.log("Trampa comprada:", nameTrap);
   };
 
   // PARTE DEL TIEMPO NO LE MUEVAN
@@ -559,6 +576,7 @@ export default function CreateLobbyScreen() {
     return () => socketService.off("startGame", handleStartGame);
   }, []);
 
+  /// NO LE MUEVAN POR FAVOR
   useEffect(() => {
     if (prepTime !== null && prepTime > 0) {
       const interval = setInterval(() => {
@@ -834,7 +852,7 @@ export default function CreateLobbyScreen() {
                     { backgroundColor: item.backgroundColor },
                     (points < item.cost || !gameStarted) && styles.disabledItem,
                   ]}
-                  onPress={() => buyItem(item.id)}
+                  onPress={() => BuyTrap(item.name)}
                   disabled={points < item.cost || !gameStarted}
                 >
                   <Image source={item.icon} style={styles.itemImage} />
