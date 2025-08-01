@@ -56,10 +56,11 @@ const cardData: CardType[] = [
 ];
 
 const App: React.FC = () => {
-
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [activeMenu, setActiveMenu] = useState("home");
-  const [layoutMode, setLayoutMode] = useState< "grid" | "linear" | "horizontal">("linear"); // Default to linear
+  const [layoutMode, setLayoutMode] = useState<
+    "grid" | "linear" | "horizontal"
+  >("linear"); // Default to linear
   const sidebarWidth = useRef(new Animated.Value(250)).current;
   const { width: screenWidth } = useWindowDimensions();
   const navigation = useNavigation();
@@ -70,8 +71,6 @@ const App: React.FC = () => {
   });
 
   useEffect(() => {
-
-
     Animated.timing(sidebarWidth, {
       toValue: sidebarVisible ? 250 : 0,
       duration: 300,
@@ -84,7 +83,7 @@ const App: React.FC = () => {
     setActiveMenu(menuItem);
   };
 
-    if (!fontsLoaded) return null;  
+  if (!fontsLoaded) return null;
 
   // Layout logic
   const isTablet = screenWidth >= 800;
