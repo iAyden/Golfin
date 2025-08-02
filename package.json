@@ -2,6 +2,7 @@
   "dependencies": {
     "@react-native-community/cli": "latest",
     "@react-native-google-signin/google-signin": "^15.0.0",
+    "axios": "^1.10.0",
     "react-native-flip-card": "^3.5.7"
   }
 }

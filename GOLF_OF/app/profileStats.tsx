@@ -11,6 +11,7 @@ import {
   ImageBackground,
   TouchableOpacity,
   useWindowDimensions,
+  TextInput,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Animatable from 'react-native-animatable'; //animacionesss
@@ -79,20 +80,33 @@ const App: React.FC = () => {
     "profile" | "history" | "friends"
   >("profile");
 
-    useEffect(()=>{
-    console.log("use efect")
+  // --- Friends CRUD State FOR TEST USES ONLY DONT FREAK OUT ---
+  const [friends, setFriends] = useState<{ id: string; name: string }[]>([
+    { id: "1", name: "Alice Birdie" },
+    { id: "2", name: "Bob Eagle" },
+    { id: "3", name: "Charlie Putter" },
+    { id: "4", name: "Daisy Driver" },
+    { id: "5", name: "Eddie Fairway" },
+  ]);
+  const [showAddFriendModal, setShowAddFriendModal] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<
+    { id: string; name: string }[]
+  >([]);
+
+  useEffect(() => {
+    console.log("use efect");
     const verifyToken = async () => {
       const isLoggedIn = await checkAuthToken();
-      console.log("isloggedin "+isLoggedIn);
-      if(!isLoggedIn){
-        console.log("usuario no logeado")
-        window.location.href = "/LogUser";     
-      }
-      else{
-        try{
+      console.log("isloggedin " + isLoggedIn);
+      if (!isLoggedIn) {
+        console.log("usuario no logeado");
+        window.location.href = "/LogUser";
+      } else {
+        try {
           const data = await getProfile();
-          console.log("data", data)
-          setProfileData(data)
+          console.log("data", data);
+          setProfileData(data);
           setisCheckingAuth(false);
         
         
@@ -101,7 +115,6 @@ const App: React.FC = () => {
         console.error("Error al obtener los datos del perfil", error)
       }
       }
-
     };
     verifyToken();
   }, []);
@@ -119,7 +132,63 @@ const App: React.FC = () => {
     setActiveMenu(menuItem);
   };
 
-  // Responsive styles for cards, rowCards, and tabs
+  // --- CRUD Handlers for Friends ---
+  const handleAddFriend = (user: { id: string; name: string }) => {
+    setFriends((prev) => [...prev, user]);
+    setShowAddFriendModal(false);
+    setSearchQuery("");
+    setSearchResults([]);
+  };
+
+  const handleEditFriend = (friend: { id: string; name: string }) => {
+    // Open edit modal or inline edit (to be implemented)
+    // Example: setEditFriend(friend)
+  };
+
+  // --- Delete Friend Confirmation State ---
+  const [friendToDelete, setFriendToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const handleDeleteFriend = (friend: { id: string; name: string }) => {
+    setFriendToDelete(friend);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteFriend = () => {
+    if (friendToDelete) {
+      setFriends((prev) => prev.filter((f) => f.id !== friendToDelete.id));
+      setFriendToDelete(null);
+      setShowDeleteModal(false);
+    }
+  };
+
+  const cancelDeleteFriend = () => {
+    setFriendToDelete(null);
+    setShowDeleteModal(false);
+  };
+
+  // For search, simulate API call TESTS!!!!
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+    // Simulate search result
+    setSearchResults(
+      [
+        { id: "1", name: "Alice" },
+        { id: "2", name: "Bob" },
+        { id: "3", name: "Charlie" },
+      ].filter((user) =>
+        user.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+  }, [searchQuery]);
+
+  // We got only one block of code and is truly responsive cuh
   const dynamicStyles = StyleSheet.create({
     rowCards: {
       flexDirection: width < 700 ? "column" : "row",
@@ -127,7 +196,7 @@ const App: React.FC = () => {
       alignItems: width < 700 ? "stretch" : "flex-start",
       gap: width < 500 ? 8 : 16,
       width: "100%",
-      padding: 24, // add padding around the group of cards
+      padding: 24,
     },
     card: {
       backgroundColor: "rgb(99, 150, 57)",
@@ -212,8 +281,9 @@ const App: React.FC = () => {
       color: "white",
     },
   });
-if (!fontsLoaded || isCheckingAuth){
-  return ( <View
+  if (!fontsLoaded || isCheckingAuth) {
+    return (
+      <View
         style={{
           flex: 1,
           justifyContent: "center",
@@ -226,6 +296,321 @@ if (!fontsLoaded || isCheckingAuth){
     );
   }
 
+  // Responsive tab navigation for small screens
+  const renderTabs = () => (
+    <View
+      style={{
+        width: "100%",
+        alignItems: "center",
+        marginBottom: 0,
+        position: "relative",
+        zIndex: 10,
+      }}
+    >
+      <View style={folderTabStyles.tabRow}>
+        {[
+          { key: "profile", label: "Stats" },
+          { key: "history", label: "History" },
+          { key: "friends", label: "Friends" },
+        ].map((tab, idx) => (
+          <TouchableOpacity
+            key={tab.key}
+            style={[
+              folderTabStyles.tab,
+              activeCard === tab.key && folderTabStyles.tabActive,
+              idx === 0 ? { borderTopLeftRadius: 12 } : {},
+              idx === 2 ? { borderTopRightRadius: 12 } : {},
+              activeCard === tab.key ? { marginBottom: -4 } : {},
+              { borderBottomColor: "transparent" },
+            ]}
+            onPress={() => setActiveCard(tab.key as typeof activeCard)}
+          >
+            <Text
+              style={[
+                folderTabStyles.tabText,
+                activeCard === tab.key && folderTabStyles.tabTextActive,
+              ]}
+            >
+              {tab.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
+  );
+
+  // Main cards rendering (profile, history, friends)
+  const renderCards = () => (
+    <View
+      style={
+        isSmallScreen
+          ? [dynamicStyles.card, { marginTop: 0, paddingTop: 32 }]
+          : dynamicStyles.rowCards
+      }
+    >
+      {/* Profile Card */}
+      {(isSmallScreen ? activeCard === "profile" : true) && (
+        <View style={dynamicStyles.card}>
+          <View style={styles.profileSection}>
+            <Image
+              source={
+                profileData?.photoUrl?.startsWith("http")
+                  ? { uri: profileData.photoUrl }
+                  : require("../assets/images/no_pfp.jpg")
+              }
+              style={styles.profileImg}
+            />
+            <Text style={styles.cardTitle}>{profileData?.username}</Text>
+            {!isSmallScreen && (
+              <Text style={styles.badgeGreen}>{profileData?.role}</Text>
+            )}
+            <Text style={styles.gamerTag}>{profileData?.email}</Text>
+            <View style={styles.socialIcons}>
+              <FontAwesome
+                name="edit"
+                size={24}
+                color="#069809"
+                style={styles.socialIcon}
+              />
+              <FontAwesome
+                name="sign-out"
+                size={24}
+                color="#069809"
+                style={styles.socialIcon}
+              />
+            </View>
+          </View>
+          <View style={styles.divider} />
+          <View style={styles.gameStats}>
+            <View style={styles.gameItem}>
+              <View style={styles.gameIcon}>
+                <FontAwesome name="flag" size={24} color="#069809" />
+              </View>
+              <View style={styles.gameInfo}>
+                <Text style={styles.gameName}>Hole in one</Text>
+                <Text style={styles.gameDetail}>Range: challenguer lol</Text>
+              </View>
+            </View>
+            <View style={styles.gameItem}>
+              <View style={styles.gameIcon}>
+                <FontAwesome name="clock-o" size={24} color="#069809" />
+              </View>
+              <View style={styles.gameInfo}>
+                <Text style={styles.gameName}>Scoring time</Text>
+                <Text style={styles.gameDetail}>Range: PLATA</Text>
+              </View>
+            </View>
+            <View style={styles.gameItem}>
+              <View style={styles.gameIcon}>
+                <FontAwesome name="heartbeat" size={24} color="#069809" />
+              </View>
+              <View style={styles.gameInfo}>
+                <Text style={styles.gameName}>Hole interrupted</Text>
+                <Text style={styles.gameDetail}>Range: PLATINITO</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      )}
+      {/* History Card */}
+      {(isSmallScreen ? activeCard === "history" : true) && (
+        <View style={dynamicStyles.card}>
+          <Text style={styles.cardTitle}>History</Text>
+          <View style={styles.lastGameSection}>
+            <Text style={styles.lastGameTitle}>Last Game Played</Text>
+            <Text style={styles.lastGameDetail}>"Golf Masters 2025"</Text>
+            <Text style={styles.lastGameSubDetail}>Date: 2025-06-01</Text>
+            <Text style={styles.lastGameSubDetail}>Score: 72 (-1)</Text>
+            <Text style={styles.lastGameSubDetail}>Traps Activated: 3</Text>
+            <Text style={styles.lastGameSubDetail}>
+              Birdies: 5 | Pars: 10 | Bogeys: 3
+            </Text>
+          </View>
+          <Image
+            source={{
+              uri: "https://media.tacdn.com/media/attractions-splice-spp-674x446/07/b3/5b/3a.jpg",
+            }}
+            style={styles.imgTemporada}
+          />
+          <View style={styles.progressContainer}>
+            <Text style={styles.progressLabel}>
+              <FontAwesome name="crosshairs" size={16} /> Total hoyos anotados:
+              87%
+            </Text>
+            <View style={styles.progressBarBg}>
+              <View style={[styles.progressBar, { width: "87%" }]} />
+            </View>
+          </View>
+          <View style={styles.progressContainer}>
+            <Text style={styles.progressLabel}>
+              <FontAwesome name="tachometer" size={16} /> Rendimiento: 320%
+            </Text>
+            <View style={styles.progressBarBg}>
+              <View style={[styles.progressBar, { width: "80%" }]} />
+            </View>
+          </View>
+          <View style={styles.divider} />
+          <Text style={styles.sectionTitle}>Golf Achievements</Text>
+          <View style={styles.achievementItem}>
+            <FontAwesome
+              name="trophy"
+              size={24}
+              color="#FFD700"
+              style={styles.achievementIcon}
+            />
+            <View style={styles.achievementText}>
+              <Text style={styles.achievementTitle}>El mas mejor</Text>
+              <Text>Primer puesto - Torneo internacional de BEYBLADE</Text>
+            </View>
+          </View>
+          <View style={styles.achievementItem}>
+            <FontAwesome
+              name="star"
+              size={24}
+              color="#C0C0C0"
+              style={styles.achievementIcon}
+            />
+            <View style={styles.achievementText}>
+              <Text style={styles.achievementTitle}>
+                MOLESTADOR DE PERSONAS
+              </Text>
+              <Text>ME LA PARTIEROn</Text>
+            </View>
+          </View>
+          <View style={styles.achievementItem}>
+            <FontAwesome
+              name="trophy"
+              size={24}
+              color="#CD7F32"
+              style={styles.achievementIcon}
+            />
+            <View style={styles.achievementText}>
+              <Text style={styles.achievementTitle}>Holes record</Text>
+              <Text>45 hoyos seguidos</Text>
+            </View>
+          </View>
+        </View>
+      )}
+      {/* Friends Card (CRUD) */}
+      {/* {(isSmallScreen ? activeCard === "friends" : true) && (
+        <FriendCard
+          friends={friends}
+          handleEditFriend={handleEditFriend}
+          handleDeleteFriend={handleDeleteFriend}
+          showAddFriendModal={showAddFriendModal}
+          setShowAddFriendModal={setShowAddFriendModal}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          searchResults={searchResults}
+          handleAddFriend={handleAddFriend}
+        />
+      )} */}
+      {/* Delete Friend Modal (shared for all screens) */}
+      {showDeleteModal && friendToDelete && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.4)",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: 20,
+              padding: 28,
+              width: 340,
+              shadowColor: "#107C10",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.2,
+              shadowRadius: 8,
+              elevation: 10,
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 22,
+                fontWeight: "bold",
+                color: "#e53e3e",
+                marginBottom: 18,
+                textAlign: "center",
+              }}
+            >
+              Remove Friend
+            </Text>
+            <Text
+              style={{
+                fontSize: 16,
+                color: "#333",
+                marginBottom: 18,
+                textAlign: "center",
+              }}
+            >
+              Are you sure you want to remove{" "}
+              <Text style={{ fontWeight: "bold" }}>{friendToDelete.name}</Text>{" "}
+              from your friends?
+            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                gap: 16,
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#e53e3e",
+                  padding: 10,
+                  borderRadius: 8,
+                  minWidth: 80,
+                  marginRight: 8,
+                }}
+                onPress={confirmDeleteFriend}
+              >
+                <Text
+                  style={{
+                    color: "#fff",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                >
+                  Remove
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#e8f5e9",
+                  padding: 10,
+                  borderRadius: 8,
+                  minWidth: 80,
+                  marginLeft: 8,
+                }}
+                onPress={cancelDeleteFriend}
+              >
+                <Text
+                  style={{
+                    color: "#107C10",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                >
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+    </View>
+  );
+
   return (
     <ImageBackground
       source={require("../assets/images/BG IMG GLF.png")}
@@ -235,10 +620,7 @@ if (!fontsLoaded || isCheckingAuth){
       <View
         style={[
           styles.container,
-          {
-            backgroundColor: "rgba(255, 255, 255, 0)",
-            flex: 1,
-          },
+          { backgroundColor: "rgba(255, 255, 255, 0)", flex: 1 },
         ]}
       >
         <Sidebar
@@ -255,70 +637,19 @@ if (!fontsLoaded || isCheckingAuth){
         >
           <FontAwesome name="bars" size={28} color="#2f855a" />
         </Pressable>
-
         <View
           style={[
             styles.mainContentWrapper,
             { marginTop: isSmallScreen ? 48 : 0, flex: 1, minHeight: "100%" },
           ]}
         >
-          {/* Engulf main content for sidebar layout */}
           {isSmallScreen ? (
             <ScrollView
               contentContainerStyle={{ flexGrow: 1 }}
               showsVerticalScrollIndicator={false}
               showsHorizontalScrollIndicator={false}
             >
-              {/* Folder Tabs */}
-              <View
-                style={{
-                  width: "100%",
-                  alignItems: "center",
-                  marginBottom: 0,
-                  position: "relative",
-                  zIndex: 10,
-                }}
-              >
-                <View style={folderTabStyles.tabRow}>
-                  {(
-                    [
-                      { key: "profile", label: "Stats" },
-                      { key: "history", label: "History" },
-                      { key: "friends", label: "Friends" },
-                    ] as const
-                  ).map((tab, idx) => (
-                    <TouchableOpacity
-                      key={tab.key}
-                      style={[
-                        folderTabStyles.tab,
-                        activeCard === tab.key && folderTabStyles.tabActive,
-                        idx === 0 ? { borderTopLeftRadius: 12 } : {},
-                        idx === 2 ? { borderTopRightRadius: 12 } : {},
-                        activeCard === tab.key ? { marginBottom: -4 } : {},
-                        // Connect tab to card
-                        {
-                          borderBottomLeftRadius: idx === 0 ? 0 : 0,
-                          borderBottomRightRadius: idx === 2 ? 0 : 0,
-                        },
-                        { borderBottomColor: "transparent" },
-                      ]}
-                      onPress={() =>
-                        setActiveCard(tab.key as typeof activeCard)
-                      }
-                    >
-                      <Text
-                        style={[
-                          folderTabStyles.tabText,
-                          activeCard === tab.key &&
-                            folderTabStyles.tabTextActive,
-                        ]}
-                      >
-                        {tab.label}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
+              {renderTabs()}
               <View
                 style={{
                   width: "100%",
@@ -763,13 +1094,13 @@ if (!fontsLoaded || isCheckingAuth){
                       style={styles.achievementIcon}
                     />
                     <View style={styles.achievementText}>
-                    {profileData?.friends.map((friendId) => (
-                    <FriendCard
-                      key={friendId}
-                      username={`Usuario-${friendId}`}
-                      isOnline={Math.random() < 0.5}
-                    />
-                  ))}
+                      {profileData?.friends.map((friendId) => (
+                        <FriendCard
+                          key={friendId}
+                          username={`Usuario-${friendId}`}
+                          isOnline={Math.random() < 0.5}
+                        />
+                      ))}
                     </View>
                   </View>
                   <View style={styles.achievementItem}>

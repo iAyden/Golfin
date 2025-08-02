@@ -27,7 +27,6 @@ type MenuItem = {
   icon: React.ComponentProps<typeof FontAwesome>["name"];
 };
 
-
 // DATOS DEL MENU CORTO AQUI MODIFICAMOS LOS REDIRECCIONAMIENTOS
 const MENU_ITEMS: MenuItem[] = [
   { id: "/", title: "Home", icon: "home" },
@@ -48,47 +47,92 @@ const Sidebar: React.FC<SidebarProps & { style?: any }> = ({
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [isLoggedIn, setisLoggedIn] = useState<boolean>(false);
   const router = useRouter(); // EL MALDITO COMPONENTE NUNCA ELIMINAR
-  useEffect(()=>{
-    console.log("use efect")
+  useEffect(() => {
+    console.log("use efect");
     const verifyToken = async () => {
       const isLogged = await checkAuthToken();
-      if(isLogged){
-        setisLoggedIn(true)
+      if (isLogged) {
+        setisLoggedIn(true);
       }
     };
     verifyToken();
-    
-    
-   
   }, []);
-  useEffect(()=>{
+  useEffect(() => {
     const MENU_ITEMS: MenuItem[] = [
-
       { id: "/", title: "Home", icon: "home" },
       { id: "LeaderBoard", title: "Ranking", icon: "trophy" },
 
       { id: "createLobby", title: "New Game", icon: "gamepad" },
-      {id: "gameplay", title: "Party", icon: "sign-out"},];
-      if(isLoggedIn){
-      MENU_ITEMS.push({ id: "profileStats", title: "Profile", icon: "newspaper-o" },
-    
-      {id: "__logout", title: "Log Out", icon: "sign-out"},)
-      }else{
-      MENU_ITEMS.push({ id: "LogUser", title: "Sign Up", icon: "user" })
-      }
-      setMenuItems(MENU_ITEMS);
-  },[isLoggedIn]);  
+      { id: "gameplay", title: "Party", icon: "sign-out" },
+    ];
+    if (isLoggedIn) {
+      MENU_ITEMS.push(
+        { id: "profileStats", title: "Profile", icon: "newspaper-o" },
+
+        { id: "__logout", title: "Log Out", icon: "sign-out" }
+      );
+    } else {
+      MENU_ITEMS.push({ id: "LogUser", title: "Sign Up", icon: "user" });
+    }
+    setMenuItems(MENU_ITEMS);
+  }, [isLoggedIn]);
+
+  // --- Friends CRUD State ---
+  const [friends, setFriends] = useState<{ id: string; name: string }[]>([]); // List of friends
+  const [showAddFriendModal, setShowAddFriendModal] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<
+    { id: string; name: string }[]
+  >([]);
+
+  // --- CRUD Handlers for Friends ---
+  const handleAddFriend = (user: { id: string; name: string }) => {
+    // Add friend to list (simulate API call)
+    setFriends((prev) => [...prev, user]);
+    setShowAddFriendModal(false);
+    setSearchQuery("");
+    setSearchResults([]);
+  };
+
+  const handleEditFriend = (friend: { id: string; name: string }) => {
+    // Open edit modal or inline edit (to be implemented)
+    // Example: setEditFriend(friend)
+  };
+
+  const handleDeleteFriend = (friend: { id: string; name: string }) => {
+    // Remove friend from list (simulate API call)
+    setFriends((prev) => prev.filter((f) => f.id !== friend.id));
+  };
+
+  // For search, simulate API call
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+    // Simulate search result
+    setSearchResults(
+      [
+        { id: "1", name: "Alice" },
+        { id: "2", name: "Bob" },
+        { id: "3", name: "Charlie" },
+      ].filter((user) =>
+        user.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+  }, [searchQuery]);
+
   return (
     <Animated.View style={[styles.sidebar, style, { width }]}>
       {isVisible && (
         <>
           {/* AQUI ESTA EL ENCABEZADO DE LA SIDE BAR, HAY QUE VER EL LOGO PARA VER COMO SE PUEDE HACER */}
           <View style={styles.sidebarHeader}>
-            <Image
+            {/* <Image
               source={require("@/assets/images/icon.png")}
               style={styles.sidebarLogo}
               accessibilityLabel="Logo Eco Noticias"
-            />
+            /> */}
             <Text style={styles.sidebarTitle}>golfin'</Text>
           </View>
 
@@ -101,7 +145,7 @@ const Sidebar: React.FC<SidebarProps & { style?: any }> = ({
                 activeMenuItem === item.id && styles.activeButton,
               ]}
               onPress={async () => {
-                if(item.id === '__logout'){
+                if (item.id === "__logout") {
                   await clearToken();
                   router.replace("/");
                   return;
@@ -152,7 +196,7 @@ const styles = StyleSheet.create({
   },
   sidebarTitle: {
     color: "#c6f6d5",
-    fontSize: 22,
+    fontSize: 52,
     fontWeight: "bold",
     fontFamily: "gharison",
   },
