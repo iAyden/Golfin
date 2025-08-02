@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import LeaderBoard from "./LeaderBoard";
 import { FontAwesome } from "@expo/vector-icons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Example winners data (replace with real data as needed)
 type Winner = {
@@ -76,6 +77,41 @@ const winners: Winner[] = [
 const podiumColors = ["#FFD700", "#C0C0C0", "#CD7F32"];
 
 const EndGame = () => {
+
+
+  //////////////// AQUI LA DATA DE LA LEADERBOARD QUE SE PASA DESDE createLobby /////////////////
+  const [userData, setUserData] = useState([]);
+
+  useEffect(() => {
+    const fetchUserCards = async () => {
+      try {
+        const storedData = await AsyncStorage.getItem('latestUserCards');
+        if (storedData) {
+          const parsedData = JSON.parse(storedData);
+          console.log('DATA cargada de la localStorage: ', parsedData);
+          setUserData(parsedData);
+        } else {
+          console.log('No hay DATA en localStorage');
+        }
+      } catch (error) {
+        console.error('Error leyendo la locl storagE', error);
+      }
+    };
+
+    fetchUserCards();
+  }, []);
+
+  console.log("Se imprime esto por el local storage", userData);
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
   const { width, height } = Dimensions.get("window");
   // Responsive max width for podium area
   const maxPodiumWidth = 420;

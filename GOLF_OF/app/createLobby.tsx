@@ -176,6 +176,7 @@ export default function CreateLobbyScreen() {
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+
  const router = useRouter();
 
 
@@ -398,12 +399,8 @@ const handleNuke = (payload: any) => {
 
 
 
-
-
-
 const handleBuyTrap = (payload : any) => {
  console.log("Esto llego del evento de handeBuyTrap: ", payload);
-
 
    setUserCards(prevUserCards =>
    prevUserCards.map(card =>
@@ -427,12 +424,15 @@ const handleGameEnded = async () => {
 
  console.log("Datos a enviar a LeaderBoard:", envio);
 
+ 
 
  await AsyncStorage.setItem('leaderboardData', JSON.stringify(envio));
- router.push('/LeaderBoard');
+ router.push('/endGame');
 };
 
-
+const handleDeactivateTrap = (payload: any) => {
+console.log("Entro a deactivateTrap");
+}
 
 
 
@@ -455,7 +455,7 @@ const handleGameEnded = async () => {
  socketService.on("endPlayerFinished", handleEndPlayerFinished);
  socketService.on("endUserTurn", handleEndUserTurn);
  socketService.on("gameEnded", handleGameEnded);
- 
+ socketService.on("deactivateTrap", handleDeactivateTrap);
 
 
  setTimeout(() => setIsReady(true), 500);
@@ -479,6 +479,7 @@ const handleGameEnded = async () => {
    socketService.off("endPlayerFinished", handleEndPlayerFinished);
    socketService.off("endUserTurn", handleEndUserTurn);
    socketService.off("gameEnded", handleGameEnded);
+   socketService.off("deactivateTrap", handleDeactivateTrap);
    socketService.close();
  };
 }, []);
@@ -496,14 +497,12 @@ const handleStartPress = () => { if (partyData) socketService.startGame(partyDat
 
 
 
-
 const BuyTrap = (nameTrap : string ) => {
  if (!gameStarted) {  Alert.alert("Espera", "INICIA EL JUEGO PRIMERO"); return; }
  if(nameTrap.length === 0) { console.log("No se pudo comprar la trampa"); return; }
 
-
  socketService.buyTrap(nameTrap.toLowerCase());
-
+ socketService.activateTrap(nameTrap.toLowerCase());
 
  console.log("Trampa comprada:", nameTrap);
 };
@@ -615,7 +614,7 @@ useEffect(() => {
 
 
 /////////////////////////////////
-console.log("UserCards data IMPRESA: ", userCards);
+//console.log("UserCards data IMPRESA: ", userCards);
 ///////////////////////////////
 
 

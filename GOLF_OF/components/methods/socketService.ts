@@ -25,7 +25,7 @@ class SocketService {
 
 
     send(type:string, payload: any){
-        console.log("Antes de enviar el send es: ", type , " ", payload);
+        // console.log("Antes de enviar el send es: ", type , " ", payload);
         (this.socket?.readyState === WebSocket.OPEN) ? 
         this.socket.send(JSON.stringify({type,payload})) 
         : console.warn("El websocket no esta abierto");
@@ -36,9 +36,10 @@ class SocketService {
     joinLobby(username:string, code:string) { this.send("joinParty",{username,code});  }
 
     startGame(code: string) { this.send("startGame", { code }); }
-
+    
     buyTrap(trap: string) { this.send("buyTrap", { trap });  }
 
+    activateTrap(trap: string){ this.send("activateTrap", { trap }); console.log("Trampa activada desde SOCKETSERVICE:", trap); }
 
     on(eventType: string, callback: Callback){
         this.listeners[eventType] ??= this.listeners[eventType] = [];
