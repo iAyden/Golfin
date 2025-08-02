@@ -114,7 +114,7 @@ const EndGame = () => {
 
   const { width, height } = Dimensions.get("window");
   // Responsive max width for podium area
-  const maxPodiumWidth = 420;
+  const maxPodiumWidth = 420; // this a reference lol
   const podiumAreaWidth = Math.min(width, maxPodiumWidth);
   // Avatar sizes scale with podium area width
   const avatarBase = podiumAreaWidth * 0.22;
@@ -125,16 +125,15 @@ const EndGame = () => {
   // Podium image reference (fixed size)
   const podiumImgHeight = 200;
   const podiumImgWidth = podiumAreaWidth;
-  const podiumBottom = -50;
-  // This is supposed to be RESPONSIVE pero ni jala alch
+  const podiumBottom = -99;
   // 1st place: center, slightly above center step
-  const avatar1stLeft = podiumImgWidth * 0.5 - avatarBase / 2;
+  const avatar1stLeft = podiumImgWidth * 0.44 - avatarBase / 2;
   const avatar1stBottom = podiumBottom + podiumImgHeight * 0.68;
   // 2nd place: left step
-  const avatar2ndLeft = podiumImgWidth * 0.23 - avatar2nd / 2;
+  const avatar2ndLeft = podiumImgWidth * 0.3 - avatar2nd / 2;
   const avatar2ndBottom = podiumBottom + podiumImgHeight * 0.48;
   // 3rd place: right step
-  const avatar3rdLeft = podiumImgWidth * 0.77 - avatar3rd / 2;
+  const avatar3rdLeft = podiumImgWidth * 0.62 - avatar3rd / 2;
   const avatar3rdBottom = podiumBottom + podiumImgHeight * 0.38;
   return (
     <ImageBackground
