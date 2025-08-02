@@ -33,14 +33,15 @@ type Message struct {
 }
 
 type UStats struct {
-	GameId        int `json:"id"`
-	Position      int `json:"position"`
-	Shots         int `json:"shots"`
-	Points        int `json:"points"`
-	SpringedTraps int `json:"springedTraps"`
-	KarmaTrigger  int `json:"karmaTrigger"`
-	KarmaSpent    int `json:"karmaSpent"`
-	Won           int `json:"won"`
+	GameId        string `json:"id"`
+	Position      int    `json:"position"`
+	Shots         int    `json:"shots"`
+	Points        int    `json:"points"`
+	Score         string `json:"score"`
+	SpringedTraps int    `json:"springedTraps"`
+	KarmaTrigger  int    `json:"karmaTrigger"`
+	KarmaSpent    int    `json:"karmaSpent"`
+	Won           int    `json:"won"`
 }
 
 type GStats struct {
@@ -321,6 +322,7 @@ func playerFinished(party *Party, game *Game, i int, start time.Time) {
 	points := calculatePoints(score, timeOfGoal)
 	party.Members[i].Stats.Points = points
 	party.Members[i].Stats.Shots = game.Round
+	party.Members[i].Stats.Score = score
 
 	data := map[string]interface{}{
 		"name":   party.Members[i].Name,
