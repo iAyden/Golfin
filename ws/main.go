@@ -486,7 +486,7 @@ func activateTrap(user *User, msg Message, game *Game) {
 
 	trap := payload["trap"].(string)
 	fmt.Println("La trampa que vamos a activar es ", trap)
-	trapLocation := fmt.Sprintf("/trampa?trampa='%s'", trap)
+	trapLocation := "/" + trap
 	url := (raspUrl + trapLocation)
 
 	http.Get(url)
@@ -494,6 +494,9 @@ func activateTrap(user *User, msg Message, game *Game) {
 	var data = map[string]interface{}{
 		"trap": trap,
 	}
+
+	sendMessage("deactivateTrap", data, user)
+
 	var gameMembers = game.Party.Members
 	fmt.Println("Empezamos a iterar")
 
@@ -542,6 +545,7 @@ func activateTrap(user *User, msg Message, game *Game) {
 
 	//aquí en realidad debería ser la duración de la trampa
 	//pero como todas duran 5 segundos ps x
+	go reactivateTrap(user, data)
 }
 
 func reactivateTrap(user *User, data map[string]interface{}) {
