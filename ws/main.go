@@ -280,7 +280,7 @@ func (game *Game) gameLoop() {
 	game.Stats.TimeElapsed = int(time.Since(globalTime))
 
 	for i, player := range game.Party.Members {
-		game.Party.Members[i].Stats.GameId = game.Id
+		game.Party.Members[i].Stats.GameId = strconv.Itoa(game.Id)
 		game.Stats.Players = append(game.Stats.Players, player.Name)
 	}
 
@@ -473,7 +473,7 @@ func (user *User) readGameMessages(game *Game) {
 		case "buyTrap":
 			buyTrap(user, msg)
 		case "activateTrap":
-			activateTrap(user, msg, game)
+			go activateTrap(user, msg, game)
 		}
 	}
 }
@@ -512,6 +512,8 @@ func activateTrap(user *User, msg Message, game *Game) {
 
 			if traps[j] == trap {
 				sendMessage("deactivateTrap", data, game.Party.Members[i])
+				//debería llegar 5 segundos despues
+				go reactivateTrap(game.Party.Members[i], data)
 			}
 		}
 	}
@@ -538,6 +540,13 @@ func activateTrap(user *User, msg Message, game *Game) {
 	user.Stats.SpringedTraps += 1
 	game.Stats.TotalSpringedTraps += 1
 
+	//aquí en realidad debería ser la duración de la trampa
+	//pero como todas duran 5 segundos ps x
+}
+
+func reactivateTrap(user *User, data map[string]interface{}) {
+	time.Sleep(5 * time.Second)
+	sendMessage("reactivateTrap", data, user)
 }
 func pop(slice []string, position int) []string {
 	return append(slice[:position], slice[position+1:]...)
