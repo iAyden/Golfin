@@ -92,14 +92,14 @@ const EndGame = () => {
   const podiumBottom = -50;
   // This is supposed to be RESPONSIVE pero ni jala alch
   // 1st place: center, slightly above center step
-  const avatar1stLeft = podiumImgWidth * 0.5 - avatarBase / 2;
-  const avatar1stBottom = podiumBottom + podiumImgHeight * 0.68;
+  const avatar1stLeft = podiumImgWidth * 0.44 - avatarBase / 2;
+  const avatar1stBottom = podiumBottom + podiumImgHeight * 0.6;
   // 2nd place: left step
-  const avatar2ndLeft = podiumImgWidth * 0.23 - avatar2nd / 2;
-  const avatar2ndBottom = podiumBottom + podiumImgHeight * 0.48;
+  const avatar2ndLeft = podiumImgWidth * 0.29 - avatar2nd / 2;
+  const avatar2ndBottom = podiumBottom + podiumImgHeight * 0.55;
   // 3rd place: right step
-  const avatar3rdLeft = podiumImgWidth * 0.77 - avatar3rd / 2;
-  const avatar3rdBottom = podiumBottom + podiumImgHeight * 0.38;
+  const avatar3rdLeft = podiumImgWidth * 0.63 - avatar3rd / 2;
+  const avatar3rdBottom = podiumBottom + podiumImgHeight * 0.48;
   return (
     <ImageBackground
       source={require("../assets/images/BG IMG GLF.png")}
@@ -169,7 +169,7 @@ const EndGame = () => {
                 />
               </View>
               <Text style={styles.podiumName}>{winners[1].name}</Text>
-              <Text style={styles.podiumScore}>2nd</Text>
+              {/* <Text style={styles.podiumScore}>2nd</Text> */}
             </View>
             {/* 1st Place */}
             <View
@@ -178,7 +178,7 @@ const EndGame = () => {
                 left: avatar1stLeft,
                 bottom: avatar1stBottom,
                 alignItems: "center",
-                zIndex: 2,
+                zIndex: 3,
               }}
             >
               <View
@@ -215,7 +215,7 @@ const EndGame = () => {
                   { fontWeight: "bold", color: podiumColors[0] },
                 ]}
               >
-                1st
+                {/* 1st */}
               </Text>
             </View>
             {/* 3rd Place */}
@@ -249,7 +249,7 @@ const EndGame = () => {
                 />
               </View>
               <Text style={styles.podiumName}>{winners[2].name}</Text>
-              <Text style={styles.podiumScore}>3rd</Text>
+              {/* <Text style={styles.podiumScore}>3rd</Text> */}
             </View>
           </View>
           {/* Fourth place and leaderboard */}
