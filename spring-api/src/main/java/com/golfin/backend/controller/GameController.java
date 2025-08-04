@@ -1,5 +1,7 @@
 package com.golfin.backend.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.golfin.backend.dto.GameDTO;
 import com.golfin.backend.model.Game;
 import com.golfin.backend.service.GameService;
@@ -18,10 +20,18 @@ import org.bson.Document;
 public class GameController {
 
     @Autowired
+    private ObjectMapper objectMapper;
+    
+    @Autowired
     private GameService gameService;
 
     @PostMapping("/add")
     public ResponseEntity<Game> addGame(@RequestBody GameDTO dto) {
+        try {
+            System.out.println("dto: " + objectMapper.writeValueAsString(dto));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
         try {
             Game savedGame = gameService.saveGame(dto);
             return ResponseEntity.ok(savedGame);
@@ -31,7 +41,7 @@ public class GameController {
         }
     }
 
-            @GetMapping("/with-players")
+    @GetMapping("/with-players")
         public ResponseEntity<?> getGamesWithPlayerDetails() {
             List<Document> games = gameService.getGamesWithPlayerDetails();
             return ResponseEntity.ok(games);

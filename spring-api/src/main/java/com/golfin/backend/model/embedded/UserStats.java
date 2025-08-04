@@ -1,21 +1,37 @@
 package com.golfin.backend.model.embedded;
 
 public class UserStats {
-
+    
+    private String id;
     private int position;
     private int shots;
     private int points;
     private int springedTraps;
+    private int KarmaTrigger;
+    private int KarmaSpent;
     private int won;
+    
 
     public UserStats() {}
 
-    public UserStats(int position, int shots, int points, int springedTraps, int won) {
+    public UserStats(String id, int position, int shots, int points, int springedTraps,int KarmaTrigger, int KarmaSpent, int won) {
+        this.id = id;
         this.position = position;
         this.shots = shots;
         this.points = points;
         this.springedTraps = springedTraps;
+        this.KarmaTrigger = KarmaTrigger;
+        this.KarmaSpent = KarmaSpent;
         this.won = won;
+        
+    }
+
+    public String getid(){
+        return id;
+    }
+
+    public void setid(String id){
+        this.id = id;
     }
 
     public int getPosition() {
@@ -44,12 +60,26 @@ public class UserStats {
 
     public int getSpringedTraps() {
         return springedTraps;
-    }
+    }       
 
     public void setSpringedTraps(int springedTraps) {
         this.springedTraps = springedTraps;
     }
+    public int getKarmaTrigger(){
+        return KarmaTrigger;
+    }
 
+    public void setKarmaTrigger(int KarmaTrigger){
+        this.KarmaTrigger=KarmaTrigger;
+    }
+
+    public int getKarmaSpent(){
+        return KarmaSpent;
+    }
+
+    public void setKarmaSpent(int KarmaSpent){
+        this.KarmaSpent=KarmaSpent;
+    }
     public int getWon() {
         return won;
     }
@@ -57,4 +87,6 @@ public class UserStats {
     public void setWon(int won) {
         this.won = won;
     }
+
+
 }

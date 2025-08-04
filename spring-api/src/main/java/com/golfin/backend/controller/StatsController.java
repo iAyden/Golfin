@@ -14,13 +14,13 @@ public class StatsController {
 
     @Autowired
     private StatsService statsService;
-
     @PostMapping("/add-ustats")
     public ResponseEntity<String> addUserStats(@RequestBody UserStatsDTO statsDTO) {
         boolean success = statsService.addStats(statsDTO);
         if (!success) {
             return ResponseEntity.badRequest().body("User not found");
         }
+        
         return ResponseEntity.ok("Stats added");
     }
 
