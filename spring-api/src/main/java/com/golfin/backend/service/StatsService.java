@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.golfin.backend.dto.UserStatsDTO;
 import com.golfin.backend.model.User;
 import com.golfin.backend.model.embedded.Achievement;
+import com.golfin.backend.model.embedded.GameHistory;
 import com.golfin.backend.model.embedded.UserStats;
 import com.golfin.backend.repository.UserRepository;
 
@@ -55,7 +56,7 @@ public class StatsService {
             currentAchievements = new ArrayList<>();
         }
         
-       List<Achievement> newAchievements = new ArrayList<>();
+        List<Achievement> newAchievements = new ArrayList<>();
 
         
         for (Achievement a : achievementService.evaluAchievementsFromGameStats(newStats)) {
@@ -69,7 +70,14 @@ public class StatsService {
                 newAchievements.add(a);
             }
         }
+        GameHistory gameHistory = new GameHistory();
+        gameHistory.setId(newStats.getGameid()); 
+        gameHistory.setUserStats(newStats);
 
+        if (user.getGameHistory() == null) {
+                user.setGameHistory(new ArrayList<>());
+            }
+            user.getGameHistory().add(gameHistory);
         currentAchievements.addAll(newAchievements);
 
         user.setAchievements(currentAchievements);

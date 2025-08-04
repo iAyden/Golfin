@@ -1,7 +1,8 @@
 package com.golfin.backend.model.embedded;
 
 public class UserStats {
-
+    
+    private String gameid;
     private int position;
     private int shots;
     private int points;
@@ -13,7 +14,8 @@ public class UserStats {
 
     public UserStats() {}
 
-    public UserStats(int position, int shots, int points, int springedTraps,int KarmaTrigger, int KarmaSpent, int won) {
+    public UserStats(String gameid, int position, int shots, int points, int springedTraps,int KarmaTrigger, int KarmaSpent, int won) {
+        this.gameid = gameid;
         this.position = position;
         this.shots = shots;
         this.points = points;
@@ -22,6 +24,14 @@ public class UserStats {
         this.KarmaSpent = KarmaSpent;
         this.won = won;
         
+    }
+
+    public String getGameid(){
+        return gameid;
+    }
+
+    public void setGameid(String gameid){
+        this.gameid = gameid;
     }
 
     public int getPosition() {

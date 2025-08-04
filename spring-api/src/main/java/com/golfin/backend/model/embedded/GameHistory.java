@@ -1,9 +1,10 @@
 package com.golfin.backend.model.embedded;
 
-import java.util.Date;
+
 
 public class GameHistory {
-    public String id;
+    private String id;
+    private UserStats stats; 
     // private String gameName;
     // private Date datePlayed;
     // private int score;
@@ -16,6 +17,9 @@ public class GameHistory {
     
     public String getId() {return id;}
     public void setId(String id ) {this.id = id;}
+
+    public UserStats getUserStats() {return stats;}
+    public void setUserStats(UserStats stats) {this.stats=stats;}
     // public String getGameName() { return gameName; }
     // public void setGameName(String gameName) { this.gameName = gameName; }
 

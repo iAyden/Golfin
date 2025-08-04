@@ -62,6 +62,7 @@ interface UserProfileDTO {
   stats: UserStats;
 }
 
+const gamesPerPage = 3;
 
 
 const App: React.FC = () => {
@@ -94,6 +95,19 @@ const App: React.FC = () => {
     { id: string; name: string }[]
   >([]);
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [newUsername, setNewUsername] = useState(profileData?.username || '');
+  const [newPhotoUrl, setNewPhotoUrl] = useState(profileData?.photoUrl || '');
+
+  //Esto es para lo de las paginas que no se amontone todo
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil((profileData?.gameHistory?.length || 0) / gamesPerPage);
+
+  const paginatedGames = profileData?.gameHistory?.slice(
+    (currentPage - 1) * gamesPerPage,
+    currentPage * gamesPerPage
+  );
   useEffect(() => {
     console.log("use efect");
     const verifyToken = async () => {
@@ -371,6 +385,7 @@ const App: React.FC = () => {
                 size={24}
                 color="#069809"
                 style={styles.socialIcon}
+                onPress={() => setIsEditing(true)}
               />
               <FontAwesome
                 name="sign-out"
@@ -804,7 +819,7 @@ const App: React.FC = () => {
                       {/* History Card */}
                       <Text style={styles.cardTitle}>History</Text>
                       {/* Last Game Played Section */}
-                      {profileData?.gameHistory?.map((game, index) => (
+                      {paginatedGames?.map((game, index) => (
                          <Animatable.View
                         key={index}
                         animation="fadeInUp"
@@ -826,10 +841,26 @@ const App: React.FC = () => {
                               Total Time: {game.totalTime}s
                             </Text>
                             <View style={styles.divider} />
+                             <Image source={require('../assets/images/MiniCourse1.jpg')} style={styles.imgTemporada}/>
                           </View>
                           </Animatable.View>
                         ))}
-
+                         <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 10 }}>
+                          {[...Array(totalPages)].map((_, pageIndex) => (
+                            <TouchableOpacity
+                              key={pageIndex}
+                              onPress={() => setCurrentPage(pageIndex + 1)}
+                              style={{
+                                marginHorizontal: 5,
+                                padding: 8,
+                                borderRadius: 6,
+                                backgroundColor: currentPage === pageIndex + 1 ? "#555" : "#ccc",
+                              }}
+                            >
+                              <Text style={{ color: "#fff" }}>{pageIndex + 1}</Text>
+                            </TouchableOpacity>
+                            ))}
+                            </View>
                         {/* Example progress bar (static) */}
                       <View style={styles.progressContainer}>
                         <Text style={styles.progressLabel}>
@@ -958,68 +989,153 @@ const App: React.FC = () => {
                   </View>
                   <View style={styles.divider} />
                   {/* Game Stats */}
-                  <View style={styles.gameStats}>
-                    <View style={styles.gameItem}>
-                      <View style={styles.gameIcon}>
-                        <FontAwesome name="flag" size={24} color="#069809" />
+                   <View style={styles.gameStats}>
+                        <View style={styles.gameItem}>
+                          <View style={styles.gameIcon}>
+                            <FontAwesome
+                              name="flag"
+                              size={24}
+                              color="#069809"
+                            />
+                          </View>
+                          <View style={styles.gameInfo}>
+                            <Text style={styles.gameName}>Average Points</Text>
+                            <Text style={styles.gameDetail}>
+                              {profileData?.stats.points}
+                            </Text>
+                          </View>
+                        </View>
+                        <View style={styles.gameItem}>
+                          <View style={styles.gameIcon}>
+                            <FontAwesome
+                              name="clock-o"
+                              size={24}
+                              color="#069809"
+                            />
+                          </View>
+                          <View style={styles.gameInfo}>
+                            <Text style={styles.gameName}>Average Postion</Text>
+                            <Text style={styles.gameDetail}>
+                              {profileData?.stats.position}
+                            </Text>
+                          </View>
+                        </View>
+                        <View style={styles.gameItem}>
+                          <View style={styles.gameIcon}>
+                            <FontAwesome
+                              name="heartbeat"
+                              size={24}
+                              color="#069809"
+                            />
+                          </View>
+                          <View style={styles.gameInfo}>
+                            <Text style={styles.gameName}>
+                              Shots
+                            </Text>
+                            <Text style={styles.gameDetail}>
+                              {profileData?.stats.shots}
+                            </Text>
+                          </View>
+                        </View>
+                        <View style={styles.gameItem}>
+                          <View style={styles.gameIcon}>
+                            <FontAwesome
+                              name="heartbeat"
+                              size={24}
+                              color="#069809"
+                            />
+                          </View>
+                          <View style={styles.gameInfo}>
+                            <Text style={styles.gameName}>
+                              SpringedTraps
+                            </Text>
+                            <Text style={styles.gameDetail}>
+                              {profileData?.stats.springedTraps}
+                            </Text>
+                          </View>
+                        </View>
+                        <View style={styles.gameItem}>
+                          <View style={styles.gameIcon}>
+                            <FontAwesome
+                              name="heartbeat"
+                              size={24}
+                              color="#069809"
+                            />
+                          </View>
+                          <View style={styles.gameInfo}>
+                            <Text style={styles.gameName}>
+                              Wins
+                            </Text>
+                            <Text style={styles.gameDetail}>
+                              {profileData?.stats.won}
+                            </Text>
+                          </View>
+                        </View>
+                             <View style={styles.gameItem}>
+                          <View style={styles.gameIcon}>
+                            <FontAwesome
+                              name="heartbeat"
+                              size={24}
+                              color="#069809"
+                            />
+                          </View>
+                          <View style={styles.gameInfo}>
+                            <Text style={styles.gameName}>
+                              Karma Spent
+                            </Text>
+                            <Text style={styles.gameDetail}>
+                              {profileData?.stats.karmaSpent}
+                            </Text>
+                          </View>
+                        </View>
                       </View>
-                      <View style={styles.gameInfo}>
-                        <Text style={styles.gameName}>Hole in one</Text>
-                        <Text style={styles.gameDetail}>
-                          Range: challenguer lol
-                        </Text>
-                      </View>
-                    </View>
-                    <View style={styles.gameItem}>
-                      <View style={styles.gameIcon}>
-                        <FontAwesome name="clock-o" size={24} color="#069809" />
-                      </View>
-                      <View style={styles.gameInfo}>
-                        <Text style={styles.gameName}>Scoring time</Text>
-                        <Text style={styles.gameDetail}>Range: PLATA</Text>
-                      </View>
-                    </View>
-                    <View style={styles.gameItem}>
-                      <View style={styles.gameIcon}>
-                        <FontAwesome
-                          name="heartbeat"
-                          size={24}
-                          color="#069809"
-                        />
-                      </View>
-                      <View style={styles.gameInfo}>
-                        <Text style={styles.gameName}>Hole interrupted</Text>
-                        <Text style={styles.gameDetail}>Range: PLATINITO</Text>
-                      </View>
-                    </View>
-                  </View>
                 </View>
                 {/* History Card */}
                 <View style={dynamicStyles.card}>
                   <Text style={styles.cardTitle}>History</Text>
-                  {/* Last Game Played Section */}
-                  <View style={styles.lastGameSection}>
-                    <Text style={styles.lastGameTitle}>Last Game Played</Text>
-                    <Text style={styles.lastGameDetail}>
-                      "Golf Masters 2025"
-                    </Text>
-                    <Text style={styles.lastGameSubDetail}>
-                      Date: 2025-06-01
-                    </Text>
-                    <Text style={styles.lastGameSubDetail}>Score: 72 (-1)</Text>
-                    <Text style={styles.lastGameSubDetail}>
-                      Traps Activated: 3
-                    </Text>
-                    <Text style={styles.lastGameSubDetail}>
-                      Birdies: 5 | Pars: 10 | Bogeys: 3
-                    </Text>
-                  </View>
-                  <Image
-                    source={{
-                      uri: "https://media.tacdn.com/media/attractions-splice-spp-674x446/07/b3/5b/3a.jpg",
-                    }}
-                    style={styles.imgTemporada}
-                  />
+                      {/* Last Game Played Section */}
+                      {paginatedGames?.map((game, index) => (
+                         <Animatable.View
+                        key={index}
+                        animation="fadeInUp"
+                        delay={index * 200}
+                        style={styles.lastGameSection}
+                      >
+                          <View key={index} style={styles.lastGameSection}>
+                            <Text style={styles.lastGameTitle}>Course: {game.course}</Text>
+                            <Text style={styles.lastGameSubDetail}>
+                              Date: {new Date(game.date).toLocaleDateString()}
+                            </Text>
+                            <Text style={styles.lastGameSubDetail}>
+                              Players: {game.players.map(p => p.username).join(", ")}
+                            </Text>
+                            <Text style={styles.lastGameSubDetail}>
+                              Traps Activated: {game.totalSpringedTraps}
+                            </Text>
+                            <Text style={styles.lastGameSubDetail}>
+                              Total Time: {game.totalTime}s
+                            </Text>
+                            <View style={styles.divider} />
+                            <Image source={require('../assets/images/MiniCourse1.jpg')} style={styles.imgTemporada}/>
+                          </View>
+                          </Animatable.View>
+                        ))}
+                        <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 10 }}>
+                          {[...Array(totalPages)].map((_, pageIndex) => (
+                            <TouchableOpacity
+                              key={pageIndex}
+                              onPress={() => setCurrentPage(pageIndex + 1)}
+                              style={{
+                                marginHorizontal: 5,
+                                padding: 8,
+                                borderRadius: 6,
+                                backgroundColor: currentPage === pageIndex + 1 ? "#555" : "#ccc",
+                              }}
+                            >
+                              <Text style={{ color: "#fff" }}>{pageIndex + 1}</Text>
+                            </TouchableOpacity>
+                            ))}
+                            </View>
                   {/* Example progress bar (static) */}
                   <View style={styles.progressContainer}>
                     <Text style={styles.progressLabel}>
@@ -1040,48 +1156,22 @@ const App: React.FC = () => {
                     </View>
                   </View>
 
-                  <View style={styles.divider} />
-                  <Text style={styles.sectionTitle}>Golf Achievements</Text>
-                  <View style={styles.achievementItem}>
-                    <FontAwesome
-                      name="trophy"
-                      size={24}
-                      color="#FFD700"
-                      style={styles.achievementIcon}
-                    />
-                    <View style={styles.achievementText}>
-                      <Text style={styles.achievementTitle}>El mas mejor</Text>
-                      <Text>
-                        Primer puesto - Torneo internacional de BEYBLADE
-                      </Text>
-                    </View>
-                  </View>
-                  <View style={styles.achievementItem}>
-                    <FontAwesome
-                      name="star"
-                      size={24}
-                      color="#C0C0C0"
-                      style={styles.achievementIcon}
-                    />
-                    <View style={styles.achievementText}>
-                      <Text style={styles.achievementTitle}>
-                        MOLESTADOR DE PERSONAS
-                      </Text>
-                      <Text>ME LA PARTIEROn</Text>
-                    </View>
-                  </View>
-                  <View style={styles.achievementItem}>
-                    <FontAwesome
-                      name="trophy"
-                      size={24}
-                      color="#CD7F32"
-                      style={styles.achievementIcon}
-                    />
-                    <View style={styles.achievementText}>
-                      <Text style={styles.achievementTitle}>Holes record</Text>
-                      <Text>45 hoyos seguidos</Text>
-                    </View>
-                  </View>
+                 <View style={styles.divider} />
+                      <Text style={styles.sectionTitle}>Golf Achievements</Text>
+                      {profileData?.achievements?.map((ach, index) => (
+                      <Animatable.View
+                        key={index}
+                        animation="fadeInUp"
+                        delay={index * 200}
+                        style={styles.achievementItem}
+                      >
+                        <FontAwesome name="trophy" size={24} color="#FFD700" style={styles.achievementIcon} />
+                        <View style={styles.achievementText}>
+                          <Text style={styles.achievementTitle}>{ach.title}</Text>
+                          <Text>{ach.description}</Text>
+                        </View>
+                      </Animatable.View>
+                    ))}
                 </View>
                 {/* Friends Card (simplified) */}
                 <View style={dynamicStyles.card}>

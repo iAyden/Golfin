@@ -48,16 +48,16 @@ public class GameService {
          
             
         );
-        GameHistory history = new GameHistory();
-            history.setId(game.getId());
-        for (ObjectId playerId : game.getPlayers()) {
-            Optional<User> userOptional = userRepository.findById(playerId);
-            if (userOptional.isPresent()) {
-                User user = userOptional.get();
-                user.getGameHistory().add(history);
-                userRepository.save(user);
-            }
-        }
+        // GameHistory history = new GameHistory();
+        //     history.setId(game.getId());
+        // for (ObjectId playerId : game.getPlayers()) {
+        //     Optional<User> userOptional = userRepository.findById(playerId);
+        //     if (userOptional.isPresent()) {
+        //         User user = userOptional.get();
+        //         user.getGameHistory().add(history);
+        //         userRepository.save(user);
+        //     }
+        // }
         return gameRepository.save(game);
     }
     public List<String> getUsernamesFromGame(Game game) {

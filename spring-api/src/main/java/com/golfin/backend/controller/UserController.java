@@ -19,6 +19,7 @@ import com.golfin.backend.model.embedded.UserStats;
 import com.golfin.backend.model.Game;
 import java.util.*;
 import java.util.stream.Collectors;
+import com.golfin.backend.dto.LeaderboardDTO;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/users")
@@ -151,4 +152,17 @@ public class UserController {
         List<User> amigos = userRepository.findAllById(user.getFriends());
         return ResponseEntity.ok(amigos);
     }
+    @GetMapping("/leaderboard")
+    public ResponseEntity<List<LeaderboardDTO>> getLeaderboard() {
+        List <User> users = userRepository.findAllByOrderByStats_WonDesc();
+        List<LeaderboardDTO> leaderboard = new ArrayList<>();
+        int position = 1;
+        for(User user: users){
+            leaderboard.add(new LeaderboardDTO(position++, user.getUsername(), user.getphotoURL(),user.getStats().getWon()));
+            
+        }
+
+    return ResponseEntity.ok(leaderboard);
+}
+
 }
