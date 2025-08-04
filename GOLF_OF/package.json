@@ -44,7 +44,8 @@
     "react-native-video": "^6.14.1",
     "react-native-web": "~0.20.0",
     "yup": "^1.6.1",
-    "zod": "^3.25.61"
+    "zod": "^3.25.61",
+    "expo-image-picker": "~16.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

@@ -4,77 +4,13 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const { width, height } = Dimensions.get('window');
 
-type LeaderboardStructure = {
-  id: string;
-  name: string;
-  image: string;
-  stats: {
-    wins: number;
-    points: number;
-    winRate: number;
-    matchesPlayed: number;
-  };
+// Tipo real que viene del backend
+export type LeaderboardStructure = {
+  position: number;
+  username: string;
+  photoURL: string;
+  wins: number;
 };
-
-const dataPhP: LeaderboardStructure[] = [
-  {
-    id: '1',
-    name: 'League of leguends',
-    image: 'https://i.pinimg.com/236x/36/b9/9d/36b99dd44debc8614db0c7445ac57b3b.jpg',
-    stats: {
-      wins: 15,
-      points: 2450,
-      winRate: 88,
-      matchesPlayed: 17,
-    },
-  },
-  {
-    id: '2',
-    name: 'Programacion PhP',
-    image: 'https://i.pinimg.com/236x/36/b9/9d/36b99dd44debc8614db0c7445ac57b3b.jpg',
-    stats: {
-      wins: 20,
-      points: 2350,
-      winRate: 82,
-      matchesPlayed: 17,
-    },
-  },
-  {
-    id: '3',
-    name: 'Faker',
-    image: 'https://i.pinimg.com/236x/36/b9/9d/36b99dd44debc8614db0c7445ac57b3b.jpg',
-    stats: {
-      wins: 300,
-      points: 2200,
-      winRate: 71,
-      matchesPlayed: 17,
-    },
-  },
-  {
-    id: '4',
-    name: 'Mordekaiser',
-    image: 'https://i.pinimg.com/236x/36/b9/9d/36b99dd44debc8614db0c7445ac57b3b.jpg',
-    stats: {
-      wins: 10,
-      points: 2100,
-      winRate: 65,
-      matchesPlayed: 17,
-    },
-  },
-  {
-    id: '5',
-    name: 'Sonic',
-    image: 'https://i.pinimg.com/236x/36/b9/9d/36b99dd44debc8614db0c7445ac57b3b.jpg',
-    stats: {
-      wins: 19,
-      points: 2050,
-      winRate: 60,
-      matchesPlayed: 17,
-    },
-  },
-];
-
-const ordenamiento_players = dataPhP.sort((a, b) => b.stats.wins - a.stats.wins);
 
 const StatIcon = ({ iconName, color = '#2E7D32' }: { iconName: string; color?: string }) => (
   <View style={styles.iconContainer}>
@@ -104,25 +40,28 @@ const PositionNumber = ({ position }: { position: number }) => {
   );
 };
 
-const LeaderboardThing = ({ item, index }: { item: LeaderboardStructure, index: number }) => {
-  const position = index + 1; 
-  
+const LeaderboardThing = ({ item }: { item: LeaderboardStructure }) => {
+  const position = item.position;
+
   return (
     <View style={[
-      styles.itemContainer, 
+      styles.itemContainer,
       position === 1 && styles.firstPlaceItem,
       position === 2 && styles.secondPlaceItem,
       position === 3 && styles.thirdPlaceItem
     ]}>
       <PositionNumber position={position} />
-      
-      <Image source={{ uri: item.image }} style={[
-        styles.userImage,
-        position === 1 && styles.firstPlaceImage,
-        position === 2 && styles.secondPlaceImage,
-        position === 3 && styles.thirdPlaceImage
-      ]} />
-      
+
+      <Image
+        source={{ uri: item.photoURL }}
+        style={[
+          styles.userImage,
+          position === 1 && styles.firstPlaceImage,
+          position === 2 && styles.secondPlaceImage,
+          position === 3 && styles.thirdPlaceImage
+        ]}
+      />
+
       <View style={styles.userInfo}>
         <Text style={[
           styles.userName,
@@ -130,25 +69,13 @@ const LeaderboardThing = ({ item, index }: { item: LeaderboardStructure, index: 
           position === 2 && styles.secondPlaceName,
           position === 3 && styles.thirdPlaceName
         ]}>
-          {item.name}
+          {item.username}
         </Text>
-        
+
         <View style={styles.statsContainer}>
           <View style={styles.statItem}>
             <StatIcon iconName="trophy" color="#FFC107" />
-            <Text style={styles.statValue}>{item.stats.wins}</Text>
-          </View>
-          <View style={styles.statItem}>
-            <StatIcon iconName="star" color="#FF9800" />
-            <Text style={styles.statValue}>{item.stats.points}</Text>
-          </View>
-          <View style={styles.statItem}>
-            <StatIcon iconName="line-chart" color="#4CAF50" />
-            <Text style={styles.statValue}>{item.stats.winRate}%</Text>
-          </View>
-          <View style={styles.statItem}>
-            <StatIcon iconName="flag" color="#2196F3" />
-            <Text style={styles.statValue}>{item.stats.matchesPlayed}</Text>
+            <Text style={styles.statValue}>{item.wins}</Text>
           </View>
         </View>
       </View>
@@ -156,7 +83,7 @@ const LeaderboardThing = ({ item, index }: { item: LeaderboardStructure, index: 
   );
 };
 
-const Leaderboard = () => {
+const Leaderboard = ({ data }: { data: LeaderboardStructure[] }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -167,9 +94,9 @@ const Leaderboard = () => {
         </View>
       </View>
       <FlatList
-        data={ordenamiento_players}
-        renderItem={({ item, index }) => <LeaderboardThing item={item} index={index} />}
-        keyExtractor={(item) => item.id}
+        data={data}
+        renderItem={({ item }) => <LeaderboardThing item={item} />}
+        keyExtractor={(item) => item.username}
         contentContainerStyle={styles.listContent}
       />
     </SafeAreaView>
@@ -257,22 +184,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: width * 0.04,
   },
-  firstPlaceImage: {
-    width: width * 0.14,
-    height: width * 0.14,
-    borderRadius: width * 0.07,
-    borderColor: '#FFD700',
-    borderWidth: width * 0.007,
-  },
-  firstPositionText: {
-    color: 'white',
-  },
-  secondPositionText: {
-    color: 'white',
-  },
-  thirdPositionText: {
-    color: 'white',
-  },
+  firstPositionText: { color: 'white' },
+  secondPositionText: { color: 'white' },
+  thirdPositionText: { color: 'white' },
+  otherPositionText: { color: '#2E7D32' },
   userImage: {
     width: width * 0.12,
     height: width * 0.12,
@@ -280,6 +195,13 @@ const styles = StyleSheet.create({
     marginRight: width * 0.03,
     borderWidth: width * 0.005,
     borderColor: '#E0E0E0',
+  },
+  firstPlaceImage: {
+    borderColor: '#FFD700',
+    borderWidth: width * 0.007,
+    width: width * 0.14,
+    height: width * 0.14,
+    borderRadius: width * 0.07,
   },
   secondPlaceImage: {
     borderColor: '#C0C0C0',
@@ -298,10 +220,6 @@ const styles = StyleSheet.create({
     marginBottom: height * 0.01,
     color: '#263626',
   },
-  thirdPlaceName: {
-    fontWeight: '700',
-    color: '#B08D57',
-  },
   firstPlaceName: {
     fontSize: width * 0.045,
     fontWeight: '700',
@@ -311,13 +229,18 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#7D7D7D',
   },
+  thirdPlaceName: {
+    fontWeight: '700',
+    color: '#B08D57',
+  },
   statsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
   },
   statItem: {
     alignItems: 'center',
     minWidth: width * 0.15,
+    marginRight: width * 0.03,
   },
   iconContainer: {
     backgroundColor: '#E8F5E9',
@@ -332,9 +255,6 @@ const styles = StyleSheet.create({
     fontSize: width * 0.033,
     fontWeight: '500',
     color: '#455A64',
-  },
-  otherPositionText: {
-    color: '#2E7D32',
   },
 });
 

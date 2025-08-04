@@ -3,9 +3,10 @@ import { View, StyleSheet } from 'react-native';
 import Leaderboard from '@/components/UserComponents/LeaderBoard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
+import { LeaderboardStructure } from '@/components/UserComponents/LeaderBoard';
 const LeaderBoardScreen = () => { 
   const [userData, setUserData] = useState([]);
-  const [leaderboard, setLeaderboard] = useState([]);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardStructure[]>([]);
   useEffect(() => {
     const fetchUserCards = async () => {
       try {
@@ -26,16 +27,14 @@ const LeaderBoardScreen = () => {
   }, []);
 
   console.log("Se imprime esto por el local storage", userData);
- useEffect(() => {
+  useEffect(() => {
     axios.get('http://127.0.0.1:8080/users/leaderboard')
       .then(res => setLeaderboard(res.data))
       .catch(err => console.error(err));
   }, []);
-  return (
-    <View> 
-      <Leaderboard/>
-    </View>
-  );
+
+  return <Leaderboard data={leaderboard} />;
 };
+
 
 export default LeaderBoardScreen;

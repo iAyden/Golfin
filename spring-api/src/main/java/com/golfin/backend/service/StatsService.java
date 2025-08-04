@@ -71,7 +71,7 @@ public class StatsService {
             }
         }
         GameHistory gameHistory = new GameHistory();
-        gameHistory.setId(newStats.getGameid()); 
+        gameHistory.setId(newStats.getid()); 
         gameHistory.setUserStats(newStats);
 
         if (user.getGameHistory() == null) {
