@@ -6,7 +6,7 @@ import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
 import socketService from "../components/methods/socketService";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import Icon from 'react-native-vector-icons/FontAwesome'; 
 
 // Definicion de tipos
 type UserCardType = {
@@ -345,9 +345,7 @@ const handlePlayerFinished = (payload: any) => {
 
  setUserCards(prevUserCards =>
    prevUserCards.map(card =>
-     card.name === payload.name
-       ? { ...card, points: payload.points, karma: card.karma } // Actualizas points y karma si quieres
-       : card
+     card.name === payload.name ? { ...card, points: payload.points, karma: card.karma }  : card
    )
  );
 
@@ -432,7 +430,7 @@ const handleReactivateTrap = (payload: any) => {
 };
 
 const handleDeactivateTrap = (payload: any) => {
-  console.log("Entro a deactivateTrap");
+  console.log("Entro a deactivateTrap", payload);
 
 };
 
@@ -490,13 +488,13 @@ const handleDeactivateTrap = (payload: any) => {
 const handleStartPress = () => { if (partyData) socketService.startGame(partyData.code); };
 
 function enableTrap(trapName: string) {
-  const updatedItems = shopItems.map(item => item.name === trapName ? { ...item, isOnCooldown: false } : item );
+  const updatedItems = shopItems.map(item => item.name === trapName ? { ...item, cooldown: false } : item );
   setShopItems(updatedItems);
   console.log("Trampa activada:", trapName);
 }
 
 function disableTrap(trapName: string) {
-  const updatedItems = shopItems.map(item => item.name === trapName ? { ...item, isOnCooldown: true } : item );
+  const updatedItems = shopItems.map(item => item.name === trapName ? { ...item, cooldown: true } : item );
   setShopItems(updatedItems);
   console.log("Trampa desactivada :", trapName);
 }
@@ -508,7 +506,7 @@ const BuyTrap = (nameTrap : string ) => {
  if (!gameStarted) {  Alert.alert("Espera", "INICIA EL JUEGO PRIMERO"); return; }
  if(nameTrap.length === 0) { console.log("No se pudo comprar la trampa"); return; }
 
- disableTrap(nameTrap.toLowerCase());
+ disableTrap(nameTrap);
  socketService.buyTrap(nameTrap.toLowerCase());
  socketService.activateTrap(nameTrap.toLowerCase());
 
@@ -828,19 +826,45 @@ useEffect(() => {
 
 
            <View style={styles.shopGrid}>
-             {shopItems.map((item) => (
-               <TouchableOpacity
-                disabled={!gameStarted || karmaActual < item.cost || item.cooldown}
-                style={[ styles.shopItem, { backgroundColor: item.backgroundColor },
-                  (!gameStarted || karmaActual < item.cost || item.cooldown) && styles.disabledItem,]}
-                onPress={() => BuyTrap(item.name)} >
-                <Image source={item.icon} style={styles.itemImage} />
-                <Text style={styles.itemName}>{item.name}</Text>
-                <Text style={styles.itemPrice}>{item.cost} pts</Text>
-              </TouchableOpacity>
-             ))}
-           </View>
+              {shopItems.map((item) => (
+                <TouchableOpacity  key={item.id}
+                  disabled={!gameStarted || karmaActual < item.cost || item.cooldown}
+                  style={[  styles.shopItem, { backgroundColor: item.backgroundColor },  (!gameStarted || karmaActual < item.cost || item.cooldown) && styles.disabledItem,  ]}
+                  onPress={() => BuyTrap(item.name)} >
+                  <Image source={item.icon} style={styles.itemImage} />
+                  <Text style={styles.itemName}>{item.name}</Text>
+                  <Text style={styles.itemPrice}>{item.cost} pts</Text>
 
+                  {item.cooldown && (
+                    <View style={styles.cooldownOverlay}>
+                      <Icon name="clock-o" size={100} color="white" />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+            
+            {showTurnModal && (
+                <View style={styles.modalOverlay}>
+                  <View style={styles.modalContent}>
+                    {prepTime !== null && prepTime > 0 ? (
+                      <>
+                        <Text style={styles.modalTitle}>Watch out...</Text>
+                        <Text style={styles.modalTimer}>{prepTime}s remaining</Text>
+                      </>
+                    ) 
+                    : 
+                    (
+                      isMyTurn && (
+                        <>
+                          <Text style={styles.modalTitle}>¡Go ahead!</Text>
+                          <Text style={styles.modalTimer}>{turnTime}s remaining</Text>
+                        </>
+                      )
+                    )}
+                  </View>
+                </View>
+              )}
 
            <TouchableOpacity  style={[styles.flipButton, !gameStarted && styles.disabledButton]} onPress={flipCard}  disabled={!gameStarted} >
              <Text style={styles.flipButtonText}>Back to lobby</Text>
@@ -855,10 +879,8 @@ useEffect(() => {
  // Chicos esto es para conservar el karma de el jugador y poder mantener el estado de los botones
 const karmaActual = userCards.find(XDuwu => XDuwu.name === userName)?.karma ?? 0;
 useEffect(() => {
-  setShopItems((prevItems) =>
-    prevItems.map((item) => ({
-      ...item,
-      state: (gameStarted && karmaActual >= item.cost) ? "enable" : "disable",
+  setShopItems((AntStats) =>
+    AntStats.map((stat) => ({ ...stat, state: (gameStarted && karmaActual >= stat.cost) ? "enable" : "disable",
     }))
   );
 }, [karmaActual, gameStarted]);
@@ -1354,5 +1376,29 @@ modalOverlay: {
    textShadowRadius: 5,
  },
 
+cooldownOverlay: {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.4)', 
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: 10,
+  zIndex: 1,
+},
+
+cooldownText: {
+  color: 'white',
+  fontWeight: 'bold',
+  fontSize: 16,
+},
+cooldownIcon: {
+  width: 120,
+  height: 120,
+  opacity: 0.8,
+  backgroundColor: 'transparent',
+},
 
 });
