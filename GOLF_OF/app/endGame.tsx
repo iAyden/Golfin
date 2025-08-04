@@ -89,7 +89,7 @@ const EndGame = () => {
   // Podium image reference (fixed size)
   const podiumImgHeight = 200;
   const podiumImgWidth = podiumAreaWidth;
-  const podiumBottom = -50;
+  const podiumBottom = -80;
   // This is supposed to be RESPONSIVE pero ni jala alch
   // 1st place: center, slightly above center step
   const avatar1stLeft = podiumImgWidth * 0.44 - avatarBase / 2;
