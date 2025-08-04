@@ -10,11 +10,13 @@ import java.util.List;
 public interface GameRepository extends MongoRepository<Game, String> {
 
     // Buscar todos los juegos donde un jugador participó
-    List<Game> findByPlayerUsernamesContaining(String username);
+    List<Game> findByplayersContaining(String players);
 
-    // Buscar todos los juegos ganados por un jugador
-    List<Game> findByWinner(String winner);
 
-    List<Game> findByPlayerIdsContaining(String playerId);
+    List<Game> findByWinner(String winner);     //Buscar juegos ganados por un jugador
+
+    List<Game> findByIdIn(List<String> ids);
+    
+    // List<Game> findByPlayerIdsContaining(String playerId);
 
 }

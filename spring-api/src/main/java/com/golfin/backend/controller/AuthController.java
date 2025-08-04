@@ -11,6 +11,8 @@ import com.golfin.backend.dto.LoginResponse;
 import com.golfin.backend.dto.SignupDTO;
 import com.golfin.backend.dto.TokenRequest;
 import com.golfin.backend.model.User;
+import com.golfin.backend.model.embedded.GameHistory;
+import com.golfin.backend.model.embedded.UserStats;
 import com.golfin.backend.repository.UserRepository;
 import com.golfin.backend.security.JwtUtil;
 import com.golfin.backend.util.PasswordUtil;
@@ -21,6 +23,8 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
+
+import java.util.ArrayList;
 import java.util.Collections;
 
 @RestController
@@ -68,9 +72,19 @@ public class AuthController {
         }
         
         User newUser = new User();
+        UserStats newUserStats = new UserStats();
+        newUserStats.setPoints(0);
+        newUserStats.setPosition(0);
+        newUserStats.setShots(0);
+        newUserStats.setSpringedTraps(0);
+        newUserStats.setWon(0);
+        newUserStats.setKarmaSpent(0);
+        newUserStats.setKarmaTrigger(0);
         newUser.setEmail(signupDTO.getEmail());
         newUser.setUsername(signupDTO.getUsername());
         newUser.setPassword(PasswordUtil.hash(signupDTO.getPassword()))  ;
+        newUser.setStats(newUserStats);
+        newUser.setGameHistory(new ArrayList<>());
         userRepository.save(newUser);
         String jwt = jwtUtil.generateToken(newUser.getEmail());
             if(jwt==null || jwt.isEmpty()){
@@ -107,7 +121,12 @@ public class AuthController {
         String name = (String) payload.get("name");
         String picture = (String) payload.get("picture");
         String googleSub = payload.getSubject();
-
+        UserStats newUserStats = new UserStats();
+        newUserStats.setPoints(0);
+        newUserStats.setPosition(0);
+        newUserStats.setShots(0);
+        newUserStats.setSpringedTraps(0);
+        newUserStats.setWon(0);
         User user = userRepository.findByGoogleSub(googleSub);
         if (user == null) {
             user = userRepository.findByEmail(email);
@@ -118,6 +137,7 @@ public class AuthController {
                 user.setphotoURL(picture);
                 user.setgoogleSub(googleSub);
                 user.setauthProvider("GOOGLE");
+                user.setStats(newUserStats);
                 userRepository.save(user);
             }
         }

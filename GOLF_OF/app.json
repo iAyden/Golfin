@@ -7,11 +7,6 @@
     "icon": "./assets/images/golf.png",
     "scheme": "golfin",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "splash": {
-      "resizeMode": "contain",
-      "foregroundImage": "./assets/images/BG IMG GLF.png"
-    },
     "ios": {
       "supportsTablet": true
     },
@@ -23,6 +18,12 @@
       "edgeToEdgeEnabled": true,
       "package": "com.anonymous.GOLFIN"
     },
+    "splash": {
+      "resizeMode": "contain",
+      "image": "./assets/images/BG IMG GLF.png",
+      "backgroundColor": "#ffffff"
+    },
+
     "web": {
       "bundler": "metro",
       "output": "static",
@@ -34,6 +35,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "73b0f30f-dd05-4ca2-ad81-c079c1f71cf3"
+      }
+    },
+    "owner": "iayden"
   }
 }
