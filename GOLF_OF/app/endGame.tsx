@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import LeaderBoard from "./LeaderBoard";
 import { FontAwesome } from "@expo/vector-icons";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Example winners data (replace with real data as needed)
 type Winner = {
@@ -77,24 +77,22 @@ const winners: Winner[] = [
 const podiumColors = ["#FFD700", "#C0C0C0", "#CD7F32"];
 
 const EndGame = () => {
-
-
   //////////////// AQUI LA DATA DE LA LEADERBOARD QUE SE PASA DESDE createLobby /////////////////
   const [userData, setUserData] = useState([]);
 
   useEffect(() => {
     const fetchUserCards = async () => {
       try {
-        const storedData = await AsyncStorage.getItem('latestUserCards');
+        const storedData = await AsyncStorage.getItem("latestUserCards");
         if (storedData) {
           const parsedData = JSON.parse(storedData);
-          console.log('DATA cargada de la localStorage: ', parsedData);
+          console.log("DATA cargada de la localStorage: ", parsedData);
           setUserData(parsedData);
         } else {
-          console.log('No hay DATA en localStorage');
+          console.log("No hay DATA en localStorage");
         }
       } catch (error) {
-        console.error('Error leyendo la locl storagE', error);
+        console.error("Error leyendo la locl storagE", error);
       }
     };
 
@@ -102,15 +100,7 @@ const EndGame = () => {
   }, []);
 
   console.log("Se imprime esto por el local storage", userData);
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const { width, height } = Dimensions.get("window");
   // Responsive max width for podium area
@@ -131,10 +121,10 @@ const EndGame = () => {
   const avatar1stBottom = podiumBottom + podiumImgHeight * 0.68;
   // 2nd place: left step
   const avatar2ndLeft = podiumImgWidth * 0.3 - avatar2nd / 2;
-  const avatar2ndBottom = podiumBottom + podiumImgHeight * 0.48;
+  const avatar2ndBottom = podiumBottom + podiumImgHeight * 0.55;
   // 3rd place: right step
   const avatar3rdLeft = podiumImgWidth * 0.62 - avatar3rd / 2;
-  const avatar3rdBottom = podiumBottom + podiumImgHeight * 0.38;
+  const avatar3rdBottom = podiumBottom + podiumImgHeight * 0.48;
   return (
     <ImageBackground
       source={require("../assets/images/BG IMG GLF.png")}
@@ -180,7 +170,7 @@ const EndGame = () => {
                 left: avatar2ndLeft,
                 bottom: avatar2ndBottom,
                 alignItems: "center",
-                zIndex: 2,
+                zIndex: 1, // behind 1st place
               }}
             >
               <View
@@ -204,7 +194,7 @@ const EndGame = () => {
                 />
               </View>
               <Text style={styles.podiumName}>{winners[1].name}</Text>
-              <Text style={styles.podiumScore}>2nd</Text>
+              {/* <Text style={styles.podiumScore}>2nd</Text> */}
             </View>
             {/* 1st Place */}
             <View
@@ -213,7 +203,7 @@ const EndGame = () => {
                 left: avatar1stLeft,
                 bottom: avatar1stBottom,
                 alignItems: "center",
-                zIndex: 2,
+                zIndex: 2, // in front of 2nd and 3rd
               }}
             >
               <View
@@ -249,9 +239,7 @@ const EndGame = () => {
                   styles.podiumScore,
                   { fontWeight: "bold", color: podiumColors[0] },
                 ]}
-              >
-                1st
-              </Text>
+              ></Text>
             </View>
             {/* 3rd Place */}
             <View
@@ -260,7 +248,7 @@ const EndGame = () => {
                 left: avatar3rdLeft,
                 bottom: avatar3rdBottom,
                 alignItems: "center",
-                zIndex: 2,
+                zIndex: 1, // behind 1st place
               }}
             >
               <View
@@ -284,7 +272,7 @@ const EndGame = () => {
                 />
               </View>
               <Text style={styles.podiumName}>{winners[2].name}</Text>
-              <Text style={styles.podiumScore}>3rd</Text>
+              {/* <Text style={styles.podiumScore}>3rd</Text> */}
             </View>
           </View>
           {/* Fourth place and leaderboard */}
@@ -314,7 +302,9 @@ const EndGame = () => {
               <Text style={styles.fourthScore}>4th Place</Text>
             </View>
           </View>
-          <LeaderBoard />
+          <View style={styles.leaderboardContainer}>
+            <LeaderBoard />
+          </View>
         </View>
       </ScrollView>
     </ImageBackground>
@@ -446,6 +436,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#c19a6b", // fallback wood color
     borderWidth: 1,
     borderColor: "#8d6748",
+  },
+  leaderboardContainer: {
+    borderRadius: 24,
+    overflow: "hidden",
+    backgroundColor: "rgba(255,255,255,0.85)",
+    marginTop: 8,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 2,
   },
 });
 
