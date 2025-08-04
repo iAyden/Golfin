@@ -33,14 +33,15 @@ type Message struct {
 }
 
 type UStats struct {
-	GameId        int `json:"id"`
-	Position      int `json:"position"`
-	Shots         int `json:"shots"`
-	Points        int `json:"points"`
-	SpringedTraps int `json:"springedTraps"`
-	KarmaTrigger  int `json:"karmaTrigger"`
-	KarmaSpent    int `json:"karmaSpent"`
-	Won           int `json:"won"`
+	GameId        string `json:"id"`
+	Position      int    `json:"position"`
+	Shots         int    `json:"shots"`
+	Points        int    `json:"points"`
+	Score         string `json:"score"`
+	SpringedTraps int    `json:"springedTraps"`
+	KarmaTrigger  int    `json:"karmaTrigger"`
+	KarmaSpent    int    `json:"karmaSpent"`
+	Won           int    `json:"won"`
 }
 
 type GStats struct {
@@ -279,7 +280,7 @@ func (game *Game) gameLoop() {
 	game.Stats.TimeElapsed = int(time.Since(globalTime).Seconds())
 
 	for i, player := range game.Party.Members {
-		game.Party.Members[i].Stats.GameId = game.Id
+		game.Party.Members[i].Stats.GameId = strconv.Itoa(game.Id)
 		game.Stats.Players = append(game.Stats.Players, player.Name)
 	}
 
@@ -321,6 +322,7 @@ func playerFinished(party *Party, game *Game, i int, start time.Time) {
 	points := calculatePoints(score, timeOfGoal)
 	party.Members[i].Stats.Points = points
 	party.Members[i].Stats.Shots = game.Round
+	party.Members[i].Stats.Score = score
 
 	data := map[string]interface{}{
 		"name":   party.Members[i].Name,
@@ -471,7 +473,7 @@ func (user *User) readGameMessages(game *Game) {
 		case "buyTrap":
 			buyTrap(user, msg)
 		case "activateTrap":
-			activateTrap(user, msg, game)
+			go activateTrap(user, msg, game)
 		}
 	}
 }
@@ -484,7 +486,7 @@ func activateTrap(user *User, msg Message, game *Game) {
 
 	trap := payload["trap"].(string)
 	fmt.Println("La trampa que vamos a activar es ", trap)
-	trapLocation := fmt.Sprintf("/trampa?trampa='%s'", trap)
+	trapLocation := "/" + trap
 	url := (raspUrl + trapLocation)
 
 	http.Get(url)
@@ -492,6 +494,9 @@ func activateTrap(user *User, msg Message, game *Game) {
 	var data = map[string]interface{}{
 		"trap": trap,
 	}
+
+	sendMessage("deactivateTrap", data, user)
+
 	var gameMembers = game.Party.Members
 	fmt.Println("Empezamos a iterar")
 
@@ -510,6 +515,8 @@ func activateTrap(user *User, msg Message, game *Game) {
 
 			if traps[j] == trap {
 				sendMessage("deactivateTrap", data, game.Party.Members[i])
+				//debería llegar 5 segundos despues
+				go reactivateTrap(game.Party.Members[i], data)
 			}
 		}
 	}
@@ -536,6 +543,14 @@ func activateTrap(user *User, msg Message, game *Game) {
 	user.Stats.SpringedTraps += 1
 	game.Stats.TotalSpringedTraps += 1
 
+	//aquí en realidad debería ser la duración de la trampa
+	//pero como todas duran 5 segundos ps x
+	go reactivateTrap(user, data)
+}
+
+func reactivateTrap(user *User, data map[string]interface{}) {
+	time.Sleep(5 * time.Second)
+	sendMessage("reactivateTrap", data, user)
 }
 func pop(slice []string, position int) []string {
 	return append(slice[:position], slice[position+1:]...)

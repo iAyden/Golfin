@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Leaderboard from '@/components/UserComponents/LeaderBoard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import axios from "axios";
 const LeaderBoardScreen = () => { 
   const [userData, setUserData] = useState([]);

@@ -37,11 +37,12 @@ type IconsType = {
 
 
 type ShopItemType = {
- id: string;
- name: string;
- icon: ImageSourcePropType;
- cost: number;
- backgroundColor: string;
+  id: string;
+  name: string;
+  icon: ImageSourcePropType;
+  cost: number;
+  backgroundColor: string;
+  cooldown: boolean;
 };
 
 
@@ -137,17 +138,18 @@ export default function CreateLobbyScreen() {
 
 
  // TIENDA
- const shopItems: ShopItemType[] = [
-   { id: "1", name: "tornado", icon: icons.ramp, cost: 100, backgroundColor: "#2ecc71" },
-   { id: "2", name: "casino", icon: icons.slap, cost: 150, backgroundColor: "#2ecc71" },
-   { id: "3", name: "castle", icon: icons.obstacle, cost: 125, backgroundColor: "#2ecc71" },
-   { id: "4", name: "windmill", icon: icons.fan, cost: 150, backgroundColor: "#2ecc71" },
-   { id: "5", name: "wall", icon: icons.vipRamp, cost: 250, backgroundColor: "#2ecc71" },
-   { id: "6", name: "ramp", icon: icons.cart, cost: 300, backgroundColor: "#2ecc71" },
-   { id: "7", name: "slap", icon: icons.earthquake, cost: 100, backgroundColor: "#2ecc71" },
-   { id: "8", name: "hole", icon: icons.vipSlap, cost: 250, backgroundColor: "#2ecc71" },
-   { id: "9", name: "random", icon: icons.movingHole, cost: 150, backgroundColor: "#2ecc71" },
- ];
+const [shopItems, setShopItems] = useState<ShopItemType[]>([
+  { id: "1", name: "tornado", cooldown: false, icon: icons.ramp, cost: 100, backgroundColor: "#2ecc71" },
+  { id: "2", name: "casino", cooldown: false, icon: icons.slap, cost: 150, backgroundColor: "#2ecc71" },
+  { id: "3", name: "castle", cooldown: false, icon: icons.obstacle, cost: 125, backgroundColor: "#2ecc71" },
+  { id: "4", name: "windmill", cooldown: false, icon: icons.fan, cost: 150, backgroundColor: "#2ecc71" },
+  { id: "5", name: "wall", cooldown: false, icon: icons.vipRamp, cost: 250, backgroundColor: "#2ecc71" },
+  { id: "6", name: "ramp", cooldown: false, icon: icons.cart, cost: 300, backgroundColor: "#2ecc71" },
+  { id: "7", name: "slap", cooldown: false, icon: icons.earthquake, cost: 100, backgroundColor: "#2ecc71" },
+  { id: "8", name: "hole",cooldown: false, icon: icons.vipSlap, cost: 250, backgroundColor: "#2ecc71" },
+  { id: "9", name: "random", cooldown: false, icon: icons.movingHole, cost: 150, backgroundColor: "#2ecc71" },
+]);
+
 
 
    // Estados del juego
@@ -164,9 +166,7 @@ export default function CreateLobbyScreen() {
  const [prepTime, setPrepTime] = useState<number | null>(null);
  const [turnTime, setTurnTime] = useState<number>(0);
  const [showTurnModal, setShowTurnModal] = useState(false);
-
-
-
+ const [abletoBuyTrap, setAbleToBuyTrap] = useState(false);
 
  /////////////////// Variables del estado del modal y la informacion del jugador ////////////////
  const [userScoredModal, setUserScoredModal] = useState(false);           
@@ -174,6 +174,7 @@ export default function CreateLobbyScreen() {
  const [scoreUserScored, setScoreUserScored] = useState<string>("");      
  const [pointsUserScored, setPointsUserScored] = useState<number>(0);     
 /////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
  const router = useRouter();
@@ -398,19 +399,11 @@ const handleNuke = (payload: any) => {
 
 
 
-
-
-
 const handleBuyTrap = (payload : any) => {
  console.log("Esto llego del evento de handeBuyTrap: ", payload);
 
-
    setUserCards(prevUserCards =>
-   prevUserCards.map(card =>
-     card.name === payload.username
-       ? { ...card, karma: payload.karma }
-       : card
-   )
+   prevUserCards.map(card => card.name === payload.username ? { ...card, karma: payload.karma } : card )
  );
 }
 
@@ -427,13 +420,21 @@ const handleGameEnded = async () => {
 
  console.log("Datos a enviar a LeaderBoard:", envio);
 
+ 
 
  await AsyncStorage.setItem('leaderboardData', JSON.stringify(envio));
- router.push('/LeaderBoard');
+ router.push('/endGame');
 };
 
+const handleReactivateTrap = (payload: any) => {
+  console.log("Entro a reactivateTrap");
+  enableTrap(payload.trap); 
+};
 
+const handleDeactivateTrap = (payload: any) => {
+  console.log("Entro a deactivateTrap");
 
+};
 
 
 
@@ -455,7 +456,8 @@ const handleGameEnded = async () => {
  socketService.on("endPlayerFinished", handleEndPlayerFinished);
  socketService.on("endUserTurn", handleEndUserTurn);
  socketService.on("gameEnded", handleGameEnded);
- 
+ socketService.on("deactivateTrap", handleDeactivateTrap);
+ socketService.on("reactivateTrap", handleReactivateTrap);
 
 
  setTimeout(() => setIsReady(true), 500);
@@ -479,20 +481,25 @@ const handleGameEnded = async () => {
    socketService.off("endPlayerFinished", handleEndPlayerFinished);
    socketService.off("endUserTurn", handleEndUserTurn);
    socketService.off("gameEnded", handleGameEnded);
+   socketService.off("deactivateTrap", handleDeactivateTrap);
    socketService.close();
  };
 }, []);
 
 
-
-
-
-
-
-
-
-
 const handleStartPress = () => { if (partyData) socketService.startGame(partyData.code); };
+
+function enableTrap(trapName: string) {
+  const updatedItems = shopItems.map(item => item.name === trapName ? { ...item, isOnCooldown: false } : item );
+  setShopItems(updatedItems);
+  console.log("Trampa activada:", trapName);
+}
+
+function disableTrap(trapName: string) {
+  const updatedItems = shopItems.map(item => item.name === trapName ? { ...item, isOnCooldown: true } : item );
+  setShopItems(updatedItems);
+  console.log("Trampa desactivada :", trapName);
+}
 
 
 
@@ -501,9 +508,9 @@ const BuyTrap = (nameTrap : string ) => {
  if (!gameStarted) {  Alert.alert("Espera", "INICIA EL JUEGO PRIMERO"); return; }
  if(nameTrap.length === 0) { console.log("No se pudo comprar la trampa"); return; }
 
-
+ disableTrap(nameTrap.toLowerCase());
  socketService.buyTrap(nameTrap.toLowerCase());
-
+ socketService.activateTrap(nameTrap.toLowerCase());
 
  console.log("Trampa comprada:", nameTrap);
 };
@@ -610,16 +617,14 @@ useEffect(() => {
 }, [userScoredModal]);
 
 
-
-
-
-
 /////////////////////////////////
-console.log("UserCards data IMPRESA: ", userCards);
+//console.log("UserCards data IMPRESA: ", userCards);
 ///////////////////////////////
 
 
  const renderJoinCreateView = () => (
+
+  
    <View style={styles.card}>
      <Text style={styles.title}>Golfin' Lobby</Text>
      <Text style={styles.subtitle}>Join or create a party!</Text>
@@ -629,21 +634,14 @@ console.log("UserCards data IMPRESA: ", userCards);
        <Text style={styles.sectionTitle}>Join Party!</Text>
 
 
-       <TextInput
-         style={styles.input}
-         placeholder="Enter your name"
-         placeholderTextColor="#888"
+       <TextInput style={styles.input} placeholder="Enter your name" placeholderTextColor="#888"
          value={userName}
          onChangeText={setUserName}
          maxLength={20}
          autoCapitalize="words"
        />
       
-       <TextInput
-         style={styles.input}
-         placeholder="Enter code"
-         placeholderTextColor="#888"
-         value={lobbyCode}
+       <TextInput  style={styles.input} placeholder="Enter code" placeholderTextColor="#888" value={lobbyCode}
          onChangeText={setLobbyCode}
          maxLength={8}
          autoCapitalize="characters"
@@ -657,8 +655,7 @@ console.log("UserCards data IMPRESA: ", userCards);
      <Text style={styles.sectionTitle}>Don't have a code PERRO?</Text>
      <View style={styles.sectionDivider} />
      <View style={styles.section}>
-        <Pressable
-         onPress={handleJoin}
+        <Pressable onPress={handleJoin}
          onPressIn={() => Animated.spring(joinScale, { toValue: 0.95, useNativeDriver: true }).start()}
          onPressOut={() => Animated.spring(joinScale, { toValue: 1, friction: 3, tension: 40, useNativeDriver: true }).start()}
        >
@@ -667,8 +664,7 @@ console.log("UserCards data IMPRESA: ", userCards);
          </Animated.View>
        </Pressable>
     
-       <Pressable
-         onPress={handleCreate}
+       <Pressable onPress={handleCreate}
          onPressIn={() => Animated.spring(createScale, { toValue: 0.95, useNativeDriver: true }).start()}
          onPressOut={() => Animated.spring(createScale, { toValue: 1, friction: 3, tension: 40, useNativeDriver: true }).start()}
        >
@@ -682,6 +678,7 @@ console.log("UserCards data IMPRESA: ", userCards);
 
 
  const renderLobbyView = () => (
+  
    <SafeAreaView style={styles.safeArea}>
      <View style={styles.container}>
        {/* FRENTE DE LA CARTA */}
@@ -705,21 +702,16 @@ console.log("UserCards data IMPRESA: ", userCards);
 
 
    <View style={styles.userCardsContainer}>
+    
      {[...userCards].sort((primerItem, segundoItem) =>
        (primerItem.points || 0) === 0 && (segundoItem.points || 0) === 0 ? 0 :
        (primerItem.points || 0) === 0 ? 1 :  (segundoItem.points || 0) === 0 ? -1 :
        (primerItem.points || 0) - (segundoItem.points || 0)
      )
 
-
+     
      .map((user) => (
-       <View
-         key={user.id}
-         style={[
-           styles.userCard,
-           user.name === currentTurnPlayer && { backgroundColor: "#ffd700" },
-         ]}
-       >
+       <View key={user.id} style={[ styles.userCard, user.name === currentTurnPlayer && { backgroundColor: "#ffd700" },]} >
          <View style={styles.userInfoContainer}>
            <Image source={user.image} style={styles.userImage} />
            <View style={styles.userTextContainer}>
@@ -738,7 +730,7 @@ console.log("UserCards data IMPRESA: ", userCards);
            </View>
          </View>
        </View>
-   ))}
+     ))}
          </View>
 
 
@@ -750,13 +742,15 @@ console.log("UserCards data IMPRESA: ", userCards);
                  <Text style={styles.modalTitle}>Watch out...</Text>
                  <Text style={styles.modalTimer}>{prepTime}s remaining</Text>
                </>
-             ) : (
+             ) 
+             : 
+             (
                isMyTurn && (
                  <>
                    <Text style={styles.modalTitle}>¡Go ahead!</Text>
                    <Text style={styles.modalTimer}>{turnTime}s remaining</Text>
                  </>
-               )
+              )
              )}
            </View>
          </View>
@@ -775,13 +769,6 @@ console.log("UserCards data IMPRESA: ", userCards);
          </View>
        )}
 
-
-
-
-
-
-
-
          {userCards.length === 1 && ( <Text style={styles.noUsersText}>There are not users connected.</Text> )}
 
 
@@ -799,11 +786,6 @@ console.log("UserCards data IMPRESA: ", userCards);
 
 
        )}
-
-
-
-
-
 
          </ScrollView>
        </Animated.View>
@@ -826,21 +808,19 @@ console.log("UserCards data IMPRESA: ", userCards);
                    {formatTime(seconds)}
                  </Text>
                </View>
-               <View style={styles.badPointsContainer}>
-                 <Text style={styles.pointsText}>Round: {karma}</Text>
-               </View>
+
              </View>
              <View style={styles.timeContainer}>
                <View style={styles.pointsContainer}>
                  <Text style={styles.pointsText}>
                    <Image source={icons.scoreIcon} style={styles.iconImage} />:{" "}
-                   {points}
+                   {puntosActuales}
                  </Text>
                </View>
                <View style={styles.badPointsContainer}>
                  <Text style={styles.pointsText}>
                    <Image source={icons.karmaIcon} style={styles.iconImage} />:{" "}
-                   {karma}
+                   {karmaActual}
                  </Text>
                </View>
              </View>
@@ -850,15 +830,14 @@ console.log("UserCards data IMPRESA: ", userCards);
            <View style={styles.shopGrid}>
              {shopItems.map((item) => (
                <TouchableOpacity
-                     key={item.id}
-                     style={[ styles.shopItem, { backgroundColor: item.backgroundColor }, (points < item.cost || !gameStarted) && styles.disabledItem,]}
-                     onPress={() => BuyTrap(item.name)}
-                     disabled={ !gameStarted}
-                   >
-                 <Image source={item.icon} style={styles.itemImage} />
-                 <Text style={styles.itemName}>{item.name}</Text>
-                 <Text style={styles.itemPrice}>{item.cost} pts</Text>
-               </TouchableOpacity>
+                disabled={!gameStarted || karmaActual < item.cost || item.cooldown}
+                style={[ styles.shopItem, { backgroundColor: item.backgroundColor },
+                  (!gameStarted || karmaActual < item.cost || item.cooldown) && styles.disabledItem,]}
+                onPress={() => BuyTrap(item.name)} >
+                <Image source={item.icon} style={styles.itemImage} />
+                <Text style={styles.itemName}>{item.name}</Text>
+                <Text style={styles.itemPrice}>{item.cost} pts</Text>
+              </TouchableOpacity>
              ))}
            </View>
 
@@ -871,15 +850,22 @@ console.log("UserCards data IMPRESA: ", userCards);
      </View>
    </SafeAreaView>
  );
-
+ // Variables para pegar el los puntos del jugador 
+ const puntosActuales = userCards.find(XDuwu => XDuwu.name === userName)?.points ?? 0;
+ // Chicos esto es para conservar el karma de el jugador y poder mantener el estado de los botones
+const karmaActual = userCards.find(XDuwu => XDuwu.name === userName)?.karma ?? 0;
+useEffect(() => {
+  setShopItems((prevItems) =>
+    prevItems.map((item) => ({
+      ...item,
+      state: (gameStarted && karmaActual >= item.cost) ? "enable" : "disable",
+    }))
+  );
+}, [karmaActual, gameStarted]);
 
  return (
    <View style={[styles.bg, { paddingTop: isSmallScreen ? insets.top || 24 : 0 }]}>
-     <ImageBackground
-       source={require("../assets/images/BG IMG GLF.png")}
-       style={styles.imageBg}
-       resizeMode="cover"
-     >
+     <ImageBackground source={require("../assets/images/BG IMG GLF.png")} style={styles.imageBg} resizeMode="cover">
        <View style={styles.overlay} />
        <View style={styles.cardContainer}>
          {currentView === "joinCreate" ? renderJoinCreateView() : renderLobbyView()}
