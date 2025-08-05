@@ -15,6 +15,7 @@ import {
   Modal,
   Button,
 } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Animatable from 'react-native-animatable'; //animacionesss
@@ -106,6 +107,7 @@ const App: React.FC = () => {
     { id: string; name: string }[]
   >([]);
 
+  const phoneURL = "http://192.168.0.22:8080";
   const [isEditing, setIsEditing] = useState(false);
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -269,7 +271,7 @@ const saveProfileChanges = async () => {
     }
 
     //guardar en backend
-    const res = await fetch('http://localhost:8080/users/update-profile', {
+    const res = await fetch(`${phoneURL}/users/update-profile`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -830,6 +832,8 @@ const saveProfileChanges = async () => {
   );
 
   return (
+     <SafeAreaProvider>
+          <SafeAreaView style={{ flex: 1 }}>
     <ImageBackground
       source={require("../assets/images/BG IMG GLF.png")}
       style={styles.imageBg}
@@ -1534,6 +1538,8 @@ const saveProfileChanges = async () => {
         </View>
       </View>
     </ImageBackground>
+    </SafeAreaView>
+    </SafeAreaProvider>
   );
   
 };
