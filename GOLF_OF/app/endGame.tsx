@@ -1,3 +1,5 @@
+import { useRouter } from "expo-router";
+import { TouchableOpacity } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
   View,
@@ -9,7 +11,7 @@ import {
   ImageSourcePropType,
   ScrollView,
 } from "react-native";
-import LeaderBoard from "./LeaderBoard";
+import LeaderBoard from "./LocalLeaderBoard";
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -77,6 +79,7 @@ const winners: Winner[] = [
 const podiumColors = ["#FFD700", "#C0C0C0", "#CD7F32"];
 
 const EndGame = () => {
+  const router = useRouter();
   //////////////// AQUI LA DATA DE LA LEADERBOARD QUE SE PASA DESDE createLobby /////////////////
   const [userData, setUserData] = useState([]);
 
@@ -305,6 +308,14 @@ const EndGame = () => {
           <View style={styles.leaderboardContainer}>
             <LeaderBoard />
           </View>
+          {/* Exit to Main Menu Button */}
+          <TouchableOpacity
+            style={styles.exitButton}
+            onPress={() => router.replace("/")}
+          >
+            <FontAwesome name="sign-out" size={18} color="#2E7D32" />
+            <Text style={styles.exitButtonText}>Exit to Main Menu</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </ImageBackground>
@@ -337,17 +348,6 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
     textAlign: "center",
-  },
-  podiumRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "flex-end",
-    width: "100%",
-    marginBottom: 40,
-  },
-  podiumSpot: {
-    flex: 1,
-    alignItems: "center",
   },
   avatarCircle: {
     borderWidth: 4,
@@ -447,6 +447,26 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 6,
     elevation: 2,
+  },
+  exitButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 24,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    marginTop: 16,
+    alignSelf: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  exitButtonText: {
+    color: "#2E7D32",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginLeft: 8,
   },
 });
 
