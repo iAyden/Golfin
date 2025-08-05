@@ -116,15 +116,15 @@ function wait(ms) {
 
 	<ul id="messages"></ul>
 
-<button id="fan" onclick="buyTrap('fan')">Ventilador</button> 
-<button id="fan" onclick="activateTrap('fan')">Activar</button>  <br>
+<button id="fan" onclick="buyTrap('tornado')">Ventilador</button> 
+<button id="fan" onclick="activateTrap('tornado')">Activar</button>  <br>
 <button id="car" onclick="buyTrap('car')">Car</button><br>
 <button id="earthquake" onclick="buyTrap('earthquake')">earthquake</button> <br>
 
 <button onclick="nukeReaderFunction()">Nuke</button>
 	
 	<script>
-		const ws = new WebSocket("ws://localhost:1337/game");
+		const ws = new WebSocket("ws://192.168.0.24:1337/game");
 
 		ws.onmessage = async function (event) {
 			const messages = document.getElementById("messages");
@@ -278,7 +278,7 @@ async function score(){
 	let id = document.getElementById("gameId").innerText
 
 	data = {
-		id :  parseInt(id)
+		data :  parseInt(id)
 	}
 	await fetch("/playerScored", {
 		method : "POST",
