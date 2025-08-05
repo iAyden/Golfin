@@ -18,7 +18,8 @@ import (
 )
 
 const springApiUrl = "http://127.0.0.1:8080"
-const raspUrl = "http:arduinito.net"
+const raspUrl = "http://192.168.0.16"
+const serverIp = "192.168.0.24:1337"
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
@@ -98,21 +99,23 @@ func main() {
 	http.HandleFunc("/playerScored", playerScored)
 	http.Handle("/", http.FileServer(http.Dir("static")))
 
-	http.ListenAndServe(":1337", nil)
+	http.ListenAndServe(serverIp, nil)
 }
 
 func playerScored(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Entramos a la ruta player scored")
+	fmt.Println(r)
 	//increible la validación
 	//creo qué tan solo sería checar el origen del request
 	//que concuerde con el del pico
-
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	var data = make(map[string]interface{})
 
 	json.NewDecoder(r.Body).Decode(&data)
 	fmt.Println(data)
-	gameId := data["id"].(float64)
+	gameId := data["data"].(float64)
 
+	fmt.Println("El id que recibimos del pico")
 	fmt.Println(gameId)
 	actualGame := games[int(gameId)]
 
@@ -284,15 +287,7 @@ func (game *Game) gameLoop() {
 		game.Stats.Players = append(game.Stats.Players, player.Name)
 	}
 
-	payload, _ := json.Marshal(game.Stats)
-	msg := Message{
-		Type:    "gameEnded",
-		Payload: payload,
-	}
-
-	game.Party.Broadcast <- msg
-	<-done
-	sendUserStats(game.Party.Members)
+	sendUserStats(game.Party.Members, game)
 	sendGameStats(game)
 
 }
@@ -369,19 +364,30 @@ func sendGameStats(game *Game) {
 	res, err := http.Post(springApiUrl+"/api/games/add", "application/json", bytes.NewBuffer(json))
 	fmt.Println(res, err)
 }
-func sendUserStats(members []*User) {
+func sendUserStats(members []*User, game *Game) {
 
+	dataArr := []map[string]interface{}{}
 	for _, member := range members {
 		post := map[string]interface{}{
 			"username": member.Name,
 			"data":     member.Stats,
 		}
+
+		dataArr = append(dataArr, post)
 		fmt.Println(member.Stats)
 		data, _ := json.Marshal(post)
 		res, err := http.Post(springApiUrl+"/api/stats/add-ustats", "application/json", bytes.NewBuffer(data))
 		fmt.Println(res, err)
 	}
 
+	payload, _ := json.Marshal(dataArr)
+	msg := Message{
+		Type:    "gameEnded",
+		Payload: payload,
+	}
+
+	game.Party.Broadcast <- msg
+	<-done
 }
 
 func getWinner(members []*User) *User {
@@ -489,7 +495,9 @@ func activateTrap(user *User, msg Message, game *Game) {
 	trapLocation := "/" + trap
 	url := (raspUrl + trapLocation)
 
-	http.Get(url)
+	res, err := http.Get(url)
+
+	fmt.Println(res, err)
 
 	var data = map[string]interface{}{
 		"trap": trap,
@@ -747,9 +755,9 @@ func startGame(user *User, msg Message) {
 	party.Broadcast <- message
 	<-done
 
-	endpoint := fmt.Sprintf("/gameId?id=%d", intnum)
-	http.Get(raspUrl + endpoint)
-
+	fmt.Println("Vamos a postear")
+	postIdToRasp(strconv.Itoa(intnum))
+	fmt.Println("post post")
 	intnum++
 
 	stringNum := strconv.Itoa(intnum)
@@ -765,6 +773,30 @@ func startGame(user *User, msg Message) {
 	}
 	go game.gameLoop()
 
+}
+
+func postIdToRasp(id string) {
+	data := map[string]interface{}{
+		"data": id,
+	}
+
+	fmt.Println("la data que vamos a mandar ", data)
+	// Marshal into JSON
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Ahora sí vamos a postear")
+	// Cr  eate the request
+	fmt.Println("JSON data:", string(jsonData))
+
+	resp, err := http.Post(raspUrl+"/picoW", "application/json", bytes.NewBuffer(jsonData))
+	fmt.Println("pos post")
+	fmt.Println(resp)
+	if err != nil {
+		panic(err)
+	}
 }
 
 var done = make(chan string)
