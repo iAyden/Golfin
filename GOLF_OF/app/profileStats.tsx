@@ -15,6 +15,7 @@ import {
   Modal,
   Button,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Animatable from 'react-native-animatable'; //animacionesss
 import Sidebar from "@/components/Structures/Sidebar";
@@ -118,7 +119,7 @@ const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil((profileData?.gameHistory?.length || 0) / gamesPerPage);
-
+  const isWeb = Platform.OS === 'web';
   const paginatedGames = profileData?.gameHistory?.slice(
     (currentPage - 1) * gamesPerPage,
     currentPage * gamesPerPage
@@ -145,6 +146,7 @@ const App: React.FC = () => {
     setTempImageUri(localUri); // solo para preview
   }
 };
+  
 const pickImageAndUpload = async () => {
   const result = await ImagePicker.launchImageLibraryAsync({
     allowsEditing: true,
@@ -232,7 +234,13 @@ const pickImageAndUpload = async () => {
 
 const saveProfileChanges = async () => {
   try {
-    const token = localStorage.getItem('jwt_token');
+    let token: string | null;
+
+    if (isWeb) {
+        token = localStorage.getItem("jwt_token");
+    } else {
+        token = await AsyncStorage.getItem("jwt_token");
+    }
     if (!token) throw new Error("Token no encontrado");
 
     let uploadedUrl = profileData?.photoUrl;

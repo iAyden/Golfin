@@ -17,6 +17,7 @@ import { FontAwesome } from "@expo/vector-icons";
 
 const LeaderBoardScreen = () => {
   const [userData, setUserData] = useState([]);
+  const phoneURL = "http://192.168.0.22:8080";
   const [leaderboard, setLeaderboard] = useState<LeaderboardStructure[]>([]);
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [activeMenuItem, setActiveMenuItem] = useState("LeaderBoard");
@@ -51,10 +52,9 @@ const LeaderBoardScreen = () => {
   }, [sidebarVisible]);
 
   useEffect(() => {
-    axios
-      .get("http://127.0.0.1:8080/users/leaderboard")
-      .then((res) => setLeaderboard(res.data))
-      .catch((err) => {});
+    axios.get(`${phoneURL}/users/leaderboard`)
+      .then(res => setLeaderboard(res.data))
+      .catch(err => console.error(err));
   }, []);
 
   const handleMenuItemPress = (menuItem: string) => {
