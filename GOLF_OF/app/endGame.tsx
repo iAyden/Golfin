@@ -1,4 +1,4 @@
-import { Route, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { TouchableOpacity } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {

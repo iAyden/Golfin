@@ -128,7 +128,7 @@ const Leaderboard = ({ data }: { data: LeaderboardStructure[] }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F9F5",
+    backgroundColor: "#f5f9f584",
   },
   header: {
     paddingVertical: height * 0.02,

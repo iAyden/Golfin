@@ -1,4 +1,5 @@
 import { Try } from "expo-router/build/views/Try";
+import { useRouter } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import React, { useState, useRef, useEffect } from "react";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
@@ -37,6 +38,8 @@ import { loginSchema, loginSchemaType } from "../../schemas/AuthSchemas";
 import { signupSchema, signupSchemaType } from "../../schemas/AuthSchemas";
 
 const GolfLogin = () => {
+  const router = useRouter();
+
   const [isCheckingAuth, setisCheckingAuth] = useState(true);
   const [showFront, setShowFront] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -327,6 +330,14 @@ const GolfLogin = () => {
               <TouchableOpacity onPress={flipCard} style={styles.flipButton}>
                 <Text style={styles.flipText}>Are you new? Sign up</Text>
               </TouchableOpacity>
+              {/* Exit to Main Menu Button */}
+              <TouchableOpacity
+                style={styles.exitButton}
+                onPress={() => router.replace("/")}
+              >
+                <FontAwesome name="sign-out" size={18} color="#2E7D32" />
+                <Text style={styles.exitButtonText}>Exit to Main Menu</Text>
+              </TouchableOpacity>
             </Animated.View>
 
             {/* PARTE DE ATRAS DE LA CARTA REGISTER */}
@@ -452,8 +463,6 @@ const GolfLogin = () => {
               </TouchableOpacity>
             </Animated.View>
           </View>
-
-          {/* <Text style={styles.footer}>MICRO RATONES</Text> */}
         </View>
       </SafeAreaView>
     </ImageBackground>
@@ -582,6 +591,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textDecorationLine: "underline",
     textAlign: "center",
+  },
+  exitButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 24,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    marginTop: 16,
+    alignSelf: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  exitButtonText: {
+    color: "#2E7D32",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginLeft: 8,
   },
   footer: {
     marginTop: 30,
