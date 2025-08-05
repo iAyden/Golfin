@@ -13,7 +13,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 const { width, height } = Dimensions.get("window");
 
 // Tipo real que viene del backend
-export type LeaderboardStructure = {
+export type LocalLeaderboardStructure = {
   position: number;
   username: string;
   photoURL: string;
@@ -58,7 +58,11 @@ const PositionNumber = ({ position }: { position: number }) => {
   );
 };
 
-const LeaderboardThing = ({ item }: { item: LeaderboardStructure }) => {
+const LocalLeaderboardThing = ({
+  item,
+}: {
+  item: LocalLeaderboardStructure;
+}) => {
   const position = item.position;
 
   return (
@@ -105,19 +109,19 @@ const LeaderboardThing = ({ item }: { item: LeaderboardStructure }) => {
   );
 };
 
-const Leaderboard = ({ data }: { data: LeaderboardStructure[] }) => {
+const LocalLeaderboard = ({ data }: { data: LocalLeaderboardStructure[] }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>GOLFIN' LEADERBOARD</Text>
+          <Text style={styles.title}>LEADERBOARD</Text>
           <FontAwesome name="trophy" size={width * 0.09} color="#C0C0C0" />
           <View style={styles.divider} />
         </View>
       </View>
       <FlatList
         data={data}
-        renderItem={({ item }) => <LeaderboardThing item={item} />}
+        renderItem={({ item }) => <LocalLeaderboardThing item={item} />}
         keyExtractor={(item) => item.username}
         contentContainerStyle={styles.listContent}
       />
@@ -128,7 +132,7 @@ const Leaderboard = ({ data }: { data: LeaderboardStructure[] }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f9f584",
+    backgroundColor: "#F5F9F5",
   },
   header: {
     paddingVertical: height * 0.02,
@@ -280,4 +284,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Leaderboard;
+export default LocalLeaderboard;

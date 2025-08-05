@@ -36,6 +36,8 @@ dependencies {
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 	implementation("io.github.cdimascio:dotenv-java:3.0.0")
+	implementation("org.json:json:20240303")
+
 }
 
 tasks.withType<Test> {

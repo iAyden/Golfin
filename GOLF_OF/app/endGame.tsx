@@ -1,4 +1,6 @@
-import React from "react";
+import { useRouter } from "expo-router";
+import { TouchableOpacity } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -9,8 +11,9 @@ import {
   ImageSourcePropType,
   ScrollView,
 } from "react-native";
-import LeaderBoard from "./LeaderBoard";
+import LeaderBoard from "./LocalLeaderBoard";
 import { FontAwesome } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Example winners data (replace with real data as needed)
 type Winner = {
@@ -76,6 +79,32 @@ const winners: Winner[] = [
 const podiumColors = ["#FFD700", "#C0C0C0", "#CD7F32"];
 
 const EndGame = () => {
+  const router = useRouter();
+  //////////////// AQUI LA DATA DE LA LEADERBOARD QUE SE PASA DESDE createLobby /////////////////
+  const [userData, setUserData] = useState([]);
+
+  useEffect(() => {
+    const fetchUserCards = async () => {
+      try {
+        const storedData = await AsyncStorage.getItem("latestUserCards");
+        if (storedData) {
+          const parsedData = JSON.parse(storedData);
+          console.log("DATA cargada de la localStorage: ", parsedData);
+          setUserData(parsedData);
+        } else {
+          console.log("No hay DATA en localStorage");
+        }
+      } catch (error) {
+        console.error("Error leyendo la locl storagE", error);
+      }
+    };
+
+    fetchUserCards();
+  }, []);
+
+  console.log("Se imprime esto por el local storage", userData);
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
   const { width, height } = Dimensions.get("window");
   // Responsive max width for podium area
   const maxPodiumWidth = 420; // this a reference lol
@@ -95,10 +124,10 @@ const EndGame = () => {
   const avatar1stBottom = podiumBottom + podiumImgHeight * 0.68;
   // 2nd place: left step
   const avatar2ndLeft = podiumImgWidth * 0.3 - avatar2nd / 2;
-  const avatar2ndBottom = podiumBottom + podiumImgHeight * 0.48;
+  const avatar2ndBottom = podiumBottom + podiumImgHeight * 0.55;
   // 3rd place: right step
   const avatar3rdLeft = podiumImgWidth * 0.62 - avatar3rd / 2;
-  const avatar3rdBottom = podiumBottom + podiumImgHeight * 0.38;
+  const avatar3rdBottom = podiumBottom + podiumImgHeight * 0.48;
   return (
     <ImageBackground
       source={require("../assets/images/BG IMG GLF.png")}
@@ -144,7 +173,7 @@ const EndGame = () => {
                 left: avatar2ndLeft,
                 bottom: avatar2ndBottom,
                 alignItems: "center",
-                zIndex: 2,
+                zIndex: 1, // behind 1st place
               }}
             >
               <View
@@ -168,7 +197,7 @@ const EndGame = () => {
                 />
               </View>
               <Text style={styles.podiumName}>{winners[1].name}</Text>
-              <Text style={styles.podiumScore}>2nd</Text>
+              {/* <Text style={styles.podiumScore}>2nd</Text> */}
             </View>
             {/* 1st Place */}
             <View
@@ -177,7 +206,7 @@ const EndGame = () => {
                 left: avatar1stLeft,
                 bottom: avatar1stBottom,
                 alignItems: "center",
-                zIndex: 2,
+                zIndex: 2, // in front of 2nd and 3rd
               }}
             >
               <View
@@ -213,9 +242,7 @@ const EndGame = () => {
                   styles.podiumScore,
                   { fontWeight: "bold", color: podiumColors[0] },
                 ]}
-              >
-                1st
-              </Text>
+              ></Text>
             </View>
             {/* 3rd Place */}
             <View
@@ -224,7 +251,7 @@ const EndGame = () => {
                 left: avatar3rdLeft,
                 bottom: avatar3rdBottom,
                 alignItems: "center",
-                zIndex: 2,
+                zIndex: 1, // behind 1st place
               }}
             >
               <View
@@ -248,7 +275,7 @@ const EndGame = () => {
                 />
               </View>
               <Text style={styles.podiumName}>{winners[2].name}</Text>
-              <Text style={styles.podiumScore}>3rd</Text>
+              {/* <Text style={styles.podiumScore}>3rd</Text> */}
             </View>
           </View>
           {/* Fourth place and leaderboard */}
@@ -278,7 +305,17 @@ const EndGame = () => {
               <Text style={styles.fourthScore}>4th Place</Text>
             </View>
           </View>
-          <LeaderBoard />
+          <View style={styles.leaderboardContainer}>
+            <LeaderBoard />
+          </View>
+          {/* Exit to Main Menu Button */}
+          <TouchableOpacity
+            style={styles.exitButton}
+            onPress={() => router.replace("/")}
+          >
+            <FontAwesome name="sign-out" size={18} color="#2E7D32" />
+            <Text style={styles.exitButtonText}>Exit to Main Menu</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </ImageBackground>
@@ -311,17 +348,6 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
     textAlign: "center",
-  },
-  podiumRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "flex-end",
-    width: "100%",
-    marginBottom: 40,
-  },
-  podiumSpot: {
-    flex: 1,
-    alignItems: "center",
   },
   avatarCircle: {
     borderWidth: 4,
@@ -410,6 +436,37 @@ const styles = StyleSheet.create({
     backgroundColor: "#c19a6b", // fallback wood color
     borderWidth: 1,
     borderColor: "#8d6748",
+  },
+  leaderboardContainer: {
+    borderRadius: 24,
+    overflow: "hidden",
+    backgroundColor: "rgba(255,255,255,0.85)",
+    marginTop: 8,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  exitButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 24,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    marginTop: 16,
+    alignSelf: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  exitButtonText: {
+    color: "#2E7D32",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginLeft: 8,
   },
 });
 

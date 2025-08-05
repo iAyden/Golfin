@@ -280,7 +280,7 @@ func (game *Game) gameLoop() {
 	fmt.Println("Ganó la partida", winner.Name)
 
 	game.Stats.Winner = winner.Name
-	game.Stats.TimeElapsed = int(time.Since(globalTime))
+	game.Stats.TimeElapsed = int(time.Since(globalTime).Seconds())
 
 	for i, player := range game.Party.Members {
 		game.Party.Members[i].Stats.GameId = strconv.Itoa(game.Id)

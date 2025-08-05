@@ -1,7 +1,12 @@
 package com.golfin.backend.model;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+
+import java.util.Date;
+
 import java.util.List;
 
 @Document
@@ -9,21 +14,23 @@ public class Game {
 
     @Id
     private String id;
-
-    private String course;
     private String winner;
-    private int totalSpringedTraps;
+    private List<ObjectId> players;
+    private String course;
     private int totalTime;
-    private List<String> playerIds;
-    private List <String> playerUsernames;
+    private int totalSpringedTraps;
+    private Date date;
     public Game() {}
 
-    public Game(String course, String winner, int totalSpringedTraps, int totalTime, List<String> playerIds) {
-        this.course = course;
+    public Game(String id, String course, String winner, int totalSpringedTraps, int totalTime, List<ObjectId> players, Date date) {
+        this.id = id;
         this.winner = winner;
+        this.players=players;
+        this.course = course;
         this.totalSpringedTraps = totalSpringedTraps;
         this.totalTime = totalTime;
-        this.playerIds = playerIds;
+        this.date = date;
+       
     }
 
     // Getters y Setters
@@ -63,19 +70,20 @@ public class Game {
         this.totalTime = totalTime;
     }
 
-    public List<String> getPlayerIds() {
-        return playerIds;
+    public List<ObjectId> getPlayers() {
+        return players;
     }
 
-    public void setPlayerIds(List<String> playerIds) {
-        this.playerIds = playerIds;
+    public void setPlayers(List<ObjectId> players) {
+        this.players = players;
+    }
+
+    public Date getDate(){
+        return date;
+    }
+
+    public void setDate(Date date){
+        this.date=date;
     }
     
-    public List<String> getPlayerUsernames(){
-        return playerUsernames;
-    }
-
-    public void setPlayerUsernames(List<String> playerUsernames){
-        this.playerUsernames = playerUsernames;
-    }
 }
