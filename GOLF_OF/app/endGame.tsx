@@ -84,7 +84,7 @@ const EndGame = () => {
   //////////////// AQUI LA DATA DE LA LEADERBOARD QUE SE PASA DESDE createLobby /////////////////
   const [userData, setUserData] = useState([]);
 
-  const phoneURL = "http://192.168.0.22:8080";
+  const phoneURL = "https://brush-pollution-rivers-upset.trycloudflare.com";
   useEffect(() => {
     const fetchUserCards = async () => {
       try {

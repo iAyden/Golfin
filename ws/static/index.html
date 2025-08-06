@@ -123,8 +123,8 @@ function wait(ms) {
 
 <button onclick="nukeReaderFunction()">Nuke</button>
 	
-	<script>
-		const ws = new WebSocket("ws://192.168.0.24:1337/game");
+	<script> //
+		const ws = new WebSocket("ws://192.168.0.22:1337/game");
 
 		ws.onmessage = async function (event) {
 			const messages = document.getElementById("messages");

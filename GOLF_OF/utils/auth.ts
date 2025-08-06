@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 const isWeb = Platform.OS === 'web';
-const phoneURL = "http://192.168.0.22:8080";
+const phoneURL = "https://birth-classics-ent-bread.trycloudflare.com";
 export const checkAuthToken = async (): Promise<boolean> => {
     try {
         console.log("Dentro de checkAuthToken");

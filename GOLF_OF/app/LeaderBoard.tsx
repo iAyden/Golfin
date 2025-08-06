@@ -17,7 +17,7 @@ import { FontAwesome } from "@expo/vector-icons";
 
 const LeaderBoardScreen = () => {
   const [userData, setUserData] = useState([]);
-  const phoneURL = "http://192.168.0.22:8080";
+  const phoneURL = "https://birth-classics-ent-bread.trycloudflare.com";
   const [leaderboard, setLeaderboard] = useState<LeaderboardStructure[]>([]);
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [activeMenuItem, setActiveMenuItem] = useState("LeaderBoard");

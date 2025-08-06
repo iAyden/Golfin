@@ -1,5 +1,5 @@
 import axios from "axios";
-const phoneURL = "http://192.168.0.22:8080";
+const phoneURL = "https://birth-classics-ent-bread.trycloudflare.com";
 const API_URL = `${phoneURL}/users/profile`; 
 import { Platform } from "react-native";
 

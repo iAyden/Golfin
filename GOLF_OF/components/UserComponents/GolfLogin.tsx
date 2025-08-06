@@ -54,12 +54,12 @@ const GolfLogin = () => {
   const redirectUri = Platform.OS === "web"
 
   
-  ? `https://bb599f5d352b.ngrok-free.app/google-popup.html`
+  ? `https://birth-classics-ent-bread.trycloudflare.com/google-popup.html`
   : makeRedirectUri({ native: "golfin://redirect", useProxy: true as any, 
   });
   console.log("Redirect URI móvil:", redirectUri);
   const isWeb = Platform.OS === 'web';
-  const phoneURL = "http://192.168.0.22:8080";
+  const phoneURL = "https://birth-classics-ent-bread.trycloudflare.com";
   useEffect(() => {
     console.log("use efect");
 

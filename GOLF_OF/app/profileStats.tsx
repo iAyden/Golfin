@@ -107,7 +107,7 @@ const App: React.FC = () => {
     { id: string; name: string }[]
   >([]);
 
-  const phoneURL = "http://192.168.0.22:8080";
+  const phoneURL = "https://birth-classics-ent-bread.trycloudflare.com";
   const [isEditing, setIsEditing] = useState(false);
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);

@@ -7,7 +7,6 @@ public class GameStats {
     private int timeElapsed;
     private int totalSpringedTraps;
 
-    // Getters y Setters
     public int getGameId() {
         return gameId;
     }

@@ -5,6 +5,9 @@
     "axios": "^1.10.0",
     "expo-image-picker": "^16.1.4",
     "react-native-animatable": "^1.4.0",
-    "react-native-flip-card": "^3.5.7"
+    "react-native-flip-card": "^3.5.7",
+    "react-dom": "19.0.0",
+    "react-native-web": "^0.20.0",
+    "@expo/metro-runtime": "~5.0.4"
   }
 }

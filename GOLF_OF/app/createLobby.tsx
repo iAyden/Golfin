@@ -203,7 +203,7 @@ useEffect(() => {
 
 
 
-const phoneURL = "ws://192.168.0.22:1337";
+const phoneURL = "wss://mr-virtual-penalty-czech.trycloudflare.com";
 ////////////////////// WEBSOCKETS ///////////////////////////////////
 useEffect(() => {
  socketService.connect(`${phoneURL}/game`);
