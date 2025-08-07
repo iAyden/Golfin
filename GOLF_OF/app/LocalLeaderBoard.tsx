@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
-import Leaderboard from "@/components/UserComponents/localLdrBoard";
+import LocalLeaderboard from "../components/UserComponents/localLdrBoard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { LocalLeaderboardStructure } from "@/components/UserComponents/localLdrBoard";
 const LeaderBoardScreen = () => {
-  const [userData, setUserData] = useState([]);
-  const [leaderboard, setLeaderboard] = useState<LocalLeaderboardStructure[]>(
-    []
-  );
+  const [userData, setUserData] = useState<any[]>([]);
+  // Remove leaderboard from API for local only
 
-  useEffect(() => {
+useEffect(() => {
     const fetchUserCards = async () => {
       try {
         const storedData = await AsyncStorage.getItem("latestUserCards");
@@ -24,21 +22,28 @@ const LeaderBoardScreen = () => {
         console.error("Error leyendo AsyncStorage:", error);
       }
     };
-
     fetchUserCards();
   }, []);
 
-  console.log("Se imprime esto por el local storage", userData);
-  useEffect(() => {
-    axios
-      .get(
-        "https://vehicle-etc-bare-proceeds.trycloudflare.com/users/leaderboard"
-      )
-      .then((res) => setLeaderboard(res.data))
-      .catch((err) => console.error(err));
-  }, []);
+  // Map userData to LocalLeaderboardStructure
+  const mappedLeaderboard: LocalLeaderboardStructure[] = userData.map((user, idx) => ({
+    position: idx + 1,
+    username: user.username || user.name || `User${idx + 1}`,
+    photoURL: user.photoURL && user.photoURL.startsWith('http')
+      ? user.photoURL
+      : (user.avatar && user.avatar.startsWith('http')
+        ? user.avatar
+        : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || user.name || `User${idx + 1}`)}`),
+    wins: user.wins || user.points || 0,
+    karma: user.karma || 0,
+    traps: user.traps || 0,
+    points: user.points || 0,
+    birdies: user.birdies || 0,
+    pars: user.pars || 0,
+    bogeys: user.bogeys || 0,
+  }));
 
-  return <Leaderboard data={leaderboard} />;
+return <LocalLeaderboard data={mappedLeaderboard} />;
 };
 
 export default LeaderBoardScreen;

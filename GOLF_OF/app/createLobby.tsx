@@ -270,7 +270,7 @@ export default function CreateLobbyScreen() {
     }
   }, [userCards]);
 
-  const phoneURL = "wss://mr-virtual-penalty-czech.trycloudflare.com";
+  const phoneURL = "ws://192.168.0.24:1337";
   ////////////////////// WEBSOCKETS ///////////////////////////////////
   useEffect(() => {
     socketService.connect(`${phoneURL}/game`);

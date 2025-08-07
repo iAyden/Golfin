@@ -13,9 +13,9 @@ import { Route, useRouter } from "expo-router";
 // Here I import our custom font
 import { useFonts } from "expo-font";
 
-const [fontsLoaded] = useFonts({
-  gharison: require("../assets/fonts/gharison.ttf"),
-});
+// const [fontsLoaded] = useFonts({
+//   gharison: require("../assets/fonts/gharison.ttf"),
+// });
 //
 
 // DEFINIMOS LOS TIPOS PARA LAS PROPS DEL COMPONENTE
