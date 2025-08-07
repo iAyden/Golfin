@@ -12,6 +12,7 @@ import {
   ScrollView,
 } from "react-native";
 import LeaderBoard from "./LocalLeaderBoard";
+import { Platform } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -83,17 +84,34 @@ const EndGame = () => {
   //////////////// AQUI LA DATA DE LA LEADERBOARD QUE SE PASA DESDE createLobby /////////////////
   const [userData, setUserData] = useState([]);
 
+  const phoneURL = "https://brush-pollution-rivers-upset.trycloudflare.com";
   useEffect(() => {
     const fetchUserCards = async () => {
       try {
-        const storedData = await AsyncStorage.getItem("latestUserCards");
+        let storedData: string | null;
+        const isWeb = Platform.OS === 'web';
+        if (isWeb) {
+            storedData = localStorage.getItem("latestUserCards");
+        } else {
+            storedData = await AsyncStorage.getItem("latestUserCards");
+        }
+
         if (storedData) {
           const parsedData = JSON.parse(storedData);
           console.log("DATA cargada de la localStorage: ", parsedData);
           setUserData(parsedData);
+          const storedUsers = JSON.parse(localStorage.getItem('latestUserCards') || '[]');
+          const usernames = storedUsers.map((u: any) => u.id);
+          const response = await fetch(`${phoneURL}/game/game-data`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(usernames),
+          });
+          
         } else {
           console.log("No hay DATA en localStorage");
         }
+
       } catch (error) {
         console.error("Error leyendo la locl storagE", error);
       }

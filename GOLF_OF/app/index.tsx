@@ -14,6 +14,7 @@ import {
   ListRenderItemInfo,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Sidebar from "@/components/Structures/Sidebar";
 // import { Text } from '@/components/Themed';
 import ImagenSinFondo from "@/components/VisualComponents/ImagenSinFondo";
@@ -151,6 +152,8 @@ const App: React.FC = () => {
   );
 
   return (
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }}>
     <ImageBackground
       source={require("../assets/images/BG IMG GLF.png")}
       style={styles.imageBg}
@@ -196,6 +199,8 @@ const App: React.FC = () => {
         </View>
       </View>
     </ImageBackground>
+    </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 

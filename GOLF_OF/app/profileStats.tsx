@@ -15,6 +15,8 @@ import {
   Modal,
   Button,
 } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Animatable from 'react-native-animatable'; //animacionesss
 import Sidebar from "@/components/Structures/Sidebar";
@@ -105,6 +107,7 @@ const App: React.FC = () => {
     { id: string; name: string }[]
   >([]);
 
+  const phoneURL = "https://birth-classics-ent-bread.trycloudflare.com";
   const [isEditing, setIsEditing] = useState(false);
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -118,7 +121,7 @@ const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil((profileData?.gameHistory?.length || 0) / gamesPerPage);
-
+  const isWeb = Platform.OS === 'web';
   const paginatedGames = profileData?.gameHistory?.slice(
     (currentPage - 1) * gamesPerPage,
     currentPage * gamesPerPage
@@ -145,6 +148,7 @@ const App: React.FC = () => {
     setTempImageUri(localUri); // solo para preview
   }
 };
+  
 const pickImageAndUpload = async () => {
   const result = await ImagePicker.launchImageLibraryAsync({
     allowsEditing: true,
@@ -232,7 +236,13 @@ const pickImageAndUpload = async () => {
 
 const saveProfileChanges = async () => {
   try {
-    const token = localStorage.getItem('jwt_token');
+    let token: string | null;
+
+    if (isWeb) {
+        token = localStorage.getItem("jwt_token");
+    } else {
+        token = await AsyncStorage.getItem("jwt_token");
+    }
     if (!token) throw new Error("Token no encontrado");
 
     let uploadedUrl = profileData?.photoUrl;
@@ -261,7 +271,7 @@ const saveProfileChanges = async () => {
     }
 
     //guardar en backend
-    const res = await fetch('http://localhost:8080/users/update-profile', {
+    const res = await fetch(`${phoneURL}/users/update-profile`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -822,6 +832,8 @@ const saveProfileChanges = async () => {
   );
 
   return (
+     <SafeAreaProvider>
+          <SafeAreaView style={{ flex: 1 }}>
     <ImageBackground
       source={require("../assets/images/BG IMG GLF.png")}
       style={styles.imageBg}
@@ -1526,6 +1538,8 @@ const saveProfileChanges = async () => {
         </View>
       </View>
     </ImageBackground>
+    </SafeAreaView>
+    </SafeAreaProvider>
   );
   
 };

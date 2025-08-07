@@ -10,8 +10,6 @@ public class GameDTO {
     private int totalTime;
     private int totalSpringedTraps;
     private Date date;
-    // private List<String> playerIds; // IDs en lugar de usernames
-    // private List<String> playerUsernames; // sigue viniendo como usernames
 
     public GameDTO() {}
 
@@ -48,7 +46,7 @@ public class GameDTO {
         this.totalTime = totalTime;
     }
 
-    
+
     public String getId(){
         return id;
     }

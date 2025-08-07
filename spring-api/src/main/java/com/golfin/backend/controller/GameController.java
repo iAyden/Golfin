@@ -7,6 +7,8 @@ import com.golfin.backend.model.Game;
 import com.golfin.backend.service.GameService;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +42,16 @@ public class GameController {
                                  .body(null);
         }
     }
+    @PostMapping("/game-data")
+    public ResponseEntity<?> getMultipleUserGameData(@RequestBody List<String> usernames) {
+    List<UserGameDataDTO> gameDataList = usernames.stream()
+        .map(username -> gameService.getGameDataForUsername(username)) // tu lógica
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+
+    return ResponseEntity.ok(gameDataList);
+}
+
 
     @GetMapping("/with-players")
         public ResponseEntity<?> getGamesWithPlayerDetails() {

@@ -23,7 +23,7 @@ import { useRouter } from "expo-router";
 import socketService from "../components/methods/socketService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/FontAwesome";
-
+import { Platform } from "react-native";
 // Definicion de tipos
 type UserCardType = {
   id: string;
@@ -260,13 +260,20 @@ export default function CreateLobbyScreen() {
 
   useEffect(() => {
     if (userCards.length > 0) {
-      AsyncStorage.setItem("latestUserCards", JSON.stringify(userCards));
+      let stored: string | null;
+      const isWeb = Platform.OS === "web";
+      if (isWeb) {
+        localStorage.setItem("latestUserCards", JSON.stringify(userCards));
+      } else {
+        AsyncStorage.setItem("latestUserCards", JSON.stringify(userCards));
+      }
     }
   }, [userCards]);
 
+  const phoneURL = "wss://mr-virtual-penalty-czech.trycloudflare.com";
   ////////////////////// WEBSOCKETS ///////////////////////////////////
   useEffect(() => {
-    socketService.connect("ws://localhost:1337/game");
+    socketService.connect(`${phoneURL}/game`);
 
     const handleCreateParty = (payload: PartyData) => {
       if (payload?.code) {
@@ -479,7 +486,13 @@ export default function CreateLobbyScreen() {
     };
 
     const handleGameEnded = async () => {
-      const stored = await AsyncStorage.getItem("latestUserCards");
+      let stored: string | null;
+      const isWeb = Platform.OS === "web";
+      if (isWeb) {
+        stored = localStorage.getItem("latestUserCards");
+      } else {
+        stored = await AsyncStorage.getItem("latestUserCards");
+      }
       let envio = stored ? JSON.parse(stored) : [];
 
       envio = [...envio].sort((primerItem, segundoItem) =>
@@ -494,7 +507,11 @@ export default function CreateLobbyScreen() {
 
       console.log("Datos a enviar a LeaderBoard:", envio);
 
-      await AsyncStorage.setItem("leaderboardData", JSON.stringify(envio));
+      if (isWeb) {
+        localStorage.setItem("leaderboardData", JSON.stringify(envio));
+      } else {
+        await AsyncStorage.setItem("leaderboardData", JSON.stringify(envio));
+      }
       router.push("/endGame");
     };
 

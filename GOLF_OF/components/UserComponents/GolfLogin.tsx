@@ -1,9 +1,11 @@
 import { Try } from "expo-router/build/views/Try";
-import { useRouter } from "expo-router";
+//import { useRouter } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import React, { useState, useRef, useEffect } from "react";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
+//import { API_URL } from '@env';
 import { useNavigation } from "@react-navigation/native";
+import { makeRedirectUri } from "expo-auth-session";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   View,
@@ -23,7 +25,7 @@ import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 //Importar función para autentificar token
 import { checkAuthToken } from "@/utils/auth";
-
+import { useRouter } from "expo-router";
 //Importar metodos para majear JWTs
 import { saveToken, getToken, clearToken } from "../../utils/jwtStorage";
 
@@ -36,6 +38,8 @@ import * as Google from "expo-auth-session/providers/google";
 import { loginSchema, loginSchemaType } from "../../schemas/AuthSchemas";
 //Importar Zod Schema para SignUp
 import { signupSchema, signupSchemaType } from "../../schemas/AuthSchemas";
+import { Platform } from "react-native";
+import Constants from "expo-constants";
 
 const GolfLogin = () => {
   const router = useRouter();
@@ -47,9 +51,18 @@ const GolfLogin = () => {
   const flipAnimation = useRef(new Animated.Value(0)).current;
   const [errorMsg, setErrorMsg] = useState("");
   const navigation = useNavigation();
+  const redirectUri = Platform.OS === "web"
 
+  
+  ? `https://birth-classics-ent-bread.trycloudflare.com/google-popup.html`
+  : makeRedirectUri({ native: "golfin://redirect", useProxy: true as any, 
+  });
+  console.log("Redirect URI móvil:", redirectUri);
+  const isWeb = Platform.OS === 'web';
+  const phoneURL = "https://birth-classics-ent-bread.trycloudflare.com";
   useEffect(() => {
     console.log("use efect");
+
     const verifyToken = async () => {
       const isLoggedIn = await checkAuthToken();
       console.log("isloggedin " + isLoggedIn);
@@ -83,38 +96,65 @@ const GolfLogin = () => {
       "467124897071-etfu4to0fh6i2rcpgvol7f15m5cdnthj.apps.googleusercontent.com",
     scopes: ["openid", "email", "profile"],
     responseType: "id_token",
-    redirectUri: "http://localhost:8080/google-popup.html",
+    redirectUri,
   });
-
+  
   useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      if (event.data?.id_token) {
-        const id_token = event.data.id_token;
-        console.log("Token recibido del popup:", id_token);
+    console.log("Redirect URI móvil:", redirectUri);
 
-        fetch("http://127.0.0.1:8080/auth/google", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id_token }),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log("Respuesta del backend:", data);
-            if (data.token) {
-              saveToken(data.token);
-              window.location.href = "/profileStats";
-            } else {
-              console.error("No se recibió token del backend", data);
-            }
+    if (Platform.OS === "web") {
+      const handleMessage = (event: MessageEvent) => {
+        if (event.data?.id_token) {
+          const id_token = event.data.id_token;
+          console.log("Token recibido del popup:", id_token);
+  
+          fetch(`${phoneURL}/auth/google`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id_token }),
           })
-          .catch((err) => console.error("Error en el fetch:", err));
-      }
-    };
-
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.token) {
+                saveToken(data.token);
+                if(isWeb){
+                window.location.href = "/profileStats";} 
+                else{
+                  const router = useRouter();
+                  router.push("/profileStats");
+                }
+              }
+            })
+            .catch((err) => console.error("Error en el fetch:", err));
+        }
+      };
+  
+      window.addEventListener("message", handleMessage);
+      return () => window.removeEventListener("message", handleMessage);
+    }
   }, []);
 
+  useEffect(() => {
+    if (Platform.OS !== "web" && response?.type === "success") {
+      const { id_token } = response.params;
+      console.log("Token recibido en móvil:", id_token);
+  
+      fetch(`${phoneURL}/auth/google`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id_token }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.token) {
+            saveToken(data.token);
+            window.location.href = "/profileStats";
+          }
+        })
+        .catch((err) => console.error("Error en el fetch:", err));
+    }
+  }, [response]);
+  
   const handleGoogleLogin = async () => {
     await promptAsync();
   };
@@ -129,7 +169,7 @@ const GolfLogin = () => {
     }
     try {
       Alert.alert("Bienvenido amigo {$email}");
-      const response = await fetch("http://127.0.0.1:8080/auth/login", {
+      const response = await fetch(`${phoneURL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -147,9 +187,16 @@ const GolfLogin = () => {
         const data = await response.json();
         const token = data.token;
         console.log("token guardado del login" + token);
-        saveToken(token);
+        saveToken(token);  
+        if(isWeb){
+          window.location.href = "/profileStats"; 
+        
         if (typeof window !== "undefined" && window.location) {
           window.location.href = "/profileStats";
+        }}
+        else{
+          const router = useRouter();
+          router.push("/profileStats");
         }
       }
     } catch (error) {
@@ -175,7 +222,7 @@ const GolfLogin = () => {
       return;
     }
     try {
-      const response = await fetch("http://127.0.0.1:8080/auth/signup", {
+      const response = await fetch(`${phoneURL}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -195,9 +242,12 @@ const GolfLogin = () => {
         const token = data.token;
         console.log("token guardado del signup" + token);
         saveToken(token);
-        if (typeof window !== "undefined" && window.location) {
-          window.location.href = "/profileStats";
-        }
+        if(isWeb){
+          window.location.href = "/profileStats";} 
+          else{
+            const router = useRouter();
+            router.push("/profileStats");
+          }
       }
     } catch (error) {
       console.log(error);
@@ -280,7 +330,9 @@ const GolfLogin = () => {
                     keyboardType="email-address"
                     autoCapitalize="none"
                     placeholderTextColor="#666"
-                    {...field}
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    onBlur={field.onBlur}
                   />
                 )}
               />
@@ -300,7 +352,9 @@ const GolfLogin = () => {
                       placeholder="Password"
                       secureTextEntry={!showPassword}
                       placeholderTextColor="#666"
-                      {...field}
+                      value={field.value}
+                      onChangeText={field.onChange}
+                      onBlur={field.onBlur}
                     />
                     <TouchableOpacity
                       style={styles.eyeIcon}
@@ -363,7 +417,9 @@ const GolfLogin = () => {
                     style={styles.input}
                     placeholder="Username"
                     placeholderTextColor="#666"
-                    {...field}
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    onBlur={field.onBlur}
                   />
                 )}
               />
@@ -382,7 +438,9 @@ const GolfLogin = () => {
                     placeholder="Email address"
                     keyboardType="email-address"
                     placeholderTextColor="#666"
-                    {...field}
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    onBlur={field.onBlur}
                   />
                 )}
               />
@@ -401,7 +459,9 @@ const GolfLogin = () => {
                       placeholder="Password"
                       secureTextEntry={!showPassword}
                       placeholderTextColor="#666"
-                      {...field}
+                      value={field.value}
+                      onChangeText={field.onChange}
+                      onBlur={field.onBlur}
                     />
                     <TouchableOpacity
                       style={styles.eyeIcon}
@@ -428,7 +488,9 @@ const GolfLogin = () => {
                       placeholder="Confirm Password"
                       secureTextEntry={!showConfirmPassword}
                       placeholderTextColor="#666"
-                      {...field}
+                      value={field.value}
+                      onChangeText={field.onChange}
+                      onBlur={field.onBlur}
                     />
                     <TouchableOpacity
                       style={styles.eyeIcon}
