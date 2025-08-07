@@ -503,14 +503,11 @@ export default function CreateLobbyScreen() {
       let envio = stored ? JSON.parse(stored) : [];
 
       envio = [...envio].sort((primerItem, segundoItem) =>
-        (primerItem.points || 0) === 0 && (segundoItem.points || 0) === 0
-          ? 0
-          : (primerItem.points || 0) === 0
-          ? 1
-          : (segundoItem.points || 0) === 0
-          ? -1
-          : (primerItem.points || 0) - (segundoItem.points || 0)
-      );
+                  (primerItem.points || 0) === 0 && (segundoItem.points || 0) === 0
+                    ? 0 : (primerItem.points || 0) === 0
+                    ? -1 : (segundoItem.points || 0) === 0
+                    ? 1 : (primerItem.points || 0) - (segundoItem.points || 0)
+                );
 
       console.log("Datos a enviar a LeaderBoard:", envio);
 
@@ -846,8 +843,7 @@ export default function CreateLobbyScreen() {
             <View style={styles.userCardsContainer}>
               {[...userCards]
                 .sort((primerItem, segundoItem) =>
-                  (primerItem.points || 0) === 0 &&
-                  (segundoItem.points || 0) === 0
+                  (primerItem.points || 0) === 0 && (segundoItem.points || 0) === 0
                     ? 0
                     : (primerItem.points || 0) === 0
                     ? 1
