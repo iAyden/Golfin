@@ -372,14 +372,14 @@ const GolfLogin = () => {
               )}
               {errorMsg && <Text style={{ color: "red" }}>{errorMsg}</Text>}
 
-              <GoogleButton onPress={handleGoogleLogin} />
-
               <TouchableOpacity
                 style={styles.actionButton}
                 onPress={handleLoginSubmit(handleLogin)}
               >
                 <Text style={styles.buttonText}>Log in</Text>
               </TouchableOpacity>
+
+              <GoogleButton onPress={handleGoogleLogin} />  
 
               <TouchableOpacity onPress={flipCard} style={styles.flipButton}>
                 <Text style={styles.flipText}>Are you new? Sign up</Text>

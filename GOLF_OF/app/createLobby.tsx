@@ -270,7 +270,7 @@ export default function CreateLobbyScreen() {
     }
   }, [userCards]);
 
-  const phoneURL = "wss://mr-virtual-penalty-czech.trycloudflare.com";
+  const phoneURL = "ws://192.168.0.24:1337";
   ////////////////////// WEBSOCKETS ///////////////////////////////////
   useEffect(() => {
     socketService.connect(`${phoneURL}/game`);
@@ -364,16 +364,23 @@ export default function CreateLobbyScreen() {
       setIsOwner(updatedParty.owner === userNameRef.current);
     };
 
-    const handleKarmaTrigger = (payload: {
-      username: string;
-      karma: number;
-    }) => {
-      console.log("TRAMPA trigueada:", payload.username, payload.karma);
+    const handleKarmaTrigger = (payload: any) => {
+      console.log("Evento karmaTrigger recibido: ", payload);
+        setUserCards((prevUserCards) =>
+        prevUserCards.map((card) =>
+          card.name === payload.username ? { ...card, karma: payload.karma }: card
+        )
+      );
     };
 
     /////////////////// REAL TIME updater /////////////
     const handleGlobalTimer = (payload: { time: number }) => {
       console.log("Global timer recibido:", payload.time);
+
+      // localizamos al usuario del turno actual: 
+      
+
+
       setSeconds(payload.time);
     };
     //////////////////////////////////////////////////
@@ -1048,6 +1055,24 @@ export default function CreateLobbyScreen() {
                       </>
                     )
                   )}
+                </View>
+              </View>
+            )}
+
+            {userScoredModal && (
+              <View style={styles.modalOverlay}>
+                <View style={styles.modalContent}>
+                  <>
+                    <Text style={styles.modalTitle}>
+                      ¡{nameUserScored} scored!
+                    </Text>
+                    <Text style={styles.modalScore}>
+                      Score: {scoreUserScored}
+                    </Text>
+                    <Text style={styles.modalPoints}>
+                      Points: {pointsUserScored}{" "}
+                    </Text>
+                  </>
                 </View>
               </View>
             )}
