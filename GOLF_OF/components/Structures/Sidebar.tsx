@@ -1,5 +1,4 @@
 import React from "react";
-import { useEffect, useState } from "react";
 import {
   Animated,
   StyleSheet,
@@ -10,8 +9,15 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Route, useRouter } from "expo-router";
-import { clearToken } from "@/utils/jwtStorage";
-import { checkAuthToken } from "@/utils/auth";
+
+// Here I import our custom font
+import { useFonts } from "expo-font";
+
+const [fontsLoaded] = useFonts({
+  gharison: require("../assets/fonts/gharison.ttf"),
+});
+//
+
 // DEFINIMOS LOS TIPOS PARA LAS PROPS DEL COMPONENTE
 type SidebarProps = {
   isVisible: boolean;
@@ -32,9 +38,8 @@ const MENU_ITEMS: MenuItem[] = [
   { id: "/", title: "Home", icon: "home" },
   { id: "createLobby", title: "New Game", icon: "gamepad" },
   { id: "profileStats", title: "Profile", icon: "newspaper-o" },
-  { id: "LeaderBoard", title: "Ranking", icon: "trophy" },
   { id: "LogUser", title: "Sign Up", icon: "user" },
-  { id: "gameplay", title: "Log Out", icon: "sign-out" },
+  { id: "gameplay", title: "inGmaeExp", icon: "gamepad" },
 ];
 
 const Sidebar: React.FC<SidebarProps & { style?: any }> = ({
@@ -44,112 +49,30 @@ const Sidebar: React.FC<SidebarProps & { style?: any }> = ({
   activeMenuItem,
   style,
 }) => {
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [isLoggedIn, setisLoggedIn] = useState<boolean>(false);
   const router = useRouter(); // EL MALDITO COMPONENTE NUNCA ELIMINAR
-  useEffect(() => {
-    console.log("use efect");
-    const verifyToken = async () => {
-      const isLogged = await checkAuthToken();
-      if (isLogged) {
-        setisLoggedIn(true);
-      }
-    };
-    verifyToken();
-  }, []);
-  useEffect(() => {
-    const MENU_ITEMS: MenuItem[] = [
-      { id: "/", title: "Home", icon: "home" },
-      { id: "LeaderBoard", title: "Ranking", icon: "trophy" },
-
-      { id: "createLobby", title: "New Game", icon: "gamepad" },
-      { id: "gameplay", title: "Party", icon: "sign-out" },
-    ];
-    if (isLoggedIn) {
-      MENU_ITEMS.push(
-        { id: "profileStats", title: "Profile", icon: "newspaper-o" },
-
-        { id: "__logout", title: "Log Out", icon: "sign-out" }
-      );
-    } else {
-      MENU_ITEMS.push({ id: "LogUser", title: "Sign Up", icon: "user" });
-    }
-    setMenuItems(MENU_ITEMS);
-  }, [isLoggedIn]);
-
-  // --- Friends CRUD State ---
-  const [friends, setFriends] = useState<{ id: string; name: string }[]>([]); // List of friends
-  const [showAddFriendModal, setShowAddFriendModal] = useState<boolean>(false);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<
-    { id: string; name: string }[]
-  >([]);
-
-  // --- CRUD Handlers for Friends ---
-  const handleAddFriend = (user: { id: string; name: string }) => {
-    // Add friend to list (simulate API call)
-    setFriends((prev) => [...prev, user]);
-    setShowAddFriendModal(false);
-    setSearchQuery("");
-    setSearchResults([]);
-  };
-
-  const handleEditFriend = (friend: { id: string; name: string }) => {
-    // Open edit modal or inline edit (to be implemented)
-    // Example: setEditFriend(friend)
-  };
-
-  const handleDeleteFriend = (friend: { id: string; name: string }) => {
-    // Remove friend from list (simulate API call)
-    setFriends((prev) => prev.filter((f) => f.id !== friend.id));
-  };
-
-  // For search, simulate API call
-  useEffect(() => {
-    if (searchQuery.trim() === "") {
-      setSearchResults([]);
-      return;
-    }
-    // Simulate search result
-    setSearchResults(
-      [
-        { id: "1", name: "Alice" },
-        { id: "2", name: "Bob" },
-        { id: "3", name: "Charlie" },
-      ].filter((user) =>
-        user.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    );
-  }, [searchQuery]);
-
   return (
     <Animated.View style={[styles.sidebar, style, { width }]}>
       {isVisible && (
         <>
           {/* AQUI ESTA EL ENCABEZADO DE LA SIDE BAR, HAY QUE VER EL LOGO PARA VER COMO SE PUEDE HACER */}
           <View style={styles.sidebarHeader}>
-            {/* <Image
+            <Image
               source={require("@/assets/images/icon.png")}
               style={styles.sidebarLogo}
               accessibilityLabel="Logo Eco Noticias"
-            /> */}
+            />
             <Text style={styles.sidebarTitle}>golfin'</Text>
           </View>
 
           {/* AQUI ESTAN LOS ITEMS DE LOS MENUS*/}
-          {menuItems.map((item) => (
+          {MENU_ITEMS.map((item) => (
             <TouchableOpacity
               key={item.id}
               style={[
                 styles.sidebarButton,
                 activeMenuItem === item.id && styles.activeButton,
               ]}
-              onPress={async () => {
-                if (item.id === "__logout") {
-                  await clearToken();
-                  router.replace("/");
-                  return;
-                }
+              onPress={() => {
                 onMenuItemPress(item.id);
                 router.push(item.id as Route);
               }}
@@ -196,7 +119,7 @@ const styles = StyleSheet.create({
   },
   sidebarTitle: {
     color: "#c6f6d5",
-    fontSize: 52,
+    fontSize: 22,
     fontWeight: "bold",
     fontFamily: "gharison",
   },

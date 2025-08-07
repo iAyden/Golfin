@@ -77,6 +77,7 @@ const winners: Winner[] = [
   },
 ];
 
+// This is for the border colors of the avatars in the podium
 const podiumColors = ["#FFD700", "#C0C0C0", "#CD7F32"];
 
 const EndGame = () => {
@@ -89,29 +90,29 @@ const EndGame = () => {
     const fetchUserCards = async () => {
       try {
         let storedData: string | null;
-        const isWeb = Platform.OS === 'web';
+        const isWeb = Platform.OS === "web";
         if (isWeb) {
-            storedData = localStorage.getItem("latestUserCards");
+          storedData = localStorage.getItem("latestUserCards");
         } else {
-            storedData = await AsyncStorage.getItem("latestUserCards");
+          storedData = await AsyncStorage.getItem("latestUserCards");
         }
 
         if (storedData) {
           const parsedData = JSON.parse(storedData);
           console.log("DATA cargada de la localStorage: ", parsedData);
           setUserData(parsedData);
-          const storedUsers = JSON.parse(localStorage.getItem('latestUserCards') || '[]');
+          const storedUsers = JSON.parse(
+            localStorage.getItem("latestUserCards") || "[]"
+          );
           const usernames = storedUsers.map((u: any) => u.id);
           const response = await fetch(`${phoneURL}/game/game-data`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(usernames),
           });
-          
         } else {
           console.log("No hay DATA en localStorage");
         }
-
       } catch (error) {
         console.error("Error leyendo la locl storagE", error);
       }
@@ -152,185 +153,182 @@ const EndGame = () => {
       style={styles.bg}
       resizeMode="cover"
     >
-      <ScrollView contentContainerStyle={{ paddingBottom: marginBottom }}>
-        <View style={[styles.container, { justifyContent: "flex-end" }]}>
-          <Text style={styles.title}>Game Results</Text>
+      <View style={[styles.container, { justifyContent: "flex-start" }]}>
+        <Text style={styles.title}>Game Results</Text>
+        <View
+          style={[
+            styles.podiumWrapper,
+            {
+              position: "relative",
+              minHeight: 180,
+              width: podiumAreaWidth,
+              alignSelf: "center",
+            },
+          ]}
+        >
+          {/* Podium image with all 3 places */}
+          <Image
+            source={require("../assets/images/podium_image.png")}
+            style={{
+              width: podiumAreaWidth,
+              height: podiumImgHeight,
+              resizeMode: "contain",
+              position: "absolute",
+              left: 0,
+              bottom: podiumBottom,
+              zIndex: 0,
+            }}
+          />
+          {/* 2nd Place */}
           <View
-            style={[
-              styles.podiumWrapper,
-              {
-                position: "relative",
-                minHeight: 180,
-                width: podiumAreaWidth,
-                alignSelf: "center",
-              },
-            ]}
-          >
-            {/* Podium image with all 3 places */}
-            <Image
-              source={require("../assets/images/podium_image.png")}
-              style={{
-                width: podiumAreaWidth,
-                height: podiumImgHeight,
-                resizeMode: "contain",
-                position: "absolute",
-                left: 0,
-                bottom: podiumBottom,
-                zIndex: 0,
-              }}
-            />
-            {/* 2nd Place */}
-            <View
-              style={{
-                position: "absolute",
-                left: avatar2ndLeft,
-                bottom: avatar2ndBottom,
-                alignItems: "center",
-                zIndex: 1, // behind 1st place
-              }}
-            >
-              <View
-                style={[
-                  styles.avatarCircle,
-                  {
-                    borderColor: podiumColors[1],
-                    width: avatar2nd,
-                    height: avatar2nd,
-                    backgroundColor: "#fff",
-                  },
-                ]}
-              >
-                <Image
-                  source={winners[1].avatar}
-                  style={{
-                    width: avatar2nd * 0.9,
-                    height: avatar2nd * 0.9,
-                    borderRadius: avatar2nd * 0.45,
-                  }}
-                />
-              </View>
-              <Text style={styles.podiumName}>{winners[1].name}</Text>
-              {/* <Text style={styles.podiumScore}>2nd</Text> */}
-            </View>
-            {/* 1st Place */}
-            <View
-              style={{
-                position: "absolute",
-                left: avatar1stLeft,
-                bottom: avatar1stBottom,
-                alignItems: "center",
-                zIndex: 2, // in front of 2nd and 3rd
-              }}
-            >
-              <View
-                style={[
-                  styles.avatarCircle,
-                  {
-                    borderColor: podiumColors[0],
-                    width: avatarBase,
-                    height: avatarBase,
-                    backgroundColor: "#fff",
-                  },
-                ]}
-              >
-                <Image
-                  source={winners[0].avatar}
-                  style={{
-                    width: avatarBase * 0.9,
-                    height: avatarBase * 0.9,
-                    borderRadius: avatarBase * 0.45,
-                  }}
-                />
-              </View>
-              <Text
-                style={[
-                  styles.podiumName,
-                  { fontWeight: "bold", fontSize: podiumAreaWidth * 0.06 },
-                ]}
-              >
-                {winners[0].name}
-              </Text>
-              <Text
-                style={[
-                  styles.podiumScore,
-                  { fontWeight: "bold", color: podiumColors[0] },
-                ]}
-              ></Text>
-            </View>
-            {/* 3rd Place */}
-            <View
-              style={{
-                position: "absolute",
-                left: avatar3rdLeft,
-                bottom: avatar3rdBottom,
-                alignItems: "center",
-                zIndex: 1, // behind 1st place
-              }}
-            >
-              <View
-                style={[
-                  styles.avatarCircle,
-                  {
-                    borderColor: podiumColors[2],
-                    width: avatar3rd,
-                    height: avatar3rd,
-                    backgroundColor: "#fff",
-                  },
-                ]}
-              >
-                <Image
-                  source={winners[2].avatar}
-                  style={{
-                    width: avatar3rd * 0.9,
-                    height: avatar3rd * 0.9,
-                    borderRadius: avatar3rd * 0.45,
-                  }}
-                />
-              </View>
-              <Text style={styles.podiumName}>{winners[2].name}</Text>
-              {/* <Text style={styles.podiumScore}>3rd</Text> */}
-            </View>
-          </View>
-          {/* Fourth place and leaderboard */}
-          <View
-            style={[
-              styles.fourthPlaceContainer,
-              { marginBottom: height * 0.04 },
-            ]}
+            style={{
+              position: "absolute",
+              left: avatar2ndLeft,
+              bottom: avatar2ndBottom,
+              alignItems: "center",
+              zIndex: 1, // behind 1st place
+            }}
           >
             <View
               style={[
                 styles.avatarCircle,
-                { borderColor: "#78909c", width: avatar4th, height: avatar4th },
+                {
+                  borderColor: podiumColors[1],
+                  width: avatar2nd,
+                  height: avatar2nd,
+                  backgroundColor: "#fff",
+                },
               ]}
             >
               <Image
-                source={winners[3].avatar}
+                source={winners[1].avatar}
                 style={{
-                  width: avatar4th * 0.9,
-                  height: avatar4th * 0.9,
-                  borderRadius: avatar4th * 0.45,
+                  width: avatar2nd * 0.9,
+                  height: avatar2nd * 0.9,
+                  borderRadius: avatar2nd * 0.45,
                 }}
               />
             </View>
-            <View style={{ marginLeft: 16, flex: 1 }}>
-              <Text style={styles.fourthName}>{winners[3].name}</Text>
-              <Text style={styles.fourthScore}>4th Place</Text>
-            </View>
+            <Text style={styles.podiumName}>{winners[1].name}</Text>
           </View>
-          <View style={styles.leaderboardContainer}>
-            <LeaderBoard />
-          </View>
-          {/* Exit to Main Menu Button */}
-          <TouchableOpacity
-            style={styles.exitButton}
-            onPress={() => router.replace("/")}
+          {/* 1st Place */}
+          <View
+            style={{
+              position: "absolute",
+              left: avatar1stLeft,
+              bottom: avatar1stBottom,
+              alignItems: "center",
+              zIndex: 2, // in front of 2nd and 3rd
+            }}
           >
-            <FontAwesome name="sign-out" size={18} color="#2E7D32" />
-            <Text style={styles.exitButtonText}>Exit to Main Menu</Text>
-          </TouchableOpacity>
+            <View
+              style={[
+                styles.avatarCircle,
+                {
+                  borderColor: podiumColors[0],
+                  width: avatarBase,
+                  height: avatarBase,
+                  backgroundColor: "#fff",
+                },
+              ]}
+            >
+              <Image
+                source={winners[0].avatar}
+                style={{
+                  width: avatarBase * 0.9,
+                  height: avatarBase * 0.9,
+                  borderRadius: avatarBase * 0.45,
+                }}
+              />
+            </View>
+            <Text
+              style={[
+                styles.podiumName,
+                { fontWeight: "bold", fontSize: podiumAreaWidth * 0.06 },
+              ]}
+            >
+              {winners[0].name}
+            </Text>
+            <Text
+              style={[
+                styles.podiumScore,
+                { fontWeight: "bold", color: podiumColors[0] },
+              ]}
+            ></Text>
+          </View>
+          {/* 3rd Place */}
+          <View
+            style={{
+              position: "absolute",
+              left: avatar3rdLeft,
+              bottom: avatar3rdBottom,
+              alignItems: "center",
+              zIndex: 1, // behind 1st place
+            }}
+          >
+            <View
+              style={[
+                styles.avatarCircle,
+                {
+                  borderColor: podiumColors[2],
+                  width: avatar3rd,
+                  height: avatar3rd,
+                  backgroundColor: "#fff",
+                },
+              ]}
+            >
+              <Image
+                source={winners[2].avatar}
+                style={{
+                  width: avatar3rd * 0.9,
+                  height: avatar3rd * 0.9,
+                  borderRadius: avatar3rd * 0.45,
+                }}
+              />
+            </View>
+            <Text style={styles.podiumName}>{winners[2].name}</Text>
+          </View>
         </View>
-      </ScrollView>
+        {/* Fourth place and leaderboard */}
+        <View
+          style={[styles.fourthPlaceContainer, { marginBottom: height * 0.04 }]}
+        >
+          <View
+            style={[
+              styles.avatarCircle,
+              { borderColor: "#78909c", width: avatar4th, height: avatar4th },
+            ]}
+          >
+            <Image
+              source={winners[3].avatar}
+              style={{
+                width: avatar4th * 0.9,
+                height: avatar4th * 0.9,
+                borderRadius: avatar4th * 0.45,
+              }}
+            />
+          </View>
+          <View style={{ marginLeft: 16, flex: 1 }}>
+            <Text style={styles.fourthName}>{winners[3].name}</Text>
+            <Text style={styles.fourthScore}>4th Place</Text>
+          </View>
+        </View>
+        <View style={styles.leaderboardContainer}>
+          <View style={{ maxHeight: 320, width: "100%" }}>
+            <ScrollView>
+              <LeaderBoard />
+            </ScrollView>
+          </View>
+        </View>
+        {/* Exit to Main Menu Button */}
+        <TouchableOpacity
+          style={styles.exitButton}
+          onPress={() => router.replace("/")}
+        >
+          <FontAwesome name="sign-out" size={18} color="#2E7D32" />
+          <Text style={styles.exitButtonText}>Exit to Main Menu</Text>
+        </TouchableOpacity>
+      </View>
     </ImageBackground>
   );
 };
@@ -342,10 +340,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   container: {
-    // Removed flex: 1 to allow ScrollView to handle scrolling
     alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: 18,
     backgroundColor: "rgba(255,255,255,0.05)",
     maxWidth: 600,
     minWidth: 280,
@@ -437,18 +433,6 @@ const styles = StyleSheet.create({
     minWidth: 70,
     maxWidth: 180,
     paddingHorizontal: 2,
-  },
-  podiumBase: {
-    width: "100%",
-    minWidth: 50,
-    maxWidth: 180,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-    marginBottom: 0,
-    overflow: "hidden",
-    backgroundColor: "#c19a6b", // fallback wood color
-    borderWidth: 1,
-    borderColor: "#8d6748",
   },
   leaderboardContainer: {
     borderRadius: 24,
