@@ -30,6 +30,19 @@ type Winner = {
 };
 
 const unknownAvatar = require("../assets/images/starC.png");
+const podiumSize = 4;
+const emptyWinner: Winner = {
+  name: "Empty",
+  avatar: unknownAvatar,
+  score: 0,
+  traps: 0,
+  karma: 0,
+  points: 0,
+  birdies: 0,
+  pars: 0,
+  bogeys: 0,
+};
+
 const winners: Winner[] = [
   {
     name: "Pana Miguel",
@@ -77,6 +90,11 @@ const winners: Winner[] = [
   },
 ];
 
+const podiumWinners: Winner[] = [
+  ...winners.slice(0, podiumSize),
+  ...Array.from({ length: Math.max(0, podiumSize - winners.length) }, () => emptyWinner)
+];
+
 // This is for the border colors of the avatars in the podium
 const podiumColors = ["#FFD700", "#C0C0C0", "#CD7F32"];
 
@@ -85,7 +103,7 @@ const EndGame = () => {
   //////////////// AQUI LA DATA DE LA LEADERBOARD QUE SE PASA DESDE createLobby /////////////////
   const [userData, setUserData] = useState([]);
 
-  const phoneURL = "https://brush-pollution-rivers-upset.trycloudflare.com";
+  const phoneURL = "http://127.0.0.1:8080";
   useEffect(() => {
     const fetchUserCards = async () => {
       try {
@@ -105,11 +123,11 @@ const EndGame = () => {
             localStorage.getItem("latestUserCards") || "[]"
           );
           const usernames = storedUsers.map((u: any) => u.id);
-          const response = await fetch(`${phoneURL}/game/game-data`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(usernames),
-          });
+          // const response = await fetch(`${phoneURL}/game/game-data`, {
+          //   method: "POST",
+          //   headers: { "Content-Type": "application/json" },
+          //   body: JSON.stringify(usernames),
+          // });
         } else {
           console.log("No hay DATA en localStorage");
         }
@@ -155,7 +173,7 @@ const EndGame = () => {
     >
       <View style={[styles.container, { justifyContent: "flex-start" }]}>
         <Text style={styles.title}>Game Results</Text>
-        <View
+        {/* <View
           style={[
             styles.podiumWrapper,
             {
@@ -165,9 +183,9 @@ const EndGame = () => {
               alignSelf: "center",
             },
           ]}
-        >
+        > */}
           {/* Podium image with all 3 places */}
-          <Image
+          {/* <Image
             source={require("../assets/images/podium_image.png")}
             style={{
               width: podiumAreaWidth,
@@ -179,7 +197,7 @@ const EndGame = () => {
               zIndex: 0,
             }}
           />
-          {/* 2nd Place */}
+          2nd Place
           <View
             style={{
               position: "absolute",
@@ -201,7 +219,7 @@ const EndGame = () => {
               ]}
             >
               <Image
-                source={winners[1].avatar}
+                source={podiumWinners[1].avatar}
                 style={{
                   width: avatar2nd * 0.9,
                   height: avatar2nd * 0.9,
@@ -209,10 +227,10 @@ const EndGame = () => {
                 }}
               />
             </View>
-            <Text style={styles.podiumName}>{winners[1].name}</Text>
-          </View>
+            <Text style={styles.podiumName}>{podiumWinners[1].name}</Text>
+          </View> */}
           {/* 1st Place */}
-          <View
+          {/* <View
             style={{
               position: "absolute",
               left: avatar1stLeft,
@@ -233,7 +251,7 @@ const EndGame = () => {
               ]}
             >
               <Image
-                source={winners[0].avatar}
+                source={podiumWinners[0].avatar}
                 style={{
                   width: avatarBase * 0.9,
                   height: avatarBase * 0.9,
@@ -247,7 +265,7 @@ const EndGame = () => {
                 { fontWeight: "bold", fontSize: podiumAreaWidth * 0.06 },
               ]}
             >
-              {winners[0].name}
+              {podiumWinners[0].name}
             </Text>
             <Text
               style={[
@@ -255,9 +273,9 @@ const EndGame = () => {
                 { fontWeight: "bold", color: podiumColors[0] },
               ]}
             ></Text>
-          </View>
+          </View> */}
           {/* 3rd Place */}
-          <View
+          {/* <View
             style={{
               position: "absolute",
               left: avatar3rdLeft,
@@ -278,7 +296,7 @@ const EndGame = () => {
               ]}
             >
               <Image
-                source={winners[2].avatar}
+                source={podiumWinners[2].avatar}
                 style={{
                   width: avatar3rd * 0.9,
                   height: avatar3rd * 0.9,
@@ -286,11 +304,11 @@ const EndGame = () => {
                 }}
               />
             </View>
-            <Text style={styles.podiumName}>{winners[2].name}</Text>
+            <Text style={styles.podiumName}>{podiumWinners[2].name}</Text>
           </View>
-        </View>
+        </View> */}
         {/* Fourth place and leaderboard */}
-        <View
+        {/* <View
           style={[styles.fourthPlaceContainer, { marginBottom: height * 0.04 }]}
         >
           <View
@@ -300,7 +318,7 @@ const EndGame = () => {
             ]}
           >
             <Image
-              source={winners[3].avatar}
+              source={podiumWinners[3].avatar}
               style={{
                 width: avatar4th * 0.9,
                 height: avatar4th * 0.9,
@@ -309,10 +327,10 @@ const EndGame = () => {
             />
           </View>
           <View style={{ marginLeft: 16, flex: 1 }}>
-            <Text style={styles.fourthName}>{winners[3].name}</Text>
+            <Text style={styles.fourthName}>{podiumWinners[3].name}</Text>
             <Text style={styles.fourthScore}>4th Place</Text>
           </View>
-        </View>
+        </View> */}
         <View style={styles.leaderboardContainer}>
           <View style={{ maxHeight: 320, width: "100%" }}>
             <ScrollView>

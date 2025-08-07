@@ -19,7 +19,7 @@ import (
 
 const springApiUrl = "https://birth-classics-ent-bread.trycloudflare.com"
 const raspUrl = "http://192.168.0.16" // http://192.168.0.16
-const serverIp = ":1337"
+const serverIp = "192.168.0.24:1337"
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
@@ -103,8 +103,7 @@ func main() {
 }
 
 func playerScored(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Entramos a la ruta player scored")
-	fmt.Println(r)
+	fmt.Println("\033[1;31mEntramos a Player Scored\033[0m")
 	//increible la validación
 	//creo qué tan solo sería checar el origen del request
 	//que concuerde con el del pico
@@ -112,16 +111,14 @@ func playerScored(w http.ResponseWriter, r *http.Request) {
 	var data = make(map[string]interface{})
 
 	json.NewDecoder(r.Body).Decode(&data)
-	fmt.Println(data)
 	gameId := data["data"].(float64)
 
-	fmt.Println("El id que recibimos del pico")
-	fmt.Println(gameId)
 	actualGame := games[int(gameId)]
 
-	fmt.Println(actualGame)
-
 	actualPlayerName := actualGame.PlayerTurn
+	fmt.Println("Nombre actual del jugador")
+	fmt.Println(actualPlayerName)
+
 	for i := 0; i < len(actualGame.Party.Members); i++ {
 		if actualGame.Party.Members[i].Name == actualPlayerName {
 			mutex.Lock()
@@ -155,7 +152,6 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 
 func (user *User) readMessages() {
 	for {
-		fmt.Println("esperando mensaje....")
 		_, rawMsg, err := user.UserConn.ReadMessage()
 		if err != nil {
 			fmt.Println(err)
@@ -175,7 +171,6 @@ func (user *User) readMessages() {
 			//xddddi
 			go startGame(user, msg)
 		case "nuke":
-			fmt.Println("Nukeamos con éxito")
 			user.Nuked <- "nukeado"
 			return
 		}
@@ -197,7 +192,6 @@ func (game *Game) gameLoop() {
 
 	globalTime := time.Now()
 
-	fmt.Println("El juego es ", games[game.Id])
 	for !finished {
 		for i := range party.Members {
 
@@ -506,7 +500,6 @@ func activateTrap(user *User, msg Message, game *Game) {
 	sendMessage("deactivateTrap", data, user)
 
 	var gameMembers = game.Party.Members
-	fmt.Println("Empezamos a iterar")
 
 	for i := 0; i < len(user.BoughtTraps); i++ {
 		if user.BoughtTraps[i] == trap {
@@ -516,10 +509,8 @@ func activateTrap(user *User, msg Message, game *Game) {
 
 	for i := 0; i < len(gameMembers); i++ {
 		traps := gameMembers[i].BoughtTraps
-		fmt.Println("iterando las trampas del miembro ", game.Party.Members[i].Name)
 
 		for j := 0; j < len(traps); j++ {
-			fmt.Println("iterando en la trampa ", traps[j])
 
 			if traps[j] == trap {
 				sendMessage("deactivateTrap", data, game.Party.Members[i])
@@ -541,8 +532,11 @@ func activateTrap(user *User, msg Message, game *Game) {
 			gameMembers[i].Karma = newTotalKarma
 
 			data := map[string]interface{}{
-				"karma": newTotalKarma,
+				"username": gameMembers[i].Name,
+				"karma":    newTotalKarma,
 			}
+			fmt.Println("El nuevo karma total")
+			fmt.Println(gameMembers[i].Name, newTotalKarma)
 			gameMembers[i].Stats.KarmaTrigger += 1
 			sendMessage("karmaTrigger", data, gameMembers[i])
 		}
@@ -569,7 +563,6 @@ func buyTrap(user *User, msg Message) {
 	json.Unmarshal(msg.Payload, &payload)
 
 	trap := payload["trap"].(string)
-	fmt.Println("El karma del jugador ", user.Name, " es de ", user.Karma)
 
 	if hasEnoughKarma(trap, user) {
 		user.Stats.KarmaSpent += trapPrice[trap]
@@ -755,9 +748,7 @@ func startGame(user *User, msg Message) {
 	party.Broadcast <- message
 	<-done
 
-	fmt.Println("Vamos a postear")
 	postIdToRasp(strconv.Itoa(intnum))
-	fmt.Println("post post")
 	intnum++
 
 	stringNum := strconv.Itoa(intnum)
@@ -765,10 +756,8 @@ func startGame(user *User, msg Message) {
 
 	interfaceMap := map[string]interface{}{}
 	for i := 0; i < len(party.Members); i++ {
-		fmt.Println("Nukeando a ", party.Members[i].Name)
 		sendMessage("nuke", interfaceMap, party.Members[i])
 		<-party.Members[i].Nuked
-		fmt.Println("Nukeamos el reader de ", party.Members[i].Name)
 		go party.Members[i].readGameMessages(game)
 	}
 	go game.gameLoop()
@@ -780,19 +769,15 @@ func postIdToRasp(id string) {
 		"data": id,
 	}
 
-	fmt.Println("la data que vamos a mandar ", data)
 	// Marshal into JSON
 	jsonData, err := json.Marshal(data)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("Ahora sí vamos a postear")
 	// Cr  eate the request
-	fmt.Println("JSON data:", string(jsonData))
 
 	resp, err := http.Post(raspUrl+"/picoW", "application/json", bytes.NewBuffer(jsonData))
-	fmt.Println("pos post")
 	fmt.Println(resp)
 	if err != nil {
 		panic(err)
