@@ -111,7 +111,7 @@ const Leaderboard = ({ data }: { data: LeaderboardStructure[] }) => {
       <View style={styles.header}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>GOLFIN' LEADERBOARD</Text>
-          <FontAwesome name="trophy" size={width * 0.09} color="#C0C0C0" />
+          <FontAwesome name="trophy" size={width * 0.09} color="#f3db00ff" />
           <View style={styles.divider} />
         </View>
       </View>

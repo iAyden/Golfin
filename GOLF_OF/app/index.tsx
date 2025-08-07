@@ -14,6 +14,7 @@ import {
   ListRenderItemInfo,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Sidebar from "@/components/Structures/Sidebar";
 // import { Text } from '@/components/Themed';
 import ImagenSinFondo from "@/components/VisualComponents/ImagenSinFondo";
@@ -67,7 +68,6 @@ const App: React.FC = () => {
 
   const [fontsLoaded] = useFonts({
     gharison: require("../assets/fonts/gharison.ttf"),
-    // Add other fonts if needed
   });
 
   useEffect(() => {
@@ -151,51 +151,62 @@ const App: React.FC = () => {
   );
 
   return (
-    <ImageBackground
-      source={require("../assets/images/BG IMG GLF.png")}
-      style={styles.imageBg}
-    >
-      <View style={styles.container}>
-        <Sidebar
-          isVisible={sidebarVisible}
-          width={sidebarWidth}
-          onMenuItemPress={handleMenuPress}
-          activeMenuItem={activeMenu}
-          style={styles.sidebarAbsolute}
-        />
-        <Pressable
-          style={[styles.hamburgerButton, { left: sidebarVisible ? 200 : 0 }]}
-          onPress={() => setSidebarVisible(!sidebarVisible)}
-          accessibilityLabel="Toggle Sidebar"
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }}>
+        <ImageBackground
+          source={require("../assets/images/BG IMG GLF.png")}
+          style={styles.imageBg}
         >
-          <FontAwesome name="bars" size={28} color="#2f855a" />
-        </Pressable>
+          <View style={styles.container}>
+            <Sidebar
+              isVisible={sidebarVisible}
+              width={sidebarWidth}
+              onMenuItemPress={handleMenuPress}
+              activeMenuItem={activeMenu}
+              style={styles.sidebarAbsolute}
+            />
+            <Pressable
+              style={[
+                styles.hamburgerButton,
+                { left: sidebarVisible ? 200 : 0 },
+              ]}
+              onPress={() => setSidebarVisible(!sidebarVisible)}
+              accessibilityLabel="Toggle Sidebar"
+            >
+              <FontAwesome name="bars" size={28} color="#2f855a" />
+            </Pressable>
 
-        <View style={styles.mainContent}>
-          <FlatList
-            key={`layout-${layoutMode}-${numColumns}`}
-            data={cardData}
-            renderItem={renderCard}
-            keyExtractor={(item, idx) => item.title + idx}
-            numColumns={layoutMode === "horizontal" ? 1 : numColumns}
-            horizontal={layoutMode === "horizontal"}
-            columnWrapperStyle={
-              layoutMode === "grid" && numColumns > 1
-                ? { justifyContent: "space-between", gap: 24, marginBottom: 0 }
-                : undefined
-            }
-            contentContainerStyle={{
-              gap: 24,
-              paddingBottom: 40,
-              paddingHorizontal: horizontalPadding,
-              alignItems: "center",
-            }}
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
-      </View>
-    </ImageBackground>
+            <View style={styles.mainContent}>
+              <FlatList
+                key={`layout-${layoutMode}-${numColumns}`}
+                data={cardData}
+                renderItem={renderCard}
+                keyExtractor={(item, idx) => item.title + idx}
+                numColumns={layoutMode === "horizontal" ? 1 : numColumns}
+                horizontal={layoutMode === "horizontal"}
+                columnWrapperStyle={
+                  layoutMode === "grid" && numColumns > 1
+                    ? {
+                        justifyContent: "space-between",
+                        gap: 24,
+                        marginBottom: 0,
+                      }
+                    : undefined
+                }
+                contentContainerStyle={{
+                  gap: 24,
+                  paddingBottom: 40,
+                  paddingHorizontal: horizontalPadding,
+                  alignItems: "center",
+                }}
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+              />
+            </View>
+          </View>
+        </ImageBackground>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 

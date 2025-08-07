@@ -79,4 +79,5 @@ public class GameService {
 
         return mongoTemplate.aggregate(aggregation, "games", Document.class).getMappedResults();
     }
+    
 }

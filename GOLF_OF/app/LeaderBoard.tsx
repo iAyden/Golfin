@@ -17,6 +17,7 @@ import { FontAwesome } from "@expo/vector-icons";
 
 const LeaderBoardScreen = () => {
   const [userData, setUserData] = useState([]);
+  const phoneURL = "https://vehicle-etc-bare-proceeds.trycloudflare.com";
   const [leaderboard, setLeaderboard] = useState<LeaderboardStructure[]>([]);
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [activeMenuItem, setActiveMenuItem] = useState("LeaderBoard");
@@ -52,9 +53,9 @@ const LeaderBoardScreen = () => {
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8080/users/leaderboard")
+      .get(`${phoneURL}/users/leaderboard`)
       .then((res) => setLeaderboard(res.data))
-      .catch((err) => {});
+      .catch((err) => console.error(err));
   }, []);
 
   const handleMenuItemPress = (menuItem: string) => {
@@ -76,7 +77,15 @@ const LeaderBoardScreen = () => {
           style={styles.sidebarAbsolute}
         />
 
-        <View style={styles.mainContent}>
+        <View
+          style={[
+            styles.mainContent,
+            {
+              marginLeft: sidebarVisible ? 250 : 20,
+              alignItems: sidebarVisible ? "flex-start" : "center",
+            },
+          ]}
+        >
           <Leaderboard data={leaderboard} />
         </View>
 

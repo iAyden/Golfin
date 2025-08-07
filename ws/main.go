@@ -17,9 +17,9 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-const springApiUrl = "http://127.0.0.1:8080"
-const raspUrl = "http://192.168.0.16"
-const serverIp = "192.168.0.24:1337"
+const springApiUrl = "https://birth-classics-ent-bread.trycloudflare.com"
+const raspUrl = "http://192.168.0.16" // http://192.168.0.16
+const serverIp = ":1337"
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },

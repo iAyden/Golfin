@@ -1,0 +1,7 @@
+tunnel: golfin-tunnel-id-aqui
+credentials-file: ~/.cloudflared/golfin-tunnel-id-aqui.json
+
+ingress:
+  - hostname: ran-pushing-reducing-searched.trycloudflare.com
+    service: http://localhost:1337
+  - service: http_status:404
