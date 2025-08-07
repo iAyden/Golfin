@@ -134,13 +134,8 @@ const EndGame = () => {
       style={styles.bg}
       resizeMode="cover"
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View
-          style={[
-            styles.container,
-            { justifyContent: "flex-end", paddingBottom: marginBottom },
-          ]}
-        >
+      <ScrollView contentContainerStyle={{ paddingBottom: marginBottom }}>
+        <View style={[styles.container, { justifyContent: "flex-end" }]}>
           <Text style={styles.title}>Game Results</Text>
           <View
             style={[
@@ -329,7 +324,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   container: {
-    flex: 1,
+    // Removed flex: 1 to allow ScrollView to handle scrolling
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,

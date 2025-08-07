@@ -433,7 +433,7 @@ const saveProfileChanges = async () => {
       fontWeight: "bold",
       fontSize: width < 400 ? 13 : 16,
     },
-  });
+  }); 
 
   // Here are the freakin' "tabs" for when the screen is small
   const folderTabStyles = StyleSheet.create({
@@ -1186,7 +1186,7 @@ const saveProfileChanges = async () => {
                   )}
                   </>
                   )}
-                  {activeCard === "friends" && (
+                  {activeCard === "friends" && ( //YOU LEFT OFF HERE
                     <View style={dynamicStyles.card}>
                       {/* Friends Card (simplified) */}
                       <Text style={styles.cardTitle}>TABLE DE AMIGOS</Text>
